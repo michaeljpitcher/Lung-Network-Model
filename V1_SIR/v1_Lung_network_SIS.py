@@ -34,6 +34,7 @@ class LungNetwork(nx.Graph):
         self.rates['p_recover'] = p_recover
 
         # Node populations
+        # TODO - only really need the infected nodes
         self.populations = dict()
         for s in self.states:
             self.populations[s] = []
@@ -212,8 +213,12 @@ class LungNetwork(nx.Graph):
         node_to_recover = self.populations['I'][index]
         # mark the node as recovered
         self.update_node(node_to_recover, 'S')
-        # remove all edges in the SI list incident on this node
+        # remove all edges in the SI list from this node
         self.si_edges = [(inf_node, sus_node) for (inf_node, sus_node) in self.si_edges if inf_node != node_to_recover]
+        # Add edges to this node from infected nodes
+        for neighbour in self.neighbors(node_to_recover):
+            if self.node[neighbour]['state'] == 'I':
+                self.si_edges.append((neighbour, node_to_recover))
 
     def transitions(self):
         return [(len(self.si_edges) * self.rates['p_infect'], lambda t: self.infect()),
@@ -253,7 +258,6 @@ class LungNetwork(nx.Graph):
 
 
 if __name__ == '__main__':
-    ln = LungNetwork([2], 0.1, 0.0001, 300)
+    ln = LungNetwork([2], 0.1, 0.01, 300)
     ln.run()
     ln.movie('simple_sir',400)
-
