@@ -135,8 +135,7 @@ class LungNetwork(nx.Graph):
         if save_name is not None:
             fig.savefig(save_name + ".png")  # save as png
 
-
-    def movie(self, interval):
+    def movie(self, filename, interval):
         print "MAKING MOVIE"
         fig = plt.figure(figsize=(10, 10))
         # manipulate the axes, since this isn't a data plot
@@ -178,7 +177,7 @@ class LungNetwork(nx.Graph):
 
         movie = animation.FuncAnimation(fig, frame, init_func=init, frames=len(self.data), interval=interval, blit=False)
         #plt.show()
-        movie.save('movie.mp4', writer='ffmpeg_file')
+        movie.save(filename + '.mp4', writer='ffmpeg_file')
 
     def record_data(self):
         self.data[self.timestep] = dict()
@@ -256,5 +255,5 @@ class LungNetwork(nx.Graph):
 if __name__ == '__main__':
     ln = LungNetwork([2], 0.1, 0.0001, 300)
     ln.run()
-    ln.movie(400)
+    ln.movie('simple_sir',400)
 
