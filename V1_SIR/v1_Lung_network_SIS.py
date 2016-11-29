@@ -1,11 +1,12 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 
 class LungNetwork(nx.Graph):
 
-    def __init__(self, infected_nodes):
+    def __init__(self, infected_nodes, p_infect, p_recover, time_limit=100):
         nx.Graph.__init__(self)
 
         # Network Topology
@@ -16,17 +17,20 @@ class LungNetwork(nx.Graph):
             [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
              (15, 16), (16, 17)])
         self.add_edges_from([(5, 18), (6, 19), (6, 20),
-                                       (7, 21), (7, 22),
-                                       (8, 23), (9, 24), (10, 25), (11, 26), (11, 27),
-                                       (13, 28), (13, 29),
-                                       (14, 30), (14, 31),
-                                       (15, 32), (16, 33), (17, 34), (17, 35)])
+                             (7, 21), (7, 22),
+                             (8, 23), (9, 24), (10, 25), (11, 26), (11, 27),
+                             (13, 28), (13, 29),
+                             (14, 30), (14, 31),
+                             (15, 32), (16, 33), (17, 34), (17, 35)])
         self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n != self.origin]
         self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
         self.positioning = self.positioning()
 
         # Dynamics
         self.states = ['S','I']
+        self.rates = dict()
+        self.rates['p_infect'] = p_infect
+        self.rates['p_recover'] = p_recover
 
         # Node populations
         self.populations = dict()
@@ -42,16 +46,27 @@ class LungNetwork(nx.Graph):
                 self.node[n]['state'] = 'S'
                 self.populations['S'].append(n)
 
-        # Data
-        self.data = dict()
+        # Stochastic dynamics
+        self.si_edges = []
+        for (n, m) in self.edges_iter(self.populations['I']):
+            if self.node[m]['state'] == 'S':
+                self.si_edges.append((n, m))
+
+        # Mark all edges as unoccupied
+        for (_, _, edge_data) in self.edges(data=True):
+            edge_data['occupied'] = False
 
         # Time
         self.timestep = 0.0
+        self.time_limit = time_limit
+
+        # Data
+        self.data = dict()
+        self.record_data()
 
     def positioning(self):
         pos = dict()
         pos[0] = (5, 10)
-
         pos[1] = (5, 8)
         pos[2] = (4, 7)
         pos[3] = (3.5, 5)
@@ -87,7 +102,6 @@ class LungNetwork(nx.Graph):
         pos[33] = (7.5, 3)
         pos[34] = (8.5, 4.25)
         pos[35] = (8.5, 3)
-
         return pos
 
     def display(self, title, save_name=None, node_labels=True, edge_label_values=None):
@@ -122,10 +136,52 @@ class LungNetwork(nx.Graph):
 
     def record_data(self):
         self.data[self.timestep] = dict()
-        for n in self.nodes():
-            self.data[self.timestep][n] = n['state']
+        for s in self.states:
+            self.data[self.timestep][s] = []
+            for n in self.populations[s]:
+                self.data[self.timestep][s].append(n)
+
+    def update_node(self, node, new_state):
+        assert self.node[node]['state'] != new_state
+        self.populations[self.node[node]['state']].remove(node)
+        self.populations[new_state].append(node)
+        self.node[node]['state'] = new_state
+
+    def infect(self):
+        # choose an SI edge
+        i = np.random.randint(len(self.si_edges))
+        (infected_node, susceptible_node) = self.si_edges[i]
+        # infect the susceptible end
+        assert self.node[susceptible_node]['state'] == 'S'
+        self.update_node(susceptible_node, 'I')
+        # label the edge we traversed as occupied
+        self.edge[infected_node][susceptible_node]['occupied'] = True
+        # remove all edges in the SI list from an infected node to this one
+        self.si_edges = [(node_1, node_2) for (node_1, node_2) in self.si_edges if susceptible_node != node_2]
+        # add all the edges incident on this node connected to susceptible nodes
+        susceptible_neighbours = [e[1] for e in self.edges(susceptible_node) if self.node[e[1]]['state'] == 'S']
+        for neighbour in susceptible_neighbours:
+            self.si_edges.insert(0, (susceptible_node, neighbour))
+
+    def recover(self):
+        # choose an infected node at random
+        index = np.random.randint(len(self.populations['I']))
+        node_to_recover = self.populations['I'][index]
+        # mark the node as recovered
+        self.update_node(node_to_recover, 'S')
+        # remove all edges in the SI list incident on this node
+        self.si_edges = [(inf_node, sus_node) for (inf_node, sus_node) in self.si_edges if inf_node != node_to_recover]
+
+    def run(self):
+        while self.timestep < self.time_limit:
+            dt = 1.0
+            self.record_data()
+            self.timestep += dt
 
 
 if __name__ == '__main__':
-    ln = LungNetwork([0])
-    ln.display('Lung')
+    ln = LungNetwork([1,2,3,4], 0.1, 0.1)
+    print ln.si_edges
+    ln.recover()
+    print ln.si_edges
+    ln.display('jh')
