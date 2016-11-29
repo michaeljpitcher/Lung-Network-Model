@@ -54,8 +54,8 @@ class LungNetwork(nx.Graph):
                 self.si_edges.append((n, m))
 
         # Mark all edges as unoccupied
-        for (_, _, edge_data) in self.edges(data=True):
-            edge_data['occupied'] = False
+        # for (_, _, edge_data) in self.edges(data=True):
+        #     edge_data['occupied'] = False
 
         # Time
         self.timestep = 0.0
@@ -199,7 +199,7 @@ class LungNetwork(nx.Graph):
         assert self.node[susceptible_node]['state'] == 'S'
         self.update_node(susceptible_node, 'I')
         # label the edge we traversed as occupied
-        self.edge[infected_node][susceptible_node]['occupied'] = True
+        # self.edge[infected_node][susceptible_node]['occupied'] = True
         # remove all edges in the SI list from an infected node to this one
         self.si_edges = [(node_1, node_2) for (node_1, node_2) in self.si_edges if susceptible_node != node_2]
         # add all the edges incident on this node connected to susceptible nodes
