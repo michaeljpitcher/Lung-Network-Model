@@ -23,8 +23,8 @@ class LungNetwork(nx.Graph):
                              (13, 28), (13, 29),
                              (14, 30), (14, 31),
                              (15, 32), (16, 33), (17, 34), (17, 35)])
-        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n != self.origin]
-        self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
+        # self.terminal_nodes = [n for n in self.nodes_iter() if self.degree(n) == 1 and n != self.origin]
+        # self.non_terminal_nodes = [n for n in self.nodes_iter() if self.degree(n) != 1]
         self.positioning = self.positioning()
 
         # Dynamics
@@ -39,7 +39,7 @@ class LungNetwork(nx.Graph):
             self.populations[s] = []
 
         # Seed network
-        for n in self.nodes():
+        for n in self.nodes_iter():
             if n in infected_nodes:
                 self.node[n]['state'] = 'I'
                 self.populations['I'].append(n)
@@ -222,7 +222,7 @@ class LungNetwork(nx.Graph):
 
     def run(self):
         print "RUNNING"
-        while self.timestep < self.time_limit and len(self.populations['I']) > 0:
+        while len(self.populations['I']) > 0:
 
             transitions = self.transitions()
             total = 0.0
@@ -232,6 +232,10 @@ class LungNetwork(nx.Graph):
             # calculate the timestep delta
             x = np.random.random()
             dt = (1.0 / total) * math.log(1.0 / x)
+
+            if self.timestep + dt > self.time_limit:
+                # Don't perform the task if it would break over the limit
+                break
 
             # calculate which transition happens
             x = np.random.random() * total
