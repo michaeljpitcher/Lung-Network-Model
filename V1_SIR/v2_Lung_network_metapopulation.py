@@ -183,6 +183,10 @@ class LungNetwork(nx.Graph):
             self.infected_nodes.remove(node)
 
     def transitions(self):
+
+        # TODO - ASSUMPTION: transmission is affected by degree
+        # TODO - ASSUMPTION: no maximum capacity in node
+
         rate_for_transmit = 0
         for node in self.infected_nodes:
             rate_for_transmit += self.node[node]['count'] * self.degree(node)
@@ -193,7 +197,6 @@ class LungNetwork(nx.Graph):
                 (rate_for_growth, lambda t: self.growth())]
 
     def transmit(self):
-
         total = sum([self.node[n]['count'] * self.degree(n) for n in self.infected_nodes])
         r = np.random.random() * total
         running_total = 0
@@ -206,7 +209,6 @@ class LungNetwork(nx.Graph):
                     return
 
     def growth(self):
-
         total = sum([self.node[n]['count'] for n in self.infected_nodes])
         r = np.random.random() * total
         running_total = 0
