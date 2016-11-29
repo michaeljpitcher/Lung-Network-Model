@@ -172,16 +172,38 @@ class LungNetwork(nx.Graph):
         # remove all edges in the SI list incident on this node
         self.si_edges = [(inf_node, sus_node) for (inf_node, sus_node) in self.si_edges if inf_node != node_to_recover]
 
+    def transitions(self):
+        return [(len(self.si_edges) * self.rates['p_infect'], lambda t: self.infect()),
+                (len(self.populations['I']) * self.rates['p_recover'], lambda t: self.recover())]
+
     def run(self):
-        while self.timestep < self.time_limit:
-            dt = 1.0
+        while self.timestep < self.time_limit and len(self.populations['I']) > 0:
+
+            transitions = self.transitions()
+            total = 0.0
+            for (r, _) in transitions:
+                total = total + r
+
+            # calculate the timestep delta
+            x = np.random.random()
+            dt = (1.0 / total) * math.log(1.0 / x)
+
+            # calculate which transition happens
+            x = np.random.random() * total
+            k = 0
+            (xs, chosen_function) = transitions[k]
+            while xs < x:
+                k += 1
+                (xsp, chosen_function) = transitions[k]
+                xs = xs + xsp
+
+            # perform the transition
+            chosen_function(self)
+
             self.record_data()
             self.timestep += dt
 
-
 if __name__ == '__main__':
-    ln = LungNetwork([1,2,3,4], 0.1, 0.1)
-    print ln.si_edges
-    ln.recover()
-    print ln.si_edges
-    ln.display('jh')
+    ln = LungNetwork([1,2,3,4], 0.1, 0.0001)
+    ln.run()
+    ln.display('dfdg')
