@@ -2,6 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import matplotlib.animation as animation
 
 
 class LungNetwork(nx.Graph):
@@ -134,12 +135,55 @@ class LungNetwork(nx.Graph):
         if save_name is not None:
             fig.savefig(save_name + ".png")  # save as png
 
+
+    def movie(self, interval):
+        print "MAKING MOVIE"
+        fig = plt.figure(figsize=(10, 10))
+        # manipulate the axes, since this isn't a data plot
+        ax = fig.gca()
+        ax.set_xlim([-0.2, 10.2])  # axes bounded around 1
+        ax.set_ylim([-0.2, 12.2])
+        ax.grid(False)  # no grid
+        ax.get_xaxis().set_ticks([])  # no ticks on the axes
+        ax.get_yaxis().set_ticks([])
+        node_markers = []
+        for n in self.nodes_iter():
+            circ = plt.Circle(self.positioning[n], radius=0.1, zorder=2)  # node markers at top of the z-order
+            ax.add_patch(circ)
+            node_markers.append({'node_key': n, 'marker': circ})
+        for e in self.edges_iter():
+            xs = [self.positioning[e[0]][0], self.positioning[e[1]][0]]
+            ys = [self.positioning[e[0]][1], self.positioning[e[1]][1]]
+            line = plt.Line2D(xs, ys, zorder=1, color='k')  # edges lower down the z-order
+            ax.add_line(line)
+        timepoints = sorted(self.data.keys())
+
+        def update_nodes(time):
+            plt.title(str(time))
+            for nm in node_markers:
+                node=nm['node_key']
+                state = self.data[time][node]
+                if state == 'S':
+                    colour = 'g'
+                else:
+                    colour = 'r'
+                marker = nm['marker']
+                marker.set(color=colour)
+
+        def init():
+            update_nodes(0.0)
+
+        def frame(i):
+            update_nodes(timepoints[i])
+
+        movie = animation.FuncAnimation(fig, frame, init_func=init, frames=len(self.data), interval=interval, blit=False)
+        #plt.show()
+        movie.save('movie.mp4', writer='ffmpeg_file')
+
     def record_data(self):
         self.data[self.timestep] = dict()
-        for s in self.states:
-            self.data[self.timestep][s] = []
-            for n in self.populations[s]:
-                self.data[self.timestep][s].append(n)
+        for (n,data) in self.nodes_iter(data=True):
+            self.data[self.timestep][n] = data['state']
 
     def update_node(self, node, new_state):
         assert self.node[node]['state'] != new_state
@@ -177,6 +221,7 @@ class LungNetwork(nx.Graph):
                 (len(self.populations['I']) * self.rates['p_recover'], lambda t: self.recover())]
 
     def run(self):
+        print "RUNNING"
         while self.timestep < self.time_limit and len(self.populations['I']) > 0:
 
             transitions = self.transitions()
@@ -200,10 +245,12 @@ class LungNetwork(nx.Graph):
             # perform the transition
             chosen_function(self)
 
-            self.record_data()
             self.timestep += dt
+            self.record_data()
+
 
 if __name__ == '__main__':
-    ln = LungNetwork([1,2,3,4], 0.1, 0.0001)
+    ln = LungNetwork([2], 0.1, 0.0001, 300)
     ln.run()
-    ln.display('dfdg')
+    ln.movie(400)
+
