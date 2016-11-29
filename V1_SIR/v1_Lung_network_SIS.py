@@ -182,8 +182,8 @@ class LungNetwork(nx.Graph):
 
     def record_data(self):
         self.data[self.timestep] = dict()
-        for (n,data) in self.nodes_iter(data=True):
-            self.data[self.timestep][n] = data['state']
+        for (n,node_data) in self.nodes_iter(data=True):
+            self.data[self.timestep][n] = node_data['state']
 
     def update_node(self, node, new_state):
         assert self.node[node]['state'] != new_state
