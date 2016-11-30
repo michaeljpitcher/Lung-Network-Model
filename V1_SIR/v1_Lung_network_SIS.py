@@ -186,7 +186,8 @@ class LungNetwork(nx.Graph):
             self.data[self.timestep][n] = node_data['state']
 
     def update_node(self, node, new_state):
-        assert self.node[node]['state'] != new_state
+        assert self.node[node]['state'] != new_state, "State has not been changed (already {0})".format(new_state)
+        assert new_state in self.states, "State {0} is not valid".format(new_state)
         self.populations[self.node[node]['state']].remove(node)
         self.populations[new_state].append(node)
         self.node[node]['state'] = new_state
