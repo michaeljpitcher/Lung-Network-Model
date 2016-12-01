@@ -4,7 +4,6 @@ import numpy as np
 import math
 import matplotlib.animation as animation
 
-
 class LungNetwork(nx.Graph):
 
     def __init__(self, infected_nodes, initial_load, p_transmit, p_growth, time_limit=100):
@@ -82,8 +81,8 @@ class LungNetwork(nx.Graph):
         pos[27] = (2.75, 1)
         pos[28] = (7.25, 8.5)
         pos[29] = (8, 8.5)
-        pos[30] = (8.25, 7.25)
-        pos[31] = (8.25, 6.75)
+        pos[30] = (8.5, 7.5)
+        pos[31] = (8.5, 6.5)
         pos[32] = (7, 5.5)
         pos[33] = (7.5, 3)
         pos[34] = (8.5, 4.25)
@@ -96,10 +95,14 @@ class LungNetwork(nx.Graph):
 
         # nodes
         # S nodes
-        nx.draw_networkx_nodes(self, self.positioning, nodelist=self.populations['S'], node_size=250,
+
+        nodelist_inf = [n for n, data in self.nodes(data=True) if data['count'] > 0]
+        nodelist_sus = [n for n, data in self.nodes(data=True) if data['count'] == 0]
+
+        nx.draw_networkx_nodes(self, self.positioning, nodelist=nodelist_sus, node_size=400,
                                node_color="green")
         # I nodes
-        nx.draw_networkx_nodes(self, self.positioning, nodelist=self.populations['I'], node_size=250,
+        nx.draw_networkx_nodes(self, self.positioning, nodelist=nodelist_inf, node_size=400,
                                node_color="red")
 
         # edges
@@ -107,7 +110,9 @@ class LungNetwork(nx.Graph):
 
         # node labels
         if node_labels:
-            nx.draw_networkx_labels(self, self.positioning, font_family='sans-serif')
+
+            labels = dict((n,d['count']) for n,d in self.nodes(data=True))
+            nx.draw_networkx_labels(self, self.positioning, labels=labels, font_family='sans-serif')
 
         # edge labels
         if edge_label_values is not None:
@@ -123,18 +128,17 @@ class LungNetwork(nx.Graph):
     def movie(self, filename, interval):
         print "MAKING MOVIE"
         fig = plt.figure(figsize=(10, 10))
-        # manipulate the axes, since this isn't a data plot
         ax = fig.gca()
-        ax.set_xlim([-0.2, 10.2])  # axes bounded around 1
+        ax.set_xlim([-0.2, 10.2])
         ax.set_ylim([-0.2, 12.2])
-        ax.grid(False)  # no grid
-        ax.get_xaxis().set_ticks([])  # no ticks on the axes
+        ax.grid(False)
+        ax.get_xaxis().set_ticks([])
         ax.get_yaxis().set_ticks([])
         node_markers = []
         for n in self.nodes_iter():
-            circ = plt.Circle(self.positioning[n], radius=0.1, zorder=2)  # node markers at top of the z-order
-            ax.add_patch(circ)
-            node_markers.append({'node_key': n, 'marker': circ})
+            circle = plt.Circle(self.positioning[n], radius=0.1, zorder=2)  # node markers at top of the z-order
+            ax.add_patch(circle)
+            node_markers.append({'node': n, 'position': circle})
         for e in self.edges_iter():
             xs = [self.positioning[e[0]][0], self.positioning[e[1]][0]]
             ys = [self.positioning[e[0]][1], self.positioning[e[1]][1]]
@@ -144,14 +148,14 @@ class LungNetwork(nx.Graph):
 
         def update_nodes(time):
             plt.title(str(time))
-            for nm in node_markers:
-                node=nm['node_key']
+            for marker in node_markers:
+                node=marker['node']
                 count = self.data[time][node]
                 # TODO - rigged so you can actually see colour change
                 if count >= 20:
                     count = 20.0
                 colour = (count/20.0,0,0)
-                marker = nm['marker']
+                marker = marker['position']
                 marker.set(color=colour)
 
         def init():
@@ -175,7 +179,7 @@ class LungNetwork(nx.Graph):
             self.infected_nodes.append(node)
 
         self.node[node]['count'] += amendment
-        assert self.node[node]['count'] >= 0
+        assert self.node[node]['count'] >= 0, "update_node: Count cannot drop below zero"
         self.max_count = max(self.max_count, self.node[node]['count'])
 
         # If new count is 0, node is no longer infected
@@ -252,5 +256,7 @@ class LungNetwork(nx.Graph):
 
 if __name__ == '__main__':
     ln = LungNetwork([2], 100, 0.1, 0.5, 1)
+    ln.display('t')
+
     ln.run()
     ln.movie('metapop', 100)
