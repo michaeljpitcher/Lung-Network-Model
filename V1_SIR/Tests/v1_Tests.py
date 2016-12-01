@@ -2,7 +2,7 @@ import unittest
 import V1_SIR.v1_Lung_network_SIS as SISNetwork
 import numpy as np
 
-class FirstTestCase(unittest.TestCase):
+class V1TestCase(unittest.TestCase):
 
     def setUp(self):
         self.infected = [0,1,2]

@@ -253,6 +253,4 @@ class LungNetwork(nx.Graph):
 if __name__ == '__main__':
     ln = LungNetwork([2], 100, 0.1, 0.5, 1)
     ln.run()
-    print len(ln.data)
-    print ln.data[max(ln.data.keys())]
     ln.movie('metapop', 100)
