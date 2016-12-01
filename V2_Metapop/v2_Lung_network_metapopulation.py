@@ -4,6 +4,7 @@ import numpy as np
 import math
 import matplotlib.animation as animation
 
+
 class LungNetwork(nx.Graph):
 
     def __init__(self, infected_nodes, initial_load, p_transmit, p_growth, time_limit=100):
@@ -193,7 +194,7 @@ class LungNetwork(nx.Graph):
 
         rate_for_transmit = 0
         for node in self.infected_nodes:
-            rate_for_transmit += self.node[node]['count'] * self.degree(node)
+            rate_for_transmit += self.node[node]['count'] * self.degree(node) * self.rates['p_transmit']
 
         rate_for_growth = sum([self.node[n]['count'] for n in self.infected_nodes]) * abs(self.rates['p_growth'])
 
