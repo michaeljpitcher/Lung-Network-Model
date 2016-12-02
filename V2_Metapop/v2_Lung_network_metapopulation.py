@@ -23,8 +23,6 @@ class LungNetwork(nx.Graph):
                              (13, 28), (13, 29),
                              (14, 30), (14, 31),
                              (15, 32), (16, 33), (17, 34), (17, 35)])
-        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n != self.origin]
-        self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
         self.positioning = self.positioning()
 
         # Dynamics
@@ -181,7 +179,8 @@ class LungNetwork(nx.Graph):
 
         self.node[node]['count'] += amendment
         assert self.node[node]['count'] >= 0, "update_node: Count cannot drop below zero"
-        self.max_count = max(self.max_count, self.node[node]['count'])
+        # Check the new maximum amount
+        self.max_count = max([data['count'] for n, data in self.nodes(data=True)])
 
         # If new count is 0, node is no longer infected
         if self.node[node]['count'] == 0:
@@ -256,8 +255,8 @@ class LungNetwork(nx.Graph):
 
 
 if __name__ == '__main__':
-    ln = LungNetwork([2], 100, 0.1, 0.5, 1)
-    ln.display('t')
-
+    ln = LungNetwork([2], 200, 0.3, 0.5, 1)
+    # ln.display('t')
     ln.run()
     ln.movie('metapop', 100)
+    ln.display("metapop", save_name="metapop")
