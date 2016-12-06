@@ -5,39 +5,39 @@ import math
 import matplotlib.animation as animation
 
 
-class LungNetwork(nx.Graph):
+class MetapopulationWeightedNetwork(nx.Graph):
 
-    def __init__(self, infected_nodes, initial_load, p_transmit, p_growth, time_limit=100):
+    def __init__(self, edges, weights, positioning, infected_nodes, initial_load, p_transmit, p_growth, time_limit=100):
         nx.Graph.__init__(self)
 
         # Network Topology
-        self.add_edge(0, 1)
-        self.add_edges_from([(1, 2), (2, 3), (1, 4)])
-        self.add_edges_from(
-            [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
-             (15, 16), (16, 17)])
-        self.add_edges_from([(5, 18), (6, 19), (6, 20),
-                             (7, 21), (7, 22),
-                             (8, 23), (9, 24), (10, 25), (11, 26), (11, 27),
-                             (13, 28), (13, 29),
-                             (14, 30), (14, 31),
-                             (15, 32), (16, 33), (17, 34), (17, 35)])
-        self.positioning = self.positioning()
-        self.calc_edge_weights()
+        self.add_edges_from(edges)
+        # Edge weights
+        for e1, e2 in self.edges():
+            # Check that the edge exists in the provided dictionary in some form
+            if (e1, e2) in weights.keys():
+                self.edge[e1][e2]['weight'] = weights[(e1, e2)]
+            elif (e2, e1) in weights.keys():
+                self.edge[e1][e2]['weight'] = weights[(e2, e1)]
+            else:
+                raise Exception, "Edge {0},{1} has not been assigned a weight".format(e1, e2)
+        self.positioning = positioning
 
         # Dynamics
         self.rates = dict()
         self.rates['p_transmit'] = p_transmit
         self.rates['p_growth'] = p_growth
 
+        self.max_count = 0
         self.infected_nodes = []
+
         # Seed network
         for n in self.nodes():
-            if n in infected_nodes:
-                self.node[n]['count'] = initial_load
-                self.infected_nodes.append(n)
-            else:
-                self.node[n]['count'] = 0
+            # Set count to 0 (adds count as a key to the node)
+            self.node[n]['count'] = 0
+
+        for n in infected_nodes:
+            self.update_node(n, initial_load)
 
         # Time
         self.timestep = 0.0
@@ -46,78 +46,20 @@ class LungNetwork(nx.Graph):
         # Data
         self.data = dict()
         self.record_data()
-        self.max_count = initial_load
 
-    def positioning(self):
-        pos = dict()
-        pos[0] = (5, 10)
-        pos[1] = (5, 8)
-        pos[2] = (4, 7)
-        pos[3] = (3.5, 5)
-        pos[4] = (6, 6)
-        pos[5] = (3, 8)
-        pos[6] = (2.75, 8.5)
-        pos[7] = (3, 4.5)
-        pos[8] = (4, 4)
-        pos[9] = (3.5, 3)
-        pos[10] = (3, 2.5)
-        pos[11] = (2.5, 2)
-        pos[12] = (7, 7)
-        pos[13] = (7.5, 8)
-        pos[14] = (8, 7)
-        pos[15] = (6.5, 5)
-        pos[16] = (7.5, 4)
-        pos[17] = (8, 3.5)
-        pos[18] = (2.5, 7.5)
-        pos[19] = (2.5, 9)
-        pos[20] = (3, 9)
-        pos[21] = (2, 5)
-        pos[22] = (2, 4)
-        pos[23] = (3.5, 4.25)
-        pos[24] = (4, 2)
-        pos[25] = (2.5, 3.25)
-        pos[26] = (1.5, 1)
-        pos[27] = (2.75, 1)
-        pos[28] = (7.25, 8.5)
-        pos[29] = (8, 8.5)
-        pos[30] = (8.5, 7.5)
-        pos[31] = (8.5, 6.5)
-        pos[32] = (7, 5.5)
-        pos[33] = (7.5, 3)
-        pos[34] = (8.5, 4.25)
-        pos[35] = (8.5, 3)
-        return pos
-
-    def calc_edge_weights(self):
-
-        self.edge[0][1]['weight'] = 10
-        edge_set_7 = [(1, 2), (2, 3), (1, 4)]
-        for e1, e2 in edge_set_7:
-            self.edge[e1][e2]['weight'] = 7
-
-        edge_set_3 = [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
-             (15, 16), (16, 17)]
-        for e1, e2 in edge_set_3:
-            self.edge[e1][e2]['weight'] = 3
-
-        edge_set_1 = [(5, 18), (6, 19), (6, 20), (7, 21), (7, 22), (8, 23), (9, 24), (10, 25), (11, 26), (11, 27),
-                      (13, 28), (13, 29), (14, 30), (14, 31), (15, 32), (16, 33), (17, 34), (17, 35)]
-        for e1, e2 in edge_set_1:
-            self.edge[e1][e2]['weight'] = 1
+        self.total_possible_transmission = 0.0
+        self.total_bacteria = 0.0
 
     def display(self, title, save_name=None, node_labels=True, edge_labels=True):
         fig = plt.figure(figsize=(10, 10))
         plt.gca().set_axis_off()
 
         # nodes
-        # S nodes
-
         nodelist_inf = [n for n, data in self.nodes(data=True) if data['count'] > 0]
         nodelist_sus = [n for n, data in self.nodes(data=True) if data['count'] == 0]
 
         nx.draw_networkx_nodes(self, self.positioning, nodelist=nodelist_sus, node_size=400,
                                node_color="green")
-        # I nodes
         nx.draw_networkx_nodes(self, self.positioning, nodelist=nodelist_inf, node_size=400,
                                node_color="red")
 
@@ -195,34 +137,47 @@ class LungNetwork(nx.Graph):
 
         self.node[node]['count'] += amendment
         assert self.node[node]['count'] >= 0, "update_node: Count cannot drop below zero"
-        self.max_count = max(self.max_count, self.node[node]['count'])
+        self.max_count = max(self.node[n]['count'] for n in self.nodes())
 
         # If new count is 0, node is no longer infected
         if self.node[node]['count'] == 0:
             self.infected_nodes.remove(node)
 
-    def transitions(self):
-
+    def update_totals(self):
         # TODO - ASSUMPTION: transmission is affected by degree
         # TODO - ASSUMPTION: no maximum capacity in node
+        self.total_possible_transmission = 0.0
+        for node in self.infected_nodes:
+            for neighbour in self.neighbors(node):
+                self.total_possible_transmission += self.node[node]['count'] * self.edge[node][neighbour]['weight']
+        self.total_bacteria = sum([self.node[n]['count'] for n in self.infected_nodes])
 
-        rate_for_transmit = self.get_transmit_total() * self.rates['p_transmit']
-        rate_for_growth = sum([self.node[n]['count'] for n in self.infected_nodes]) * abs(self.rates['p_growth'])
+    def transitions(self):
+        rate_for_transmit = self.total_possible_transmission * self.rates['p_transmit']
+        rate_for_growth = self.total_bacteria * abs(self.rates['p_growth'])
 
         return [(rate_for_transmit, lambda t: self.transmit()),
                 (rate_for_growth, lambda t: self.growth())]
 
-    def get_transmit_total(self):
-        transmit_total = 0.0
-        for node in self.infected_nodes:
-            for neighbour in self.neighbors(node):
-                transmit_total += self.node[node]['count'] * self.edge[node][neighbour]['weight']
-        return transmit_total
+    def calculate_dt(self, total):
+        # calculate the timestep delta
+        x = np.random.random()
+        dt = (1.0 / total) * math.log(1.0 / x)
+        return dt
+
+    def choose_transition(self, total, transitions):
+        # calculate which transition happens
+        x = np.random.random() * total
+        k = 0
+        (xs, chosen_function) = transitions[k]
+        while xs < x:
+            k += 1
+            (xsp, chosen_function) = transitions[k]
+            xs = xs + xsp
+        return k
 
     def transmit(self):
-
-        total = self.get_transmit_total()
-        r = np.random.random() * total
+        r = np.random.random() * self.total_possible_transmission
         running_total = 0
         for node in self.infected_nodes:
             for neighbour in self.neighbors(node):
@@ -233,15 +188,14 @@ class LungNetwork(nx.Graph):
                     return
 
     def growth(self):
-        total = sum([self.node[n]['count'] for n in self.infected_nodes])
-        r = np.random.random() * total
+        r = np.random.random() * self.total_bacteria
         running_total = 0
         for node in self.infected_nodes:
             running_total += self.node[node]['count']
             if running_total >= r:
-                if self.rates['p_growth'] > 0:
+                if self.rates['p_growth'] > 0.0:
                     self.update_node(node, 1)
-                elif self.rates['p_growth'] < 0:
+                elif self.rates['p_growth'] < 0.0:
                     self.update_node(node, -1)
                 return
 
@@ -249,33 +203,27 @@ class LungNetwork(nx.Graph):
         print "RUNNING"
         while self.timestep < self.time_limit and len(self.infected_nodes) > 0:
 
+            self.update_totals()
+
             transitions = self.transitions()
+
             total = 0.0
             for (r, _) in transitions:
-                total = total + r
+                total += r
 
-            # calculate the timestep delta
-            x = np.random.random()
-            dt = (1.0 / total) * math.log(1.0 / x)
-
-            # calculate which transition happens
-            x = np.random.random() * total
-            k = 0
-            (xs, chosen_function) = transitions[k]
-            while xs < x:
-                k += 1
-                (xsp, chosen_function) = transitions[k]
-                xs = xs + xsp
+            dt = self.calculate_dt(total)
+            chosen_function_index = self.choose_transition(total, transitions)
 
             # perform the transition
-            chosen_function(self)
+            transitions[chosen_function_index][1](self)
 
             self.timestep += dt
             self.record_data()
 
 
 if __name__ == '__main__':
-    ln = LungNetwork([2], 200, 0.3, 0.5, 1)
-    ln.run()
-    ln.movie('metapop_weighted', 100)
-    ln.display('Metapop weighted', save_name="metapop_weighted")
+    # ln = LungNetwork([2], 200, 0.3, 0.5, 1)
+    # ln.run()
+    # ln.movie('metapop_weighted', 100)
+    # ln.display('Metapop weighted', save_name="metapop_weighted")
+    pass
