@@ -7,7 +7,18 @@ import matplotlib.animation as animation
 
 class MetapopulationWeightedNetwork(nx.Graph):
 
-    def __init__(self, edges, weights, positioning, infected_nodes, initial_load, p_transmit, p_growth, time_limit=100):
+    def __init__(self, edges, weights, positioning, initial_infections, p_transmit, p_growth, time_limit=100):
+        """
+        Metapopulation model over a weighted graph. Runs SIS dynamics (with nodes assigned a 'count') and a Gillespie-
+        simulation-style time modelling.
+        :param edges: Edges of network (also defines nodes)
+        :param weights: Weights of edges (as a dict, with tuple (node1, node2) as key)
+        :param positioning: Position of nodes (for displaying and movie)
+        :param initial_infections: Count for initial infections (as dict, key=node, value=count)
+        :param p_transmit:
+        :param p_growth:
+        :param time_limit:
+        """
         nx.Graph.__init__(self)
 
         # Network Topology
@@ -36,8 +47,8 @@ class MetapopulationWeightedNetwork(nx.Graph):
             # Set count to 0 (adds count as a key to the node)
             self.node[n]['count'] = 0
 
-        for n in infected_nodes:
-            self.update_node(n, initial_load)
+        for node in initial_infections:
+            self.update_node(node, initial_infections[node])
 
         # Time
         self.timestep = 0.0
