@@ -15,13 +15,16 @@ class v3BasicTestCase(unittest.TestCase):
             self.weights[edge] = count
             count -= 1
         self.pos = [(1,1), (2,2), (2,3), (3,3), (3,2), (2,1)]
-        self.inf_nodes = [1, 5]
-        self.inf_load = 30
+
+        self.infections = dict()
+        self.infections[1] = 30
+        self.infections[5] = 10
+
         self.ptransmit = 0.5
         self.pgrowth = - 0.1
         self.timelimit = 1
-        self.network = MWN.MetapopulationWeightedNetwork(self.edges, self.weights, self.pos, self.inf_nodes,
-                                                         self.inf_load, self.ptransmit, self.pgrowth, self.timelimit)
+        self.network = MWN.MetapopulationWeightedNetwork(self.edges, self.weights, self.pos, self.infections,
+                                                         self.ptransmit, self.pgrowth, self.timelimit)
 
     def test_initialise(self):
         self.assertItemsEqual(self.network.nodes(), range(0,6))
@@ -35,10 +38,10 @@ class v3BasicTestCase(unittest.TestCase):
         self.assertEqual(self.network.edge[5][0]['weight'], 5)
         self.assertSequenceEqual(self.network.positioning, self.pos)
 
-        self.assertItemsEqual(self.network.infected_nodes, self.inf_nodes)
+        self.assertItemsEqual(self.network.infected_nodes, self.infections.keys())
         for n in range(0,6):
-            if n in self.inf_nodes:
-                self.assertEqual(self.network.node[n]['count'], self.inf_load)
+            if n in self.infections:
+                self.assertEqual(self.network.node[n]['count'], self.infections[n])
             else:
                 self.assertEqual(self.network.node[n]['count'], 0.0)
 
@@ -51,12 +54,12 @@ class v3BasicTestCase(unittest.TestCase):
         self.assertItemsEqual(self.network.data.keys(), [0.0])
         self.assertItemsEqual(self.network.data[0.0].keys(), range(0,6))
         for n in range(0, 6):
-            if n in self.inf_nodes:
-                self.assertEqual(self.network.data[0.0][n], self.inf_load)
+            if n in self.infections:
+                self.assertEqual(self.network.data[0.0][n], self.infections[n])
             else:
                 self.assertEqual(self.network.data[0.0][n], 0.0)
 
-        self.assertEqual(self.network.max_count, self.inf_load)
+        self.assertEqual(self.network.max_count, max(self.infections.values()))
         self.assertEqual(self.network.total_possible_transmission, 0.0)
         self.assertEqual(self.network.total_bacteria, 0.0)
 
@@ -68,14 +71,14 @@ class v3BasicTestCase(unittest.TestCase):
         self.assertEqual(self.network.data.keys(), [0.0, 1.0])
         for n in range(0,6):
             # at t = 0.0
-            if n in self.inf_nodes:
-                self.assertEqual(self.network.data[0.0][n], self.inf_load)
+            if n in self.infections:
+                self.assertEqual(self.network.data[0.0][n], self.infections[n])
             else:
                 self.assertEqual(self.network.data[0.0][n], 0.0)
 
             # at t = 1.0
-            if n in self.inf_nodes:
-                self.assertEqual(self.network.data[1.0][n], self.inf_load)
+            if n in self.infections:
+                self.assertEqual(self.network.data[1.0][n], self.infections[n])
             elif n == 3:
                 self.assertEqual(self.network.data[1.0][n], 99)
             else:
@@ -96,7 +99,7 @@ class v3BasicTestCase(unittest.TestCase):
 
         # Negative - stays infected
         self.network.update_node(5,-1)
-        self.assertEqual(self.network.node[5]['count'], 29)
+        self.assertEqual(self.network.node[5]['count'], 9)
         self.assertItemsEqual(self.network.infected_nodes, [0, 1, 5])
         self.assertEqual(self.network.max_count, 31)
 
@@ -104,7 +107,7 @@ class v3BasicTestCase(unittest.TestCase):
         self.network.update_node(1, -31)
         self.assertEqual(self.network.node[1]['count'], 0)
         self.assertItemsEqual(self.network.infected_nodes, [0, 5])
-        self.assertEqual(self.network.max_count, 29)
+        self.assertEqual(self.network.max_count, 9)
 
     def test_update_node_fails(self):
         with self.assertRaises(AssertionError) as context:
@@ -114,9 +117,9 @@ class v3BasicTestCase(unittest.TestCase):
     def test_update_totals(self):
         self.network.update_totals()
         # Sum of (Count at infected node * sum of weights of edges from infected node)
-        self.assertEqual(self.network.total_possible_transmission, 30 * (4) + 30 * (2))
+        self.assertEqual(self.network.total_possible_transmission, 30 * (4) + 10 * (2))
         # Sum of count at all infected node
-        self.assertEqual(self.network.total_bacteria, 30 + 30)
+        self.assertEqual(self.network.total_bacteria, 30 + 10)
 
     def test_calculate_dt(self):
         np.random.seed(100) # x = 0.543404941791
@@ -134,8 +137,8 @@ class v3BasicTestCase(unittest.TestCase):
 
         # Picks a growth
         # Alter network - easier to get a growth
-        growth_network = MWN.MetapopulationWeightedNetwork(self.edges, self.weights, self.pos, self.inf_nodes,
-                                                         self.inf_load, 0.001, 0.5, self.timelimit)
+        growth_network = MWN.MetapopulationWeightedNetwork(self.edges, self.weights, self.pos, self.infections, 0.001,
+                                                           0.5, self.timelimit)
         growth_network.update_totals()
         transitions = growth_network.transitions()
         total = transitions[0][0] + transitions[1][0]
@@ -153,19 +156,19 @@ class v3BasicTestCase(unittest.TestCase):
         self.network.update_totals()
         np.random.seed(2135) # r = 154.801986527, r2 = 8.31990523483 - should pick edge 5 -> 4
         self.network.transmit()
-        self.assertEqual(self.network.node[5]['count'], 29)
+        self.assertEqual(self.network.node[5]['count'], 9)
         self.assertEqual(self.network.node[4]['count'], 1)
 
     def test_growth(self):
         self.network.update_totals()
-        np.random.seed(100) # r = 32.604965075 - picks node 5
-        self.network.growth()
-        self.assertEqual(self.network.node[5]['count'], 29)
-
-        self.network.update_totals()
-        np.random.seed(1)  # r = 24.6042982775 - picks node 1
+        np.random.seed(100) # r = 21.7361976716 - picks node 1
         self.network.growth()
         self.assertEqual(self.network.node[1]['count'], 29)
+
+        self.network.update_totals()
+        np.random.seed(65765)  # r = 37.9819896608 - picks node 5
+        self.network.growth()
+        self.assertEqual(self.network.node[5]['count'], 9)
 
 
 
