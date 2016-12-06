@@ -114,7 +114,7 @@ class v3BasicTestCase(unittest.TestCase):
     def test_update_totals(self):
         self.network.update_totals()
         # Sum of (Count at infected node * sum of weights of edges from infected node)
-        self.assertEqual(self.network.total_possible_transmission, 30 * (10 + 9 + 8 + 7) + 30 * (6 + 5))
+        self.assertEqual(self.network.total_possible_transmission, 30 * (4) + 30 * (2))
         # Sum of count at all infected node
         self.assertEqual(self.network.total_bacteria, 30 + 30)
 
@@ -145,16 +145,16 @@ class v3BasicTestCase(unittest.TestCase):
 
     def test_transmit(self):
         self.network.update_totals()
-        np.random.seed(100) # r = 733.596671418 - should pick edge 1 -> 3
+        np.random.seed(100)  # r = 97.8128895224, r2=9.46455909319 - should pick edge 1 -> 0
         self.network.transmit()
         self.assertEqual(self.network.node[1]['count'], 29)
-        self.assertEqual(self.network.node[3]['count'], 1)
+        self.assertEqual(self.network.node[0]['count'], 1)
 
         self.network.update_totals()
-        np.random.seed(11111)  # r = 1132.49928754 - should pick edge 5 -> 0
+        np.random.seed(2135) # r = 154.801986527, r2 = 8.31990523483 - should pick edge 5 -> 4
         self.network.transmit()
         self.assertEqual(self.network.node[5]['count'], 29)
-        self.assertEqual(self.network.node[0]['count'], 1)
+        self.assertEqual(self.network.node[4]['count'], 1)
 
     def test_growth(self):
         self.network.update_totals()
