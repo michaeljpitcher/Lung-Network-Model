@@ -50,7 +50,7 @@ class MetapopulationWeightedNetwork(nx.Graph):
         self.total_possible_transmission = 0.0
         self.total_bacteria = 0.0
 
-    def display(self, title, save_name=None, node_labels=True, edge_labels=True):
+    def display(self, title, save_name=None, node_labels='count', edge_labels=True):
         fig = plt.figure(figsize=(10, 10))
         plt.gca().set_axis_off()
 
@@ -67,9 +67,13 @@ class MetapopulationWeightedNetwork(nx.Graph):
         nx.draw_networkx_edges(self, self.positioning)
 
         # node labels
-        if node_labels:
+        if node_labels == 'count':
             labels = dict((n,d['count']) for n,d in self.nodes(data=True))
             nx.draw_networkx_labels(self, self.positioning, labels=labels, font_family='sans-serif')
+        elif node_labels == 'index':
+            nx.draw_networkx_labels(self, self.positioning, font_family='sans-serif')
+        else:
+            raise Exception, "Invalid label choice"
 
         # edge labels
         if edge_labels:
@@ -148,8 +152,7 @@ class MetapopulationWeightedNetwork(nx.Graph):
         # TODO - ASSUMPTION: no maximum capacity in node
         self.total_possible_transmission = 0.0
         for node in self.infected_nodes:
-            for neighbour in self.neighbors(node):
-                self.total_possible_transmission += self.node[node]['count'] * self.edge[node][neighbour]['weight']
+            self.total_possible_transmission += self.node[node]['count'] * self.degree(node)
         self.total_bacteria = sum([self.node[n]['count'] for n in self.infected_nodes])
 
     def transitions(self):
@@ -177,15 +180,26 @@ class MetapopulationWeightedNetwork(nx.Graph):
         return k
 
     def transmit(self):
+        # Pick a node
+        chosen_node = -1
         r = np.random.random() * self.total_possible_transmission
-        running_total = 0
+        running_bacteria_total = 0
         for node in self.infected_nodes:
-            for neighbour in self.neighbors(node):
-                running_total += self.node[node]['count'] * self.edge[node][neighbour]['weight']
-                if running_total >= r:
-                    self.update_node(node, -1)
-                    self.update_node(neighbour, 1)
-                    return
+            running_bacteria_total += (self.node[node]['count'] * self.degree(node))
+            if running_bacteria_total >= r:
+                chosen_node = node
+                break
+
+        # Pick a neighbour
+        weight_total = sum([data['weight'] for _,_,data in self.edges(chosen_node, data=True)])
+        r2 = np.random.random() * weight_total
+        running_weight_total = 0.0
+        for e1, e2, data in self.edges(chosen_node, data=True):
+            running_weight_total += data['weight']
+            if running_weight_total > r2:
+                self.update_node(e1, -1)
+                self.update_node(e2, 1)
+                return
 
     def growth(self):
         r = np.random.random() * self.total_bacteria
@@ -221,9 +235,123 @@ class MetapopulationWeightedNetwork(nx.Graph):
             self.record_data()
 
 
+class LungMetapopulationWeighted(MetapopulationWeightedNetwork):
+
+    def __init__(self, weight_method, infected_nodes, initial_load, p_transmit, p_growth, time_limit=100):
+        edges = [(0, 1), (1, 2), (2, 3), (1, 4)]
+        edges += [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
+             (15, 16), (16, 17)]
+        edges += [(5,18), (6,19), (6,20), (7,21), (7,22), (8,23), (9,24), (10,25), (11,26),(11,27), (13,28), (13,29),
+                  (14,30), (14,31), (15,32), (16,33), (17,34),(17,35)]
+
+        positioning = dict()
+        positioning[0] = (5, 10)
+        positioning[1] = (5, 8)
+        positioning[2] = (4, 7)
+        positioning[3] = (3.5, 5)
+        positioning[4] = (6, 6)
+        positioning[5] = (3, 8)
+        positioning[6] = (2.75, 8.5)
+        positioning[7] = (3, 4.5)
+        positioning[8] = (4, 4)
+        positioning[9] = (3.5, 3)
+        positioning[10] = (3, 2.5)
+        positioning[11] = (2.5, 2)
+        positioning[12] = (7, 7)
+        positioning[13] = (7.5, 8)
+        positioning[14] = (8, 7)
+        positioning[15] = (6.5, 5)
+        positioning[16] = (7.5, 4)
+        positioning[17] = (8, 3.5)
+        positioning[18] = (2.5, 7.5)
+        positioning[19] = (2.5, 9)
+        positioning[20] = (3, 9)
+        positioning[21] = (2, 5)
+        positioning[22] = (2, 4)
+        positioning[23] = (3.5, 4.25)
+        positioning[24] = (4, 2)
+        positioning[25] = (2.5, 3.25)
+        positioning[26] = (1.5, 1)
+        positioning[27] = (2.75, 1)
+        positioning[28] = (7.25, 8.5)
+        positioning[29] = (8, 8.5)
+        positioning[30] = (8.5, 7.5)
+        positioning[31] = (8.5, 6.5)
+        positioning[32] = (7, 5.5)
+        positioning[33] = (7.5, 3)
+        positioning[34] = (8.5, 4.25)
+        positioning[35] = (8.5, 3)
+
+        # Pass in weights as 0 here, then override. Allows the use of network functions to find neighbours
+        weights = dict()
+        for e in edges:
+            weights[e] = 0.0
+
+        MetapopulationWeightedNetwork.__init__(self, edges, weights, positioning, infected_nodes, initial_load,
+                                               p_transmit, p_growth, time_limit)
+
+        self.origin = 0
+        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n != self.origin]
+        self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
+
+        if weight_method == 'horsfield':
+            self.set_horsfield_weights()
+        elif weight_method == 'stahler':
+            self.set_stahler_weights()
+        else:
+            raise Exception, "Invalid edge weight choice"
+
+    def set_horsfield_weights(self):
+        order = 1.0
+        queued_nodes = []
+        for child_node, parent_node in self.edges(self.terminal_nodes):
+            self[child_node][parent_node]['weight'] = order
+            queued_nodes.append(parent_node)
+        # Order the queued list (highest value first)
+        queued_nodes = sorted(set(queued_nodes), reverse=True)
+        while len(queued_nodes) > 0:
+            node = queued_nodes.pop(0)
+            edges = self.edges(node, data=True)
+            # Check that all child edges have an order (i.e. only parent is unfilled)
+            child_orders = [e[2]['weight'] for e in edges if e[2]['weight'] > 0.0]
+            assert len(child_orders) == len(self.edges(node)) - 1
+            new_order = max(child_orders) + 1
+            parent_node = [n for n in self.neighbors(node) if n < node][0]
+            # Set the new order on the parent edge
+            self[node][parent_node]['weight'] = new_order
+            # Add the parent node to the queue
+            if parent_node != self.origin:
+                queued_nodes.append(parent_node)
+            queued_nodes = sorted(set(queued_nodes), reverse=True)
+
+    def set_stahler_weights(self):
+        order = 1.0
+        queued_nodes = []
+        for child_node, parent_node in self.edges(self.terminal_nodes):
+            self[child_node][parent_node]['weight'] = order
+            queued_nodes.append(parent_node)
+        # Order the queued list (highest value first)
+        queued_nodes = sorted(set(queued_nodes), reverse=True)
+        while len(queued_nodes) > 0:
+            node = queued_nodes.pop(0)
+            edges = self.edges(node, data=True)
+            # Check that all child edges have an order (i.e. only parent is unfilled)
+            child_orders = [e[2]['weight'] for e in edges if e[2]['weight'] > 0.0]
+            assert len(child_orders) == len(self.edges(node)) - 1
+            if max(child_orders) == min(child_orders):
+                new_order = max(child_orders) + 1
+            else:
+                new_order = max(child_orders)
+            parent_node = [n for n in self.neighbors(node) if n < node][0]
+            # Set the new order on the parent edge
+            self[node][parent_node]['weight'] = new_order
+            # Add the parent node to the queue
+            if parent_node != self.origin:
+                queued_nodes.append(parent_node)
+            queued_nodes = sorted(set(queued_nodes), reverse=True)
+
+
 if __name__ == '__main__':
-    # ln = LungNetwork([2], 200, 0.3, 0.5, 1)
-    # ln.run()
-    # ln.movie('metapop_weighted', 100)
-    # ln.display('Metapop weighted', save_name="metapop_weighted")
-    pass
+    ln = LungMetapopulationWeighted('horsfield', [2], 200, 0.3, 0.5, 1)
+    ln.run()
+    ln.display("TEST")
