@@ -12,7 +12,6 @@ class LungNetwork(nx.Graph):
 
         # Network Topology
         self.add_edge(0, 1)
-        self.origin = 0
         self.add_edges_from([(1, 2), (2, 3), (1, 4)])
         self.add_edges_from(
             [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
@@ -23,8 +22,6 @@ class LungNetwork(nx.Graph):
                              (13, 28), (13, 29),
                              (14, 30), (14, 31),
                              (15, 32), (16, 33), (17, 34), (17, 35)])
-        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n != self.origin]
-        self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
         self.positioning = self.positioning()
         self.calc_edge_weights()
 
@@ -92,34 +89,21 @@ class LungNetwork(nx.Graph):
         return pos
 
     def calc_edge_weights(self):
-        # HORSFIELD & CUMMING ORDER
-        order = 1.0
 
-        queued_nodes = []
-        for child_node, parent_node in self.edges(self.terminal_nodes):
-            self[child_node][parent_node]['weight'] = order
-            queued_nodes.append(parent_node)
+        self.edge[0][1]['weight'] = 10
+        edge_set_7 = [(1, 2), (2, 3), (1, 4)]
+        for e1, e2 in edge_set_7:
+            self.edge[e1][e2]['weight'] = 7
 
-        # Order the queued list (highest value first)
-        queued_nodes = sorted(set(queued_nodes), reverse=True)
+        edge_set_3 = [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
+             (15, 16), (16, 17)]
+        for e1, e2 in edge_set_3:
+            self.edge[e1][e2]['weight'] = 3
 
-        while len(queued_nodes) > 0:
-            node = queued_nodes.pop(0)
-            edges = self.edges(node, data=True)
-
-            # Check that all child edges have a horsfield order (i.e. only parent is unfilled)
-            child_orders = [e[2]['weight'] for e in edges if 'weight' in e[2].keys()]
-            assert len(child_orders) == len(self.edges(node)) - 1
-            new_order = max(child_orders) + 1
-
-            parent_node = [n for n in self.neighbors(node) if n < node][0]
-
-            # Set the new order on the aprent edge
-            self[node][parent_node]['weight'] = new_order
-            # Add the parent node to the queue
-            if parent_node != self.origin:
-                queued_nodes.append(parent_node)
-            queued_nodes = sorted(set(queued_nodes), reverse=True)
+        edge_set_1 = [(5, 18), (6, 19), (6, 20), (7, 21), (7, 22), (8, 23), (9, 24), (10, 25), (11, 26), (11, 27),
+                      (13, 28), (13, 29), (14, 30), (14, 31), (15, 32), (16, 33), (17, 34), (17, 35)]
+        for e1, e2 in edge_set_1:
+            self.edge[e1][e2]['weight'] = 1
 
     def display(self, title, save_name=None, node_labels=True, edge_labels=True):
         fig = plt.figure(figsize=(10, 10))
