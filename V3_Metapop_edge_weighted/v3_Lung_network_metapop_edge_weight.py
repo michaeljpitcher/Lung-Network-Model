@@ -9,16 +9,17 @@ class MetapopulationWeightedNetwork(nx.Graph):
 
     def __init__(self, edges, weights, positioning, initial_infections, p_transmit, p_growth, time_limit=100):
         """
-        Metapopulation model over a weighted graph. Runs SIS dynamics (with nodes assigned a 'count') and a Gillespie-
-        simulation-style time modelling.
+        Metapopulation model over a weighted graph - extension of networkx.Graph. Runs SIS dynamics (with nodes assigned
+        a 'count') and a Gillespie simulation-style time modelling.
         :param edges: Edges of network (also defines nodes)
         :param weights: Weights of edges (as a dict, with tuple (node1, node2) as key)
         :param positioning: Position of nodes (for displaying and movie)
         :param initial_infections: Count for initial infections (as dict, key=node, value=count)
-        :param p_transmit:
-        :param p_growth:
+        :param p_transmit: Probability of transmission
+        :param p_growth: Probability of growth (if positive) or decay (if negative)
         :param time_limit:
         """
+        # Create a graph
         nx.Graph.__init__(self)
 
         # Network Topology
@@ -31,10 +32,16 @@ class MetapopulationWeightedNetwork(nx.Graph):
             elif (e2, e1) in weights.keys():
                 self.edge[e1][e2]['weight'] = weights[(e2, e1)]
             else:
-                raise Exception, "Edge {0},{1} has not been assigned a weight".format(e1, e2)
+                raise Exception, "Edge ({0},{1}) has not been assigned a weight".format(e1, e2)
         self.positioning = positioning
 
+        # Initialise counts
+        for n in self.nodes():
+            # Set count to 0 (adds count as a key to the node)
+            self.node[n]['count'] = 0
+
         # Dynamics
+        # TODO - constant rates, could be different at each node?
         self.rates = dict()
         self.rates['p_transmit'] = p_transmit
         self.rates['p_growth'] = p_growth
@@ -42,11 +49,7 @@ class MetapopulationWeightedNetwork(nx.Graph):
         self.max_count = 0
         self.infected_nodes = []
 
-        # Seed network
-        for n in self.nodes():
-            # Set count to 0 (adds count as a key to the node)
-            self.node[n]['count'] = 0
-
+        # Seed with initial infections
         for node in initial_infections:
             self.update_node(node, initial_infections[node])
 
@@ -54,35 +57,49 @@ class MetapopulationWeightedNetwork(nx.Graph):
         self.timestep = 0.0
         self.time_limit = time_limit
 
-        # Data
+        # Data (snapshot of system at each timestep)
         self.data = dict()
         self.record_data()
 
+        # Total counts - for determining transitions
         self.total_possible_transmission = 0.0
         self.total_bacteria = 0.0
 
-    def display(self, title, save_name=None, node_labels='count', edge_labels=True):
+    def display(self, title='', save_name=None, node_labels='count', edge_labels=True):
+        """
+        Create, display and optionally save a png image of the network
+        :param title: Title for image
+        :param save_name: Save name (will not save if not supplied)
+        :param node_labels: 'count'= node labels show count values, 'index'=node labels show node index,
+        'count_index'=node labels show both
+        :param edge_labels: Show edge labels True/False
+        :return:
+        """
+        # Create a display figure (no axes)
         fig = plt.figure(figsize=(10, 10))
         plt.gca().set_axis_off()
 
-        # nodes
+        # Create lists of nodes
         nodelist_inf = [n for n, data in self.nodes(data=True) if data['count'] > 0]
         nodelist_sus = [n for n, data in self.nodes(data=True) if data['count'] == 0]
-
+        # Draw nodes, differing colours
         nx.draw_networkx_nodes(self, self.positioning, nodelist=nodelist_sus, node_size=400,
                                node_color="green")
         nx.draw_networkx_nodes(self, self.positioning, nodelist=nodelist_inf, node_size=400,
                                node_color="red")
-
-        # edges
+        # Draw edges
         nx.draw_networkx_edges(self, self.positioning)
-
-        # node labels
+        # Draw labels
         if node_labels == 'count':
             labels = dict((n,d['count']) for n,d in self.nodes(data=True))
             nx.draw_networkx_labels(self, self.positioning, labels=labels, font_family='sans-serif')
         elif node_labels == 'index':
             nx.draw_networkx_labels(self, self.positioning, font_family='sans-serif')
+        elif node_labels == 'count_index':
+            labels = dict()
+            for n, d in self.nodes(data=True):
+                labels[n] = str(n) + ": " + str((n, d['count']))
+            nx.draw_networkx_labels(self, self.positioning, labels=labels, font_family='sans-serif')
         else:
             raise Exception, "Invalid label choice"
 
