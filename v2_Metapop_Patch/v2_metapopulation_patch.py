@@ -177,7 +177,6 @@ class MetapopulationPatchNetwork(nx.Graph):
         for node in self.infected_nodes:
             running_total += node.count
             if running_total >= r:
-                print node.id
                 if self.rates['p_growth'] > 0:
                     self.update_node(node, 1)
                 elif self.rates['p_growth'] < 0:
