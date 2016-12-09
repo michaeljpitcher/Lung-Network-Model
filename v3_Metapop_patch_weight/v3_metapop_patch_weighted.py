@@ -12,8 +12,12 @@ class Patch:
         self.position = position
         self.count = 0
 
+    def __str__(self):
+        return "Patch: " + str(self.id)
+
 
 class MetapopulationPatchWeightedNetwork(nx.Graph):
+
     def __init__(self, node_count, edges, p_transmit, p_growth, time_limit, initial_loads, node_positions=None):
         nx.Graph.__init__(self)
 
@@ -73,7 +77,7 @@ class MetapopulationPatchWeightedNetwork(nx.Graph):
                 nodelist_inf.append(n)
             else:
                 nodelist_sus.append(n)
-            node_labels[n] = n.count
+            node_labels[n] = str(n.id) + ":" + str(n.count)
         # Nodes
         nx.draw_networkx_nodes(self, pos, nodelist=nodelist_sus, node_size=400, node_color="green")
         nx.draw_networkx_nodes(self, pos, nodelist=nodelist_inf, node_size=400, node_color="red")
@@ -81,6 +85,11 @@ class MetapopulationPatchWeightedNetwork(nx.Graph):
         nx.draw_networkx_labels(self, pos, labels=node_labels, font_family='sans-serif')
         # Edges
         nx.draw_networkx_edges(self, pos)
+        # Edge labels
+        edge_labels = {}
+        for n1,n2,data in self.edges(data=True):
+            edge_labels[(n1,n2)] = data['weight']
+        nx.draw_networkx_edge_labels(self, pos, edge_labels=edge_labels, font_family='sans-serif')
 
         plt.show()
         if save_name is not None:
@@ -222,7 +231,8 @@ class MetapopulationPatchWeightedNetwork(nx.Graph):
 
 
 class LungMetapopulationWeightedNetwork(MetapopulationPatchWeightedNetwork):
-    def __init__(self, p_transmit, p_growth, time_limit, initial_loads):
+
+    def __init__(self, p_transmit, p_growth, time_limit, initial_loads, weight_method):
         # Trachea
         edges = [(0, 1)]
         # Main bronchi
@@ -233,11 +243,9 @@ class LungMetapopulationWeightedNetwork(MetapopulationPatchWeightedNetwork):
         # Segmental bronchi
         edges += [(5, 18), (6, 19), (6, 20), (7, 21), (7, 22), (8, 23), (9, 24), (10, 25), (11, 26), (11, 27), (13, 28),
                   (13, 29), (14, 30), (14, 31), (15, 32), (16, 33), (17, 34), (17, 35)]
-
         edge_weights = {}
         for e in edges:
             edge_weights[e] = 0.0
-
         # Node positions TODO: done by eye
         pos = dict()
         pos[0] = (5, 10)
@@ -276,18 +284,81 @@ class LungMetapopulationWeightedNetwork(MetapopulationPatchWeightedNetwork):
         pos[33] = (7.5, 3)
         pos[34] = (8.5, 4.25)
         pos[35] = (8.5, 3)
+        # Create the network (allows use of networkx functions like neighbours for calculating edge weights)
         MetapopulationPatchWeightedNetwork.__init__(self, 36, edge_weights, p_transmit, p_growth, time_limit,
                                                     initial_loads, pos)
+        # Origin and terminal nodes (to compute edge weights)
+        self.origin = 0
+        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n != self.origin]
+        self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
+        # Calculate edge weights
+        self.set_weights(weight_method)
 
-        # TODO - Recalculate edge weights (stahler, horsfield/cumming)
+    def set_weights(self, weight_method):
+        """
+        Set edge weights. Terminal branches order 1. Other branches depend on ordering method:
+        Horsfield - parent branch has order 1 greater than maximum of child branches
+        Stahler - parent branch has order 1 greater than child branches if they are equal, else has max of child orders
+        :return:
+        """
 
+        # Get the nodes in an ordered list - gives a list where all child nodes appear in list before parent
+        # So can add the order of an edge as all child edges (those futher from origin) will already have been computed
+
+        # Start with origin node
+        queued_nodes = [self.node_list[self.origin]]
+        ordered_nodes = []
+
+        # Pull a node from queued nodes, add it to the start of ordered nodes and add its neighbours to queued nodes
+        while len(queued_nodes) > 0:
+            node = queued_nodes.pop()
+            ordered_nodes.insert(0, node)
+            queued_nodes += [n for n in self.neighbors(node) if n not in ordered_nodes]
+
+        # Process all nodes
+        while len(ordered_nodes) > 0:
+            # Pull the node from the list
+            node = ordered_nodes.pop(0)
+            # Don't process origin
+            if node.id == self.origin:
+                break
+            # Find the parent edge (should only be one) as edge where weight hasn't already been set
+            parent_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
+                            data['weight'] == 0.0]
+            assert len(parent_edges) == 1
+            # Get the data from parent edge to update
+            parent_edge = parent_edges[0][2]
+            # If the node is terminal, weight is 1.0
+            if node in self.terminal_nodes:
+                parent_edge['weight'] = 1.0
+            else:
+                # Get the child edges (those with weights already set)
+                child_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
+                               data['weight'] > 0.0]
+                # Get the weights
+                child_orders = [data['weight'] for _,_,data in child_edges]
+                # Determine new weight based on method chosen
+                if weight_method == 'horsfield':
+                    new_order = max(child_orders) + 1.0
+                elif weight_method == 'stahler':
+                    if len(set(child_orders)) <= 1:
+                        new_order = max(child_orders) + 1.0
+                    else:
+                        new_order = max(child_orders)
+                else:
+                    raise Exception, "Invalid ordering method: {0}".format(weight_method)
+                # Set the parent weight
+                parent_edge['weight'] = new_order
 
 
 if __name__ == '__main__':
-    pos = {0: (0, 0), 1: (5, 5), 2: (0, 5)}
-    init = {1: 10}
-    edges = {(0, 1):10, (0, 2):5, (1, 2):3}
-    mpn = MetapopulationPatchWeightedNetwork(3, edges, 0.2, 0.1, 10, init, node_positions=pos)
-    mpn.run()
-    mpn.display("T")
-    mpn.movie("movie", 100)
+    # pos = {0: (0, 0), 1: (5, 5), 2: (0, 5)}
+    # init = {1: 10}
+    # edges = {(0, 1):10, (0, 2):5, (1, 2):3}
+    # mpn = MetapopulationPatchWeightedNetwork(3, edges, 0.2, 0.1, 10, init, node_positions=pos)
+    # mpn.run()
+    # mpn.display("T")
+    # mpn.movie("movie", 100)
+    loads = {0:100}
+    ln = LungMetapopulationWeightedNetwork(0.1,0.1,100,loads,'stahler')
+    ln.display('TITLE',save_name='ref')
