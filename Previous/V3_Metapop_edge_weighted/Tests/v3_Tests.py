@@ -1,7 +1,9 @@
-import unittest
-import V3_Metapop_edge_weighted.v3_Lung_network_metapop_edge_weight as MWN
-import numpy as np
 import math
+import unittest
+
+import numpy as np
+
+from Previous import V3_Metapop_edge_weighted as MWN
 
 
 class v3BasicTestCase(unittest.TestCase):

@@ -1,6 +1,8 @@
 import unittest
-import V2_Metapop.v2_Lung_network_metapopulation as MetapopNetwork
+
 import numpy as np
+
+import Previous.V2_Metapop.v2_Lung_network_metapopulation as MetapopNetwork
 
 
 class v2TestCase(unittest.TestCase):

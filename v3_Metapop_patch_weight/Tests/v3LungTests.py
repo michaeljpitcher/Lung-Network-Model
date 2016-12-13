@@ -1,9 +1,8 @@
 import unittest
 from v3_Metapop_patch_weight import v3_metapop_patch_weighted as v3
-import numpy as np
 
 
-class LungMetapopulationWeightedNetworkTestCase_stahler(unittest.TestCase):
+class LungMetapopulationWeightedNetworkTestCaseStahler(unittest.TestCase):
 
     def setUp(self):
         self.p_transmit = 0.2
@@ -51,7 +50,8 @@ class LungMetapopulationWeightedNetworkTestCase_stahler(unittest.TestCase):
         node2 = self.network_stahler.node_list[1]
         self.assertEqual(self.network_stahler.edge[node1][node2]['weight'], 4)
 
-class LungMetapopulationWeightedNetworkTestCase_horsfield(unittest.TestCase):
+
+class LungMetapopulationWeightedNetworkTestCaseHorsfield(unittest.TestCase):
 
     def setUp(self):
         self.p_transmit = 0.2
@@ -114,8 +114,6 @@ class LungMetapopulationWeightedNetworkTestCase_horsfield(unittest.TestCase):
         node1 = self.network_horsfield.node_list[0]
         node2 = self.network_horsfield.node_list[1]
         self.assertEqual(self.network_horsfield.edge[node1][node2]['weight'], 8)
-
-
 
 
 if __name__ == '__main__':
