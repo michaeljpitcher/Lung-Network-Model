@@ -203,6 +203,7 @@ class MetapopulationPatchWeightedNetwork(nx.Graph):
         print "RUNNING"
         while self.timestep < self.time_limit and len(self.infected_nodes) > 0:
 
+            print self.timestep
             self.calculate_totals()
 
             transitions = self.transitions()
@@ -360,5 +361,6 @@ if __name__ == '__main__':
     # mpn.display("T")
     # mpn.movie("movie", 100)
     loads = {0:100}
-    ln = LungMetapopulationWeightedNetwork(0.1,0.1,100,loads,'stahler')
-    ln.display('TITLE',save_name='ref')
+    ln = LungMetapopulationWeightedNetwork(0.5,0.0,50,loads,'stahler')
+    ln.run()
+    ln.movie('movie',100)
