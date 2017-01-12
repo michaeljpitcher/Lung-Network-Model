@@ -22,32 +22,42 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
 
         self.compartments = compartments
 
-        # For obtaining a patch via the ID
+        self.max_count = 0
+        self.infected_nodes = []
+
+        # Creating patches
+        # Node list for obtaining a patch via the ID
         self.node_list = {}
-        for i in range(node_count):
+        for node_id in range(node_count):
+            # Set position
             if node_positions is not None:
-                position = node_positions[i]
+                position = node_positions[node_id]
             else:
                 position = (np.random.uniform(0, 10))
-            initialisation = initial_loads[i]
-            p = Patch(i, initialisation, position)
-            self.add_node(p)
-            self.node_list[i] = p
 
+            # Check for each compartment if the count for this node has been specified, else set to 0
+            count = dict()
+            for compartment in compartments:
+                if node_id in initial_loads and compartment in initial_loads[node_id]:
+                    count[compartment] = initial_loads[node_id][compartment]
+                else:
+                    count[compartment] = 0.0
+            # Create patch
+            p = Patch(node_id, count, position)
+            self.add_node(p)
+            self.node_list[node_id] = p
+            # Update the infected list and max count
+            if sum(p.counts.values()) > 0:
+                self.infected_nodes.append(p)
+                self.max_count = max(self.max_count, sum(p.counts.values()))
+
+        # Add edges
         for (node1_index, node2_index) in edges:
             weight = edges[(node1_index, node2_index)]
             patch1 = [node for node in self.nodes() if node.id == node1_index][0]
             patch2 = [node for node in self.nodes() if node.id == node2_index][0]
             self.add_edge(patch1, patch2)
             self.edge[patch1][patch2]['weight'] = weight
-
-        self.max_count = 0
-        self.infected_nodes = []
-        for n_index in initial_loads:
-            node = self.node_list[n_index]
-            node.count = initial_loads[n_index]
-            self.infected_nodes.append(node)
-            self.max_count = max(node.count, self.max_count)
 
         # Time
         self.timestep = 0.0
@@ -96,11 +106,11 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
             self.data[self.timestep][n.id] = n.counts.copy()
 
     def update_node(self, node, compartment, amendment):
-        assert compartment in self.compartments
+        assert compartment in self.compartments, "update_node: Invalid compartment"
         # If previous count was 0, the node has just become infected
         if sum(node.counts.values()) == 0:
             self.infected_nodes.append(node)
-        node.count[compartment] += amendment
+        node.counts[compartment] += amendment
         assert node.counts[compartment] >= 0, "update_node: Count cannot drop below zero"
         # If new count is 0, node is no longer infected
         if sum(node.counts.values()) == 0:
@@ -108,6 +118,39 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
         # Check the new maximum amount
         new_values = [sum(n.counts.values()) for n in self.nodes()]
         self.max_count = max(new_values)
+
+    def transitions(self):
+        raise NotImplementedError
+
+    def run(self):
+        print "RUNNING"
+        while self.timestep < self.time_limit and len(self.infected_nodes) > 0:
+
+            print self.timestep
+
+            transitions = self.transitions()
+            total = 0.0
+            for (r, _) in transitions:
+                total = total + r
+
+            # calculate the timestep delta
+            x = np.random.random()
+            dt = (1.0 / total) * math.log(1.0 / x)
+
+            # calculate which transition happens
+            x = np.random.random() * total
+            k = 0
+            (xs, chosen_function) = transitions[k]
+            while xs < x:
+                k += 1
+                (xsp, chosen_function) = transitions[k]
+                xs = xs + xsp
+
+            # perform the transition
+            chosen_function(self)
+
+            self.timestep += dt
+            self.record_data()
 
 if __name__ == '__main__':
 
