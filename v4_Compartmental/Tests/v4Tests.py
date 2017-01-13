@@ -45,16 +45,12 @@ class CompartmentalModelTestCase(unittest.TestCase):
                 for c in self.compartments:
                     if c in self.initial_loads[n]:
                         self.assertEqual(patch.counts[c], self.initial_loads[n][c])
-                        self.assertTrue(patch in self.network.infected_nodes)
                     else:
                         self.assertEqual(patch.counts[c], 0.0)
             else:
                 for c in self.compartments:
                     self.assertEqual(patch.counts[c], 0.0)
 
-
-        expected_max = max([sum(i.values()) for i in self.initial_loads.values()])
-        self.assertEqual(self.network.max_count, expected_max)
         # Time
         self.assertEqual(self.network.timestep, 0.0)
         self.assertEqual(self.network.time_limit, self.time_limit)
@@ -97,32 +93,22 @@ class CompartmentalModelTestCase(unittest.TestCase):
         node = self.network.node_list[7]
         self.network.update_node(node, 'F', 1)
         self.assertEqual(node.counts['F'], 1)
-        self.assertTrue(node in self.network.infected_nodes)
-        self.assertEqual(self.network.max_count, 12)
         # Stay infected
         node = self.network.node_list[0]
         self.network.update_node(node, 'S', 1)
         self.assertEqual(node.counts['S'], 3)
-        self.assertTrue(node in self.network.infected_nodes)
-        self.assertEqual(self.network.max_count, 13)
         # Max count doesn't increase
         node = self.network.node_list[9]
         self.network.update_node(node, 'S', 1)
         self.assertEqual(node.counts['S'], 2)
-        self.assertTrue(node in self.network.infected_nodes)
-        self.assertEqual(self.network.max_count, 13)
         # Max count decreases
         node = self.network.node_list[0]
         self.network.update_node(node, 'F', -1)
         self.assertEqual(node.counts['F'], 9)
-        self.assertTrue(node in self.network.infected_nodes)
-        self.assertEqual(self.network.max_count, 12)
         # Make susceptible
         node = self.network.node_list[3]
         self.network.update_node(node, 'F', -1)
         self.assertEqual(node.counts['F'], 0)
-        self.assertTrue(node not in self.network.infected_nodes)
-        self.assertEqual(self.network.max_count, 12)
 
     def test_update_node_unacceptable_wrong_compartment(self):
         node = self.network.node_list[5]
@@ -136,15 +122,6 @@ class CompartmentalModelTestCase(unittest.TestCase):
             self.network.update_node(node, 'F', -1)
         self.assertTrue('update_node: Count cannot drop below zero' in context.exception)
 
-class LungModelTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self.p_transmit_F = 0.1
-        self.p_transmit_S = 0.0
-        self.p_growth_F = 1.0
-        self.p_growth_S = 0.0
-        self.p_change_F_to_S = 0.0
-        self.p_change_S_to_F = 0.0
 
 
 if __name__ == '__main__':
