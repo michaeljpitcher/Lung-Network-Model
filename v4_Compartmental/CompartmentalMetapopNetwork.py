@@ -23,9 +23,6 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
 
         self.compartments = compartments
 
-        self.max_count = 0
-        self.infected_nodes = []
-
         # Creating patches
         # Node list for obtaining a patch via the ID
         self.node_list = {}
@@ -47,10 +44,6 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
             p = Patch(node_id, count, position)
             self.add_node(p)
             self.node_list[node_id] = p
-            # Update the infected list and max count
-            if sum(p.counts.values()) > 0:
-                self.infected_nodes.append(p)
-                self.max_count = max(self.max_count, sum(p.counts.values()))
 
         # Add edges
         for (node1_index, node2_index) in edges:
@@ -79,12 +72,8 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
             pos[n] = n.position
             node_labels[n] = str(n.id) + ":" + str(sum(n.counts.values()))
 
-        nodelist_inf = self.infected_nodes
-        nodelist_sus = [n for n in self.nodes() if n not in self.infected_nodes]
-
         # Nodes
-        nx.draw_networkx_nodes(self, pos, nodelist=nodelist_sus, node_size=400, node_color="green")
-        nx.draw_networkx_nodes(self, pos, nodelist=nodelist_inf, node_size=400, node_color="red")
+        nx.draw_networkx_nodes(self, pos, node_size=400, node_color="green")
         # Node labels
         nx.draw_networkx_labels(self, pos, labels=node_labels, font_family='sans-serif')
         # Edges
@@ -106,17 +95,8 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
 
     def update_node(self, node, compartment, amendment):
         assert compartment in self.compartments, "update_node: Invalid compartment"
-        # If previous count was 0, the node has just become infected
-        if sum(node.counts.values()) == 0:
-            self.infected_nodes.append(node)
         node.counts[compartment] += amendment
         assert node.counts[compartment] >= 0, "update_node: Count cannot drop below zero"
-        # If new count is 0, node is no longer infected
-        if sum(node.counts.values()) == 0:
-            self.infected_nodes.remove(node)
-        # Check the new maximum amount
-        new_values = [sum(n.counts.values()) for n in self.nodes()]
-        self.max_count = max(new_values)
 
     def transitions(self):
         raise NotImplementedError
