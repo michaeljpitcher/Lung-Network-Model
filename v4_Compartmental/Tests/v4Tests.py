@@ -1,5 +1,5 @@
 import unittest
-from v4_Compartmental import v4_compartmental as v4
+from v4_Compartmental import CompartmentalMetapopNetwork as v4
 import numpy as np
 
 
@@ -135,6 +135,16 @@ class CompartmentalModelTestCase(unittest.TestCase):
         with self.assertRaises(AssertionError) as context:
             self.network.update_node(node, 'F', -1)
         self.assertTrue('update_node: Count cannot drop below zero' in context.exception)
+
+class LungModelTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.p_transmit_F = 0.1
+        self.p_transmit_S = 0.0
+        self.p_growth_F = 1.0
+        self.p_growth_S = 0.0
+        self.p_change_F_to_S = 0.0
+        self.p_change_S_to_F = 0.0
 
 
 if __name__ == '__main__':
