@@ -2,6 +2,10 @@ from CompartmentalMetapopNetwork import *
 
 
 class LungNetwork(CompartmentalMetapopulationNetwork):
+    """
+    CompartmentalMetapopulation model with a specific topology - i.e. that of the central airways of the human lung
+    Also includes methods to weight the edges based on Horsfield/Stahler methods
+    """
 
     def __init__(self, time_limit, compartments, initial_loads, weight_method='horsfield'):
 
@@ -64,7 +68,7 @@ class LungNetwork(CompartmentalMetapopulationNetwork):
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0
-        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n != self.origin]
+        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n.id != self.origin]
         self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
         # Calculate edge weights
         self.set_weights(weight_method)
