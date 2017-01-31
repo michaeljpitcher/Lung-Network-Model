@@ -53,8 +53,8 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
                 (rate_for_transmit_s, lambda t: self.transmit('S')),
                 (rate_for_growth_f, lambda t: self.growth('F')),
                 (rate_for_growth_s, lambda t: self.growth('S')),
-                (rate_for_change_f_s, lambda t: self.change('S','F')),
-                (rate_for_change_s_f, lambda t: self.change('F','S'))]
+                (rate_for_change_f_s, lambda t: self.change('F','S')),
+                (rate_for_change_s_f, lambda t: self.change('S','F'))]
 
     def transmit(self, type):
 
