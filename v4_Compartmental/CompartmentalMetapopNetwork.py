@@ -61,7 +61,7 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
         self.data = dict()
         self.record_data()
 
-    def display(self, title = "", save_name=None):
+    def display(self, title = "", save_name=None, show_node_contents = True, show_edge_labels=True):
         fig = plt.figure(figsize=(10, 10))
         plt.axis('off')
         plt.title(title)
@@ -70,7 +70,10 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
         node_labels = {}
         for n in self.nodes():
             pos[n] = n.position
-            node_labels[n] = str(n.id) + ":" + str(sum(n.counts.values()))
+            if show_node_contents:
+                node_labels[n] = str(n.id) + ":" + str(sum(n.counts.values()))
+            else:
+                node_labels[n] = str(n.id)
 
         # Nodes
         nx.draw_networkx_nodes(self, pos, node_size=400, node_color="green")
@@ -79,10 +82,11 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
         # Edges
         nx.draw_networkx_edges(self, pos)
         # Edge labels
-        edge_labels = {}
-        for n1,n2,data in self.edges(data=True):
-            edge_labels[(n1,n2)] = data['weight']
-        nx.draw_networkx_edge_labels(self, pos, edge_labels=edge_labels, font_family='sans-serif')
+        if show_edge_labels:
+            edge_labels = {}
+            for n1,n2,data in self.edges(data=True):
+                edge_labels[(n1,n2)] = data['weight']
+            nx.draw_networkx_edge_labels(self, pos, edge_labels=edge_labels, font_family='sans-serif')
 
         plt.show()
         if save_name is not None:
