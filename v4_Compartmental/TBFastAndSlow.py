@@ -3,7 +3,15 @@ from LungCompartmentalNetwork import *
 
 class TBFastSlowMetapopulationNetwork(LungNetwork):
 
-    def __init__(self, rates, time_limit, initial_loads, weight_method='horsfield'):
+    def __init__(self, rates, time_limit, initial_loads_fast, initial_loads_slow, weight_method='horsfield'):
+
+        initial_loads = dict()
+        for id in initial_loads_fast:
+            initial_loads[id] = dict()
+            initial_loads[id]['F'] = initial_loads_fast[id]
+        for id in initial_loads_slow:
+            initial_loads[id] = dict()
+            initial_loads[id]['S'] = initial_loads_slow[id]
 
         # Create the network (allows use of networkx functions like neighbours for calculating edge weights)
         LungNetwork.__init__(self, time_limit, ['F', 'S'], initial_loads, weight_method)
@@ -20,14 +28,17 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
         self.total_f = 0.0
         self.total_s = 0.0
 
+    def update_totals(self):
+
+        self.total_transmit_f = sum([node.counts['F'] * self.degree(node) for node in self.nodes()])
+        self.total_transmit_s = sum([node.counts['S'] * self.degree(node) for node in self.nodes()])
+
+        self.total_f = sum([node.counts['F'] for node in self.nodes()])
+        self.total_s = sum([node.counts['S'] for node in self.nodes()])
 
     def transitions(self):
 
-        self.total_transmit_f = sum([node.counts['F'] * self.degree(node) for node in self.infected_nodes])
-        self.total_transmit_s = sum([node.counts['S'] * self.degree(node) for node in self.infected_nodes])
-
-        self.total_f = sum([node.counts['F'] for node in self.infected_nodes])
-        self.total_s = sum([node.counts['S'] for node in self.infected_nodes])
+        self.update_totals()
 
         rate_for_transmit_f = self.total_transmit_f * self.rates['p_transmit_F']
         rate_for_transmit_s = self.total_transmit_f * self.rates['p_transmit_S']
@@ -55,14 +66,18 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
             raise Exception, "Invalid transmission: {0} compartment not valid".format(type)
 
         running_total = 0
-        for node in self.infected_nodes:
+        for id in self.node_list:
+            node = self.node_list[id]
             running_total += node.counts[type] * self.degree(node)
             if running_total >= r:
-                total_weights = sum(d['weight'] for _, _, d in self.edges(node, data=True))
+                total_weights = sum(edge['weight'] for _, _, edge in self.edges(node, data=True))
                 r2 = np.random.random() * total_weights
                 running_total_weights = 0
-                for _, neighbour, d in self.edges(node, data=True):
-                    running_total_weights += d['weight']
+                neighbour_ids = sorted([n.id for n in self.neighbors(node)])
+                for neighbour_id in neighbour_ids:
+                    neighbour = self.node_list[neighbour_id]
+                    edge = self.edge[node][neighbour]
+                    running_total_weights += edge['weight']
                     if running_total_weights > r2:
                         self.update_node(node, type, -1)
                         self.update_node(neighbour, type, 1)
@@ -78,14 +93,14 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
             raise Exception, "Invalid growth: {0} compartment not valid".format(type)
 
         running_total = 0
-        for node in self.infected_nodes:
+        for id in self.node_list:
+            node = self.node_list[id]
             running_total += node.counts[type]
             if running_total >= r:
                 if type == 'F':
                     rate = self.rates['p_growth_F']
                 else:
                     rate = self.rates['p_growth_S']
-
                 if rate > 0:
                     self.update_node(node, type, 1)
                 elif rate < 0:
@@ -102,9 +117,10 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
             raise Exception, "Invalid change: {0} compartment not valid".format(new_type)
 
         running_total = 0
-        for node in self.infected_nodes:
+        for id in self.node_list:
+            node = self.node_list[id]
             running_total += node.counts[old_type]
             if running_total >= r:
-                self.update_node(node, old_type, 1)
-                self.update_node(node, new_type, -1)
+                self.update_node(node, old_type, -1)
+                self.update_node(node, new_type, 1)
                 return
