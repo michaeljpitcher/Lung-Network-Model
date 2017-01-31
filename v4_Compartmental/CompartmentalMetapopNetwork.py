@@ -2,13 +2,12 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-import matplotlib.animation as animation
 
 
 class Patch:
 
-    def __init__(self, id, compartments_counts, position=(0,0)):
-        self.id = id
+    def __init__(self, patch_id, compartments_counts, position=(0, 0)):
+        self.id = patch_id
         self.position = position
         self.counts = compartments_counts
 
@@ -61,7 +60,7 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
         self.data = dict()
         self.record_data()
 
-    def display(self, title = "", save_name=None, show_node_contents = True, show_edge_labels=True):
+    def display(self, title="", save_name=None, show_node_contents=True, show_edge_labels=True):
         fig = plt.figure(figsize=(10, 10))
         plt.axis('off')
         plt.title(title)
@@ -84,8 +83,8 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
         # Edge labels
         if show_edge_labels:
             edge_labels = {}
-            for n1,n2,data in self.edges(data=True):
-                edge_labels[(n1,n2)] = data['weight']
+            for n1, n2, data in self.edges(data=True):
+                edge_labels[(n1, n2)] = data['weight']
             nx.draw_networkx_edge_labels(self, pos, edge_labels=edge_labels, font_family='sans-serif')
 
         plt.show()
@@ -134,4 +133,3 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
 
             self.timestep += dt
             self.record_data()
-
