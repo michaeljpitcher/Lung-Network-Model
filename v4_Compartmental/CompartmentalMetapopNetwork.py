@@ -107,7 +107,7 @@ class CompartmentalMetapopulationNetwork(nx.Graph):
 
     def run(self):
         print "RUNNING"
-        while self.timestep < self.time_limit and len(self.infected_nodes) > 0:
+        while self.timestep < self.time_limit:
 
             print self.timestep
 
