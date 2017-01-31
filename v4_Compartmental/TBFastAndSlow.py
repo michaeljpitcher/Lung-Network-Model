@@ -44,10 +44,10 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
         rate_for_transmit_s = self.total_transmit_f * self.rates['p_transmit_S']
 
         rate_for_growth_f = self.total_f * abs(self.rates['p_growth_F'])
-        rate_for_growth_s = self.total_f * abs(self.rates['p_growth_S'])
+        rate_for_growth_s = self.total_s * abs(self.rates['p_growth_S'])
 
         rate_for_change_f_s = self.total_f * self.rates['p_change_F_to_S']
-        rate_for_change_s_f = self.total_f * self.rates['p_change_S_to_F']
+        rate_for_change_s_f = self.total_s * self.rates['p_change_S_to_F']
 
         return [(rate_for_transmit_f, lambda t: self.transmit('F')),
                 (rate_for_transmit_s, lambda t: self.transmit('S')),
