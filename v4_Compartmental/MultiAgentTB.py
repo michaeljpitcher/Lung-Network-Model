@@ -24,6 +24,8 @@ rate_death_rest = 'resting_death'
 rate_death_act = 'active_death'
 rate_death_inf = 'infected_death'
 rate_death_chrinf = 'chr_infected_death'
+rate_change_fast_to_slow = 'change_fast_to_slow'
+rate_change_slow_to_fast = 'change_slow_to_fast'
 rate_translocate_fast = 'fast_translocate'
 rate_translocate_slow = 'slow_translocate'
 
@@ -47,6 +49,7 @@ class TBMultiAgentMetapopulationNetwork(LungNetwork):
                           rate_recruit,
                           rate_activate, rate_deact,
                           rate_death_rest, rate_death_act, rate_death_inf, rate_death_chrinf,
+                          rate_change_fast_to_slow, rate_change_slow_to_fast,
                           rate_translocate_fast, rate_translocate_slow]
 
         for r in expected_rates:
@@ -133,6 +136,11 @@ class TBMultiAgentMetapopulationNetwork(LungNetwork):
         transitions.append((self.total_i_m * self.rates[rate_death_inf], self.death_mac(inf_mac)))
         # Chr Inf
         transitions.append((self.total_c * self.rates[rate_death_chrinf], self.death_mac(chrinf_mac)))
+
+        # TODO - should metabolism change be constant rate?
+        # Metabolism change
+        transitions.append((self.total_f * self.rates[rate_change_fast_to_slow], self.change(slow_bac)))
+        transitions.append((self.total_s * self.rates[rate_change_slow_to_fast], self.change(fast_bac)))
 
         # Translocate
         transitions.append((self.total_f_degree * self.rates[rate_translocate_fast], self.translocate(fast_bac)))
@@ -266,6 +274,25 @@ class TBMultiAgentMetapopulationNetwork(LungNetwork):
                         self.update_node(node, metabolism, -1)
                         self.update_node(neighbour, metabolism, 1)
                         return
+
+    def change(self, new_metabolism):
+        if new_metabolism == fast_bac:
+            r = np.random.random() * self.total_s
+            old_metabolism = slow_bac
+        elif new_metabolism == slow_bac:
+            r = np.random.random() * self.total_f
+            old_metabolism = fast_bac
+        else:
+            raise Exception, "Invalid metabolism change: {0} metabolism not valid".format(new_metabolism)
+
+        running_total = 0
+        for node in self.nodes():
+            running_total += node.counts[old_metabolism]
+            if running_total >= r:
+                self.update_node(node, new_metabolism, 1)
+                self.update_node(node, old_metabolism, -1)
+                return
+
 
 if __name__ == '__main__':
     rates = dict()
