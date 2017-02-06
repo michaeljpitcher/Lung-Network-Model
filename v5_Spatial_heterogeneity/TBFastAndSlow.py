@@ -1,9 +1,9 @@
-from LungCompartmentalNetwork import *
+from LungMetapopulationNetwork import *
 
 
-class TBFastSlowMetapopulationNetwork(LungNetwork):
+class TBFastSlowMetapopulationNetwork(LungMetapopulationNetwork):
 
-    def __init__(self, rates, time_limit, initial_loads_fast, initial_loads_slow, weight_method='horsfield'):
+    def __init__(self, rates, initial_loads_fast, initial_loads_slow, weight_method='horsfield'):
 
         initial_loads = dict()
         for id in initial_loads_fast:
@@ -14,7 +14,7 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
             initial_loads[id]['S'] = initial_loads_slow[id]
 
         # Create the network
-        LungNetwork.__init__(self, time_limit, ['F', 'S'], initial_loads, weight_method)
+        LungMetapopulationNetwork.__init__(self, ['F', 'S'], initial_loads, weight_method)
 
         # Assert all rates present
         expected_rates = ['p_translocate_F', 'p_translocate_S', 'p_growth_F', 'p_growth_S', 'p_change_F_to_S',
@@ -41,7 +41,7 @@ class TBFastSlowMetapopulationNetwork(LungNetwork):
         self.total_f_O2 = sum([node.counts['F'] * node.attributes['oxygen_tension'] for node in self.nodes()])
         self.total_s_O2 = sum([node.counts['S'] * node.attributes['oxygen_tension'] for node in self.nodes()])
 
-    def transitions(self):
+    def events(self):
 
         self.update_totals()
 
