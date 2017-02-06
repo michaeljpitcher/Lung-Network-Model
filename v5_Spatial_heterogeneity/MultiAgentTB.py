@@ -1,12 +1,12 @@
 from LungMetapopulationNetwork import *
 
-FAST = 'F'
-SLOW = 'S'
-INTRACELLULAR = 'I_b'
-RESTING = 'R'
-ACTIVE = 'A'
-INFECTED = 'I_m'
-CHRONICALLY_INFECTED = 'C'
+FAST = 'fast'
+SLOW = 'slow'
+INTRACELLULAR = 'intracellular'
+RESTING = 'resting'
+ACTIVE = 'active'
+INFECTED = 'infected'
+CHRONICALLY_INFECTED = 'chr_infected'
 P_REPLICATE_FAST = 'replication_fast'
 P_REPLICATE_SLOW = 'replication_slow'
 P_INGEST_REST_FAST = 'resting_ingests_fast'
@@ -75,83 +75,83 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
     def update_totals(self):
 
-        self.total_f = sum([node.counts[FAST] for node in self.nodes()])
-        self.total_s = sum([node.counts[SLOW] for node in self.nodes()])
-        self.total_f_r = sum([node.counts[FAST] * node.counts[RESTING] for node in self.nodes()])
-        self.total_s_r = sum([node.counts[SLOW] * node.counts[RESTING] for node in self.nodes()])
-        self.total_r = sum([node.counts[RESTING] for node in self.nodes()])
-        self.total_f_a = sum([node.counts[FAST] * node.counts[ACTIVE] for node in self.nodes()])
-        self.total_s_a = sum([node.counts[SLOW] * node.counts[ACTIVE] for node in self.nodes()])
-        self.total_a = sum([node.counts[ACTIVE] for node in self.nodes()])
-        self.total_i_m = sum([node.counts[INFECTED] for node in self.nodes()])
-        self.total_f_im = sum([node.counts[FAST] * node.counts[INFECTED] for node in self.nodes()])
-        self.total_s_im = sum([node.counts[SLOW] * node.counts[INFECTED] for node in self.nodes()])
-        self.total_f_c = sum([node.counts[FAST] * node.counts[CHRONICALLY_INFECTED] for node in self.nodes()])
-        self.total_s_c = sum([node.counts[SLOW] * node.counts[CHRONICALLY_INFECTED] for node in self.nodes()])
-        self.total_c = sum([node.counts[CHRONICALLY_INFECTED] for node in self.nodes()])
+        self.total_f = sum([node.subpopulations[FAST] for node in self.nodes()])
+        self.total_s = sum([node.subpopulations[SLOW] for node in self.nodes()])
+        self.total_f_r = sum([node.subpopulations[FAST] * node.subpopulations[RESTING] for node in self.nodes()])
+        self.total_s_r = sum([node.subpopulations[SLOW] * node.subpopulations[RESTING] for node in self.nodes()])
+        self.total_r = sum([node.subpopulations[RESTING] for node in self.nodes()])
+        self.total_f_a = sum([node.subpopulations[FAST] * node.subpopulations[ACTIVE] for node in self.nodes()])
+        self.total_s_a = sum([node.subpopulations[SLOW] * node.subpopulations[ACTIVE] for node in self.nodes()])
+        self.total_a = sum([node.subpopulations[ACTIVE] for node in self.nodes()])
+        self.total_i_m = sum([node.subpopulations[INFECTED] for node in self.nodes()])
+        self.total_f_im = sum([node.subpopulations[FAST] * node.subpopulations[INFECTED] for node in self.nodes()])
+        self.total_s_im = sum([node.subpopulations[SLOW] * node.subpopulations[INFECTED] for node in self.nodes()])
+        self.total_f_c = sum([node.subpopulations[FAST] * node.subpopulations[CHRONICALLY_INFECTED] for node in self.nodes()])
+        self.total_s_c = sum([node.subpopulations[SLOW] * node.subpopulations[CHRONICALLY_INFECTED] for node in self.nodes()])
+        self.total_c = sum([node.subpopulations[CHRONICALLY_INFECTED] for node in self.nodes()])
         # TODO - check usage of degree
-        self.total_f_degree = sum([node.counts[FAST] * self.degree(node) for node in self.nodes()])
-        self.total_s_degree = sum([node.counts[SLOW] * self.degree(node) for node in self.nodes()])
-        self.total_f_O2 = sum([node.counts['F'] * node.attributes[OXYGEN_TENSION] for node in self.nodes()])
-        self.total_s_O2 = sum([node.counts['S'] * node.attributes[OXYGEN_TENSION] for node in self.nodes()])
+        self.total_f_degree = sum([node.subpopulations[FAST] * self.degree(node) for node in self.nodes()])
+        self.total_s_degree = sum([node.subpopulations[SLOW] * self.degree(node) for node in self.nodes()])
+        self.total_f_O2 = sum([node.subpopulations['F'] * node.attributes[OXYGEN_TENSION] for node in self.nodes()])
+        self.total_s_O2 = sum([node.subpopulations['S'] * node.attributes[OXYGEN_TENSION] for node in self.nodes()])
 
     def events(self):
 
-        transitions = []
+        events = []
 
         self.update_totals()
 
         # Replication (FAST)
-        transitions.append((self.total_f * self.rates[P_REPLICATE_FAST], self.replicate(FAST)))
+        events.append((self.total_f * self.rates[P_REPLICATE_FAST], self.replicate(FAST)))
         # Replication (SLOW)
-        transitions.append((self.total_f * self.rates[P_REPLICATE_SLOW], self.replicate(FAST)))
+        events.append((self.total_f * self.rates[P_REPLICATE_SLOW], self.replicate(SLOW)))
 
         # Resting ingests fast
-        transitions.append((self.total_f_r * self.rates[P_INGEST_REST_FAST], self.ingests(RESTING, FAST)))
+        events.append((self.total_f_r * self.rates[P_INGEST_REST_FAST], self.ingest(RESTING, FAST)))
         # Resting ingests slow
-        transitions.append((self.total_s_r * self.rates[P_INGEST_REST_FAST], self.ingests(RESTING, SLOW)))
+        events.append((self.total_s_r * self.rates[P_INGEST_REST_FAST], self.ingest(RESTING, SLOW)))
         # Active ingests fast
-        transitions.append((self.total_f_a * self.rates[P_INGEST_ACTIVE_FAST], self.ingests(ACTIVE, FAST)))
+        events.append((self.total_f_a * self.rates[P_INGEST_ACTIVE_FAST], self.ingest(ACTIVE, FAST)))
         # Active ingests slow
-        transitions.append((self.total_s_a * self.rates[P_INGEST_ACTIVE_SLOW], self.ingests(ACTIVE, SLOW)))
+        events.append((self.total_s_a * self.rates[P_INGEST_ACTIVE_SLOW], self.ingest(ACTIVE, SLOW)))
         # Inf ingests fast
-        transitions.append((self.total_f_im * self.rates[P_INGEST_INFECTED_FAST], self.ingests(INFECTED, FAST)))
+        events.append((self.total_f_im * self.rates[P_INGEST_INFECTED_FAST], self.ingest(INFECTED, FAST)))
         # Inf ingests slow
-        transitions.append((self.total_s_im * self.rates[P_INGEST_INFECTED_SLOW], self.ingests(INFECTED, SLOW)))
+        events.append((self.total_s_im * self.rates[P_INGEST_INFECTED_SLOW], self.ingest(INFECTED, SLOW)))
         # Chr Inf ingests fast
-        transitions.append((self.total_f_c * self.rates[P_INGEST_INFECTED_FAST], self.ingests(INFECTED, FAST)))
+        events.append((self.total_f_c * self.rates[P_INGEST_INFECTED_FAST], self.ingest(INFECTED, FAST)))
         # Chr Inf ingests slow
-        transitions.append((self.total_s_ic * self.rates[P_INGEST_INFECTED_SLOW], self.ingests(INFECTED, SLOW)))
+        events.append((self.total_s_ic * self.rates[P_INGEST_INFECTED_SLOW], self.ingest(INFECTED, SLOW)))
 
         # Recruit mac
         # TODO - this should probably be based on the level of infection
-        transitions.append((len(self.nodes()) * self.rates[P_RECRUIT], self.recruit_mac()))
+        events.append((len(self.nodes()) * self.rates[P_RECRUIT], self.recruit_mac()))
 
         # Activate mac
         # TODO - this should probably be based on the level of infection
-        transitions.append((self.total_r * self.rates[P_ACTIVATION], self.activate()))
+        events.append((self.total_r * self.rates[P_ACTIVATION], self.activate()))
 
         # Deactivate mac
         # TODO - this should probably be based on the level of infection
-        transitions.append((self.total_a * self.rates[P_DEACTIVATION], self.deactivate()))
+        events.append((self.total_a * self.rates[P_DEACTIVATION], self.deactivate()))
 
         # Death of mac
         # Resting
-        transitions.append((self.total_r * self.rates[P_DEATH_RESTING], self.death_mac(RESTING)))
+        events.append((self.total_r * self.rates[P_DEATH_RESTING], self.death_mac(RESTING)))
         # Active
-        transitions.append((self.total_a * self.rates[P_DEATH_ACTIVE], self.death_mac(ACTIVE)))
+        events.append((self.total_a * self.rates[P_DEATH_ACTIVE], self.death_mac(ACTIVE)))
         # Inf
-        transitions.append((self.total_i_m * self.rates[P_DEATH_INFECTED], self.death_mac(INFECTED)))
+        events.append((self.total_i_m * self.rates[P_DEATH_INFECTED], self.death_mac(INFECTED)))
         # Chr Inf
-        transitions.append((self.total_c * self.rates[P_DEATH_CHR_INFECTED], self.death_mac(CHRONICALLY_INFECTED)))
+        events.append((self.total_c * self.rates[P_DEATH_CHR_INFECTED], self.death_mac(CHRONICALLY_INFECTED)))
 
         # Metabolism change
-        transitions.append((self.total_f_o2 * self.rates[P_CHANGE_FAST_SLOW], self.change(SLOW)))
-        transitions.append((self.total_s_o2 * self.rates[P_CHANGE_SLOW_FAST], self.change(FAST)))
+        events.append((self.total_f_o2 * self.rates[P_CHANGE_FAST_SLOW], self.change(SLOW)))
+        events.append((self.total_s_o2 * self.rates[P_CHANGE_SLOW_FAST], self.change(FAST)))
 
-        # Translocate
-        transitions.append((self.total_f_degree * self.rates[P_MIGRATE_FAST], self.migrate(FAST)))
-        transitions.append((self.total_s_degree * self.rates[P_MIGRATE_SLOW], self.migrate(SLOW)))
+        # Migrate
+        events.append((self.total_f_degree * self.rates[P_MIGRATE_FAST], self.migrate(FAST)))
+        events.append((self.total_s_degree * self.rates[P_MIGRATE_SLOW], self.migrate(SLOW)))
 
     def replicate(self, metabolism):
         if metabolism == FAST:
@@ -165,7 +165,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         running_total = 0
         for node in self.nodes():
-            running_total += node.counts[metabolism]
+            running_total += node.subpopulations[metabolism]
             if running_total >= r:
                 if rate > 0:
                     self.update_node(node, metabolism, 1)
@@ -173,7 +173,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
                     self.update_node(node, metabolism, -1)
                 return
 
-    def ingests(self, mac_state, metabolism):
+    def ingest(self, mac_state, metabolism):
         if metabolism == FAST:
             if mac_state == RESTING:
                 total = self.total_f_r
@@ -203,7 +203,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         running_total = 0
         for node in self.nodes():
-            running_total += node.counts[metabolism] * node.counts[mac_state]
+            running_total += node.subpopulations[metabolism] * node.subpopulations[mac_state]
             if running_total >= r:
                 self.update_node(node, metabolism, -1)
                 if mac_state != ACTIVE:
@@ -223,7 +223,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         r = np.random.randint(0, self.total_r)
         running_total = 0
         for node in self.nodes():
-            running_total += node.counts[RESTING]
+            running_total += node.subpopulations[RESTING]
             if running_total >= r:
                 self.update_node(node, ACTIVE, 1)
                 self.update_node(node, RESTING, -1)
@@ -233,7 +233,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         r = np.random.randint(0, self.total_a)
         running_total = 0
         for node in self.nodes():
-            running_total += node.counts[ACTIVE]
+            running_total += node.subpopulations[ACTIVE]
             if running_total >= r:
                 self.update_node(node, RESTING, 1)
                 self.update_node(node, ACTIVE, -1)
@@ -253,7 +253,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         running_total = 0
         for node in self.nodes():
-            running_total += node.counts[state]
+            running_total += node.subpopulations[state]
             if running_total >= r:
                 self.update_node(node, state, -1)
                 # TODO maybe add caseum
@@ -270,7 +270,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         running_total = 0
         for node in self.nodes():
-            running_total += node.counts[metabolism]
+            running_total += node.subpopulations[metabolism]
             if running_total >= r:
                 total_weights = sum(d[WEIGHT] for _, _, d in self.edges(node, data=True))
                 r2 = np.random.random() * total_weights
@@ -294,7 +294,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         running_total = 0
         for node in self.nodes():
-            running_total += node.counts[old_metabolism]
+            running_total += node.subpopulations[old_metabolism]
             if running_total >= r:
                 self.update_node(node, new_metabolism, 1)
                 self.update_node(node, old_metabolism, -1)
@@ -334,7 +334,7 @@ if __name__ == '__main__':
 
     loads = dict()
 
-    netw = TBMultiAgentMetapopulationNetwork(rates, 10, loads)
+    netw = TBMultiAgentMetapopulationNetwork(rates, loads)
 
     netw.display(show_node_contents=True, show_edge_labels=False)
 
