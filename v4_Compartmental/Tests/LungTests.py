@@ -21,6 +21,8 @@ class LungNetworkTestCase(unittest.TestCase):
 
         self.assertItemsEqual([n.id for n in self.network_horsfield.terminal_nodes], range(18,36))
 
+        # TODO - check edge weights
+
 
 if __name__ == '__main__':
     unittest.main()

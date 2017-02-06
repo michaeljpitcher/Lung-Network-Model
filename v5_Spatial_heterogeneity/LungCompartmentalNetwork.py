@@ -138,8 +138,11 @@ class LungNetwork(CompartmentalMetapopulationNetwork):
         for node_id in range(36):
             patch_attributes[node_id] = dict()
             # TODO - find out specifics
+            # V - Ventilation - O2 reaching the alveolar tissue
             patch_attributes[node_id]['ventilation'] = 1.0 / positions[node_id][1]
+            # Q - Perfusion - blood that reaches the alveolar tissue
             patch_attributes[node_id]['perfusion'] = 1.0 / positions[node_id][1]
+            # V/Q - Ventilation Perfusion ratio
             patch_attributes[node_id]['oxygen_tension'] = patch_attributes[node_id]['ventilation'] / \
                                                           patch_attributes[node_id]['perfusion']
         return patch_attributes
