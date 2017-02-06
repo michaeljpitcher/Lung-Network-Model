@@ -152,6 +152,9 @@ class MetapopulationNetwork(nx.Graph):
                 total = total + r
             # Calculate the timestep delta based on the total rates
             x = np.random.random()
+            if total == 0.0:
+                print "0% of any event - ending simulation"
+                break
             dt = (1.0 / total) * math.log(1.0 / x)
             # Calculate which event happens based on their individual rates
             x = np.random.random() * total
