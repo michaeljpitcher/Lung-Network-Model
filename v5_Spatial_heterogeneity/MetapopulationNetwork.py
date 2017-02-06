@@ -4,6 +4,7 @@ import numpy as np
 import math
 from Patch import *
 
+WEIGHT = 'weight'
 
 class MetapopulationNetwork(nx.Graph):
     """ Network with added metapopulation dynamics
@@ -59,9 +60,9 @@ class MetapopulationNetwork(nx.Graph):
         # Add edges
         for (node1_index, node2_index) in edges:
             # Get weight from values
-            weight = edges[(node1_index, node2_index)]
+            weight_ = edges[(node1_index, node2_index)]
             self.add_edge(self.node_list[node1_index], self.node_list[node2_index])
-            self.edge[self.node_list[node1_index]][self.node_list[node2_index]]['weight'] = weight
+            self.edge[self.node_list[node1_index]][self.node_list[node2_index]][WEIGHT] = weight_
 
         # Time
         self.time = 0.0
@@ -88,7 +89,7 @@ class MetapopulationNetwork(nx.Graph):
         for n in self.nodes():
             pos[n] = n.position
             if show_node_contents:
-                node_labels[n] = str(n.id) + ":" + str(sum(n.counts.values()))
+                node_labels[n] = str(n.id) + ":" + str(sum(n.subpopulations.values()))
             else:
                 node_labels[n] = str(n.id)
 
@@ -102,7 +103,7 @@ class MetapopulationNetwork(nx.Graph):
         if show_edge_labels:
             edge_labels = {}
             for n1, n2, data in self.edges(data=True):
-                edge_labels[(n1, n2)] = data['weight']
+                edge_labels[(n1, n2)] = data[WEIGHT]
             nx.draw_networkx_edge_labels(self, pos, edge_labels=edge_labels, font_family='sans-serif')
 
         plt.show()

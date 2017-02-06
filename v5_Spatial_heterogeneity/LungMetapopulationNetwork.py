@@ -1,5 +1,10 @@
 from MetapopulationNetwork import *
 
+VENTILATION = 'v'
+PERFUSION = 'q'
+OXYGEN_TENSION = 'v/q'
+HORSFIELD = 'horsfield'
+STAHLER = 'stahler'
 
 class LungMetapopulationNetwork(MetapopulationNetwork):
     """
@@ -7,7 +12,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
     Also includes methods to weight the edges based on Horsfield/Stahler methods
     """
 
-    def __init__(self, species_keys, initial_loads, weight_method='horsfield'):
+    def __init__(self, species_keys, initial_loads, weight_method=HORSFIELD):
         """
 
         :param species_keys: Indicators for species of patch subpopulations
@@ -118,23 +123,23 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                 break
             # Find the parent edge (should only be one) as edge where weight hasn't already been set
             parent_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
-                            data['weight'] == 0.0]
+                            data[WEIGHT] == 0.0]
             assert len(parent_edges) == 1
             # Get the data from parent edge to update
             parent_edge = parent_edges[0][2]
             # If the node is terminal, weight is 1.0
             if node in self.terminal_nodes:
-                parent_edge['weight'] = 1.0
+                parent_edge[WEIGHT] = 1.0
             else:
                 # Get the child edges (those with weights already set)
                 child_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
-                               data['weight'] > 0.0]
+                               data[WEIGHT] > 0.0]
                 # Get the weights
-                child_orders = [data['weight'] for _,_,data in child_edges]
+                child_orders = [data[WEIGHT] for _,_,data in child_edges]
                 # Determine new weight based on method chosen
-                if weight_method == 'horsfield':
+                if weight_method == HORSFIELD:
                     new_order = max(child_orders) + 1.0
-                elif weight_method == 'stahler':
+                elif weight_method == STAHLER:
                     if len(set(child_orders)) <= 1:
                         new_order = max(child_orders) + 1.0
                     else:
@@ -142,7 +147,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                 else:
                     raise Exception, "Invalid ordering method: {0}".format(weight_method)
                 # Set the parent weight
-                parent_edge['weight'] = new_order
+                parent_edge[WEIGHT] = new_order
 
     def compute_attributes(self, positions):
         """
@@ -162,12 +167,12 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
             patch_attributes[node_id] = dict()
             # TODO - find out specifics
             # V - Ventilation - O2 reaching the alveolar tissue
-            patch_attributes[node_id]['ventilation'] = 1.0 / positions[node_id][1]
+            patch_attributes[node_id][VENTILATION] = 1.0 / positions[node_id][1]
             # Q - Perfusion - blood that reaches the alveolar tissue
-            patch_attributes[node_id]['perfusion'] = 1.0 / positions[node_id][1]
+            patch_attributes[node_id][PERFUSION] = 1.0 / positions[node_id][1]
             # V/Q - Ventilation Perfusion ratio
-            patch_attributes[node_id]['oxygen_tension'] = patch_attributes[node_id]['ventilation'] / \
-                                                          patch_attributes[node_id]['perfusion']
+            patch_attributes[node_id][OXYGEN_TENSION] = patch_attributes[node_id][VENTILATION] / \
+                                                          patch_attributes[node_id][PERFUSION]
         return patch_attributes
 
     def events(self):
