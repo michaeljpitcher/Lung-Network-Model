@@ -142,7 +142,8 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         # Check nodes until total bac exceeds r
         running_total = 0
-        for node in self.nodes():
+        for id in self.node_list:
+            node = self.node_list[id]
             running_total += node.subpopulations[metabolism]
             if running_total > r:
                 assert node.subpopulations[metabolism] > 0, "Error: no bacteria of {0} metabolism present"\
@@ -180,7 +181,8 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         :return:
         """
         # TODO - Based on level of infection?
-        node = np.random.choice(self.nodes(),1)
+        id = np.random.randint(0, len(self.nodes()))
+        node = self.node_list[id]
         self.update_node(node, MACROPHAGE, 1)
 
     def death_mac(self):
@@ -216,7 +218,8 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         # Process each node adding count of bacteria * degree until r exceeded
         running_total = 0
-        for node in self.nodes():
+        for id in self.node_list:
+            node = self.node_list[id]
             running_total += node.subpopulations[metabolism] * node.degree
             if running_total > r:
                 # Find a new patch based on the weights of edges from node
@@ -224,7 +227,9 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
                 r2 = np.random.random() * total_weights
                 running_total_weights = 0
                 # Process all neighbours, adding edge weights until r2 exceeded
-                for _, neighbour, edge in self.edges(node, data=True):
+                neighbours = sorted(self.neighbors(node), key=lambda x: x.id, reverse=False)
+                for neighbour in neighbours:
+                    edge = self.edge[node][neighbour]
                     running_total_weights += edge[WEIGHT]
                     if running_total_weights > r2:
                         # Move bacteria from node to neighbour
@@ -250,7 +255,8 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         # Process all nodes, adding num of bacteria of metabolism * oxygen tension until r exceeded
         running_total = 0
-        for node in self.nodes():
+        for id in self.node_list:
+            node = self.node_list[id]
             running_total += node.subpopulations[old_metabolism] * node.attributes[OXYGEN_TENSION]
             if running_total >= r:
                 # Reduce old count by 1 and increment new count by 1
@@ -261,32 +267,33 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
 if __name__ == '__main__':
     rates = dict()
-    rates[P_REPLICATE_FAST] = 0.1
-    rates[P_REPLICATE_SLOW] = 0.001
-    rates[P_MIGRATE_FAST] = 0.1
-    rates[P_MIGRATE_SLOW] = 0.1
-    rates[P_CHANGE_FAST_SLOW] = 0.1
-    rates[P_CHANGE_SLOW_FAST] = 0.01
+    rates[P_REPLICATE_FAST] = 0.0
+    rates[P_REPLICATE_SLOW] = 0.0
+    rates[P_MIGRATE_FAST] = 0.0
+    rates[P_MIGRATE_SLOW] = 0.0
+    rates[P_CHANGE_FAST_SLOW] = 0.0
+    rates[P_CHANGE_SLOW_FAST] = 0.0
 
-    rates[P_RECRUIT] = 0.0
-    rates[P_DEATH] = 0.0
+    # Recruitment rate * 100 to maintain mac levels
+    rates[P_RECRUIT] = 0.01 * 100
+    rates[P_DEATH] = 0.01
 
     rates[P_INGEST_FAST] = 0.0
     rates[P_INGEST_SLOW] = 0.0
 
     loads = dict()
-    loads[0] = dict()
-    loads[0][FAST] = 10
+
+    for n in range(36):
+        loads[n] = dict()
+        loads[n][MACROPHAGE] = 100
 
     netw = TBSimpleMultiAgentMetapopulationNetwork(rates, loads)
-
-    np.random.seed(101)
 
     import cProfile
 
     p = cProfile.Profile()
     p.enable()
-    netw.run(50)
+    netw.run(500)
     p.disable()
     p.print_stats('tottime')
 
