@@ -1,5 +1,7 @@
 import unittest
-from v5_Spatial_heterogeneity import LungMetapopulationNetwork
+
+from v5_Spatial_heterogeneity.Base import LungMetapopulationNetwork
+
 
 class LungMetapopTestCase(unittest.TestCase):
 

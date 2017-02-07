@@ -1,7 +1,7 @@
 import unittest
-from v5_Spatial_heterogeneity import MetapopulationNetwork as mn
+
 from v5_Spatial_heterogeneity import Patch
-import numpy as np
+from v5_Spatial_heterogeneity.Base import MetapopulationNetwork as mn, Patch
 
 
 class MetapopulationModelTestCase(unittest.TestCase):
