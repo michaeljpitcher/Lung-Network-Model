@@ -13,6 +13,7 @@ class Patch:
         self.position = position
         self.subpopulations = subpopulations
         self.attributes = attributes
+        self.degree = 0
 
     def __str__(self):
         """ String identifier of patch"""

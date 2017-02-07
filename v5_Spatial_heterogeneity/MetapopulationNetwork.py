@@ -64,6 +64,10 @@ class MetapopulationNetwork(nx.Graph):
             self.add_edge(self.node_list[node1_index], self.node_list[node2_index])
             self.edge[self.node_list[node1_index]][self.node_list[node2_index]][WEIGHT] = weight_
 
+        # Degree is stored within each Patch (to speed up degree referencing)
+        for node in self.nodes():
+            node.degree = self.degree(node)
+
         # Time
         self.time = 0.0
 
