@@ -59,8 +59,8 @@ class TBFastSlowMetapopulationNetwork(LungMetapopulationNetwork):
 
         # Migration is based on total bacteria * degree of patch where they reside
         # TODO - check use of degree
-        self.total_migrate_f = sum([node.subpopulations[FAST] * self.degree(node) for node in self.nodes()])
-        self.total_migrate_s = sum([node.subpopulations[SLOW] * self.degree(node) for node in self.nodes()])
+        self.total_migrate_f = sum([node.subpopulations[FAST] * node.degree for node in self.nodes()])
+        self.total_migrate_s = sum([node.subpopulations[SLOW] * node.degree for node in self.nodes()])
 
         # Growth is based on total numbers of bacteria
         self.total_f = sum([node.subpopulations[FAST] for node in self.nodes()])
@@ -118,7 +118,7 @@ class TBFastSlowMetapopulationNetwork(LungMetapopulationNetwork):
         running_total = 0
         for id in self.node_list:
             node = self.node_list[id]
-            running_total += node.subpopulations[type] * self.degree(node)
+            running_total += node.subpopulations[type] * node.degree
             # Patch 1 chosen
             if running_total >= r:
                 # Pick a neighbour based on the weights of the edges from patch 1
