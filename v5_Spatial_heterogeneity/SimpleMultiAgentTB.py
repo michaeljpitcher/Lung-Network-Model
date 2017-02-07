@@ -18,7 +18,7 @@ P_INGEST_FAST = 'mac_ingests_fast'
 P_INGEST_SLOW = 'mac_ingests_slow'
 
 
-class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
+class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
     """
     Metapopulation model of TB infection with host interaction.
 
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     loads[0] = dict()
     loads[0][FAST] = 10
 
-    netw = TBMultiAgentMetapopulationNetwork(rates, loads)
+    netw = TBSimpleMultiAgentMetapopulationNetwork(rates, loads)
 
     np.random.seed(101)
 
