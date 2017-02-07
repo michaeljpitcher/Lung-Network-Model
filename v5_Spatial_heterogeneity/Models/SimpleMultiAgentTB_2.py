@@ -29,7 +29,8 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
     Spatial element - bacteria rate of change fast-slow differs based on the oxygen tension attribute of the patch
     """
 
-    def __init__(self, rates, initial_loads, weight_method=HORSFIELD):
+    def __init__(self, rates, number_of_macrophages_per_patch, number_of_fast_bacteria, number_of_slow_bacteria,
+                 weight_method=HORSFIELD):
         """
 
         :param rates: User-defined rates for events
@@ -37,8 +38,23 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         :param weight_method: method of edge weighting
         """
 
+        # Initialise initial loads
+        initial_loads = dict()
+        for id in range(36):
+            initial_loads[id] = dict()
+            # Set initial macrophage levels
+            initial_loads[id][MACROPHAGE] = number_of_macrophages_per_patch
+
         # Create the network
         LungMetapopulationNetwork.__init__(self, [FAST, SLOW, MACROPHAGE], initial_loads, weight_method)
+
+        # Deposit bacteria based on ventilation
+        # Bacteria deposition
+        total_ventilation = sum([patch.attributes[VENTILATION] for patch in self.terminal_nodes])
+        for i in range(number_of_fast_bacteria):
+            self.deposit_bacteria(total_ventilation, FAST)
+        for i in range(number_of_slow_bacteria):
+            self.deposit_bacteria(total_ventilation, SLOW)
 
         # Assert all rates present
         expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW,
@@ -61,6 +77,15 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         self.total_s_degree = 0
         self.total_f_o2 = 0.0
         self.total_s_o2 = 0.0
+
+    def deposit_bacteria(self, total_ventilation, metabolism):
+        r = np.random.random() * total_ventilation
+        running_total = 0
+        for node in self.terminal_nodes:
+            running_total += node.attributes[VENTILATION]
+            if running_total > r:
+                node.subpopulations[metabolism] += 1
+                return
 
     def update_totals(self):
         """
@@ -193,7 +218,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         # Generate r based on total mac numbers
         r = np.random.random() * self.total_mac
         running_total = 0
-        for node in self.nodes():
+        for node in self.node_list.values():
             running_total += node.subpopulations[MACROPHAGE]
             if running_total >= r:
                 # reduce the macrophage count by 1
@@ -281,20 +306,6 @@ if __name__ == '__main__':
     rates[P_INGEST_FAST] = 0.0
     rates[P_INGEST_SLOW] = 0.0
 
-    loads = dict()
+    netw = TBSimpleMultiAgentMetapopulationNetwork_v2(rates, 100, 1, 1)
 
-    for n in range(36):
-        loads[n] = dict()
-        loads[n][MACROPHAGE] = 100
-
-    netw = TBSimpleMultiAgentMetapopulationNetwork(rates, loads)
-
-    import cProfile
-
-    p = cProfile.Profile()
-    p.enable()
-    netw.run(500)
-    p.disable()
-    p.print_stats('tottime')
-
-    netw.display(show_node_contents=True, show_edge_labels=False)
+    netw.display(show_edge_labels=False)
