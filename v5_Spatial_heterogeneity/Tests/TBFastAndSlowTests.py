@@ -1,6 +1,9 @@
 import unittest
-from v5_Spatial_heterogeneity.TBFastAndSlow import *
+
 import numpy as np
+
+from v5_Spatial_heterogeneity.Models.TBFastAndSlow import *
+
 
 class TBFastAndSlowTestCase(unittest.TestCase):
 

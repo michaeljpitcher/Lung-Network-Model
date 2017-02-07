@@ -1,4 +1,4 @@
-from LungMetapopulationNetwork import *
+from v5_Spatial_heterogeneity.Base.LungMetapopulationNetwork import *
 
 FAST = 'F'
 SLOW = 'S'

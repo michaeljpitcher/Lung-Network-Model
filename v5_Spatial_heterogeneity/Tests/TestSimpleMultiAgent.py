@@ -1,5 +1,7 @@
 import unittest
-from v5_Spatial_heterogeneity.SimpleMultiAgentTB import *
+
+from v5_Spatial_heterogeneity.Models.SimpleMultiAgentTB import *
+
 
 class SimpleMultiAgentTestCase(unittest.TestCase):
 
