@@ -144,7 +144,9 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         running_total = 0
         for node in self.nodes():
             running_total += node.subpopulations[metabolism]
-            if running_total >= r:
+            if running_total > r:
+                assert node.subpopulations[metabolism] > 0, "Error: no bacteria of {0} metabolism present"\
+                    .format(metabolism)
                 # Increment the count by 1
                 self.update_node(node, metabolism, 1)
                 return
