@@ -77,7 +77,7 @@ class MetapopulationNetwork(nx.Graph):
         self.data = dict()
         self.record_data()
 
-    def display(self, title="", save_name=None, show_node_contents=True, show_edge_labels=True):
+    def display(self,  title="", save_name=None, node_contents_species=[], show_edge_labels=True):
         """
         Show the network
         :param title: Title of image
@@ -94,10 +94,9 @@ class MetapopulationNetwork(nx.Graph):
         node_labels = {}
         for n in self.nodes():
             pos[n] = n.position
-            if show_node_contents:
-                node_labels[n] = str(n.id) + ":" + str(sum(n.subpopulations.values()))
-            else:
-                node_labels[n] = str(n.id)
+            node_labels[n] = ""
+            for species in node_contents_species:
+                node_labels[n] += str(n.subpopulations[species]) + ":"
 
         # Nodes
         nx.draw_networkx_nodes(self, pos, node_size=400, node_color="green")
