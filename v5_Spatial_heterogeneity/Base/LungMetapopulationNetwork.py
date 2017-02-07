@@ -78,14 +78,14 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
         # Calculate environment attributes of each patch
         patch_attributes = self.compute_attributes(pos)
 
-        # Create the network (allows use of networkx functions like neighbours for calculating edge weights)
+        # Create the network (allows use of NetworkX functions like neighbours for calculating edge weights)
         MetapopulationNetwork.__init__(self, 36, edge_weights, species_keys, initial_loads,
                                        patch_attributes, pos)
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0
-        self.terminal_nodes = [n for n in self.nodes() if self.degree(n) == 1 and n.id != self.origin]
-        self.non_terminal_nodes = [n for n in self.nodes() if self.degree(n) != 1]
+        self.terminal_nodes = [n for n in self.node_list.values() if n.degree == 1 and n.id != self.origin]
+        self.non_terminal_nodes = [n for n in self.node_list.values() if n.degree != 1]
         # Calculate edge weights
         self.set_weights(weight_method)
 
