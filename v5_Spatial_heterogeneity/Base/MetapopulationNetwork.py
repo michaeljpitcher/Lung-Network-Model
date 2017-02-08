@@ -13,7 +13,8 @@ class MetapopulationNetwork(nx.Graph):
 
     Extension of a NetworkX Graph. Each node of the graph is a Patch, each of which contains subpopulations of user-
     defined species. This class builds the initial network using specified parameters, and allows simulation whereby
-    events are defined in terms of rates and actions in ovverriding versions of this class.
+    events are defined in terms of rates and actions in overriding versions of this class. Patches can be specified to
+    contain attributes - resulting in spatial heterogeneity over the environment.
     """
 
     def __init__(self, node_count, edges, species_keys, initial_loads, patch_attributes,
@@ -30,7 +31,7 @@ class MetapopulationNetwork(nx.Graph):
                keys=attribute, values=attribute value for patch
         :param node_positions: Dictionary of positions for each node, keys=node id, values=(x,y) coordinates for patch
         """
-        # Create a networkx graph
+        # Create a NetworkX graph
         nx.Graph.__init__(self)
         self.species = species_keys
         # Creating patches

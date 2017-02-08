@@ -30,7 +30,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
     bacteria replicate at their own individual rates, and can migrate to new patches at their own rates and can change
     between each other.
     Macrophages are recruited at defined rate, ingest each type of bacteria at individual rates - ingestion of bacteria
-    causes infection - removal of a regular macrophage (and bacteria) and addition of an infected macrophage. Death
+    causes infection (removal of a regular macrophage and bacteria and addition of an infected macrophage). Death
     rates can be specified to differ between regular and infected.
 
     Spatial element - bacteria rate of change fast-slow differs based on the oxygen tension attribute of the patch
@@ -40,12 +40,14 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
                  weight_method=HORSFIELD):
         """
 
-        :param rates: User-defined rates for events
-        :param initial_loads: Where to place initial populations
-        :param weight_method: method of edge weighting
+        :param rates: Rates for events
+        :param number_of_macrophages_per_patch: Number of macrophages in each patch at start
+        :param number_of_fast_bacteria: Number of fast bacteria to be deposited
+        :param number_of_slow_bacteria: Number of slow bacteria to be deposited
+        :param weight_method: Method weighting edges
         """
 
-        # Initialise initial loads
+        # Initialise loads
         initial_loads = dict()
         for id in range(36):
             initial_loads[id] = dict()
