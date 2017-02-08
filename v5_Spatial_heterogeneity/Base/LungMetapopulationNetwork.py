@@ -89,6 +89,32 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
         # Calculate edge weights
         self.set_weights(weight_method)
 
+    def compute_attributes(self, positions):
+        """
+        Calculate the environment attributes for each patch.
+
+        Determines the ventilation, perfusion and ventilation/perfusion ratio for each patch based on it's position
+        vertically within the lung
+        :param positions: Dictionary of positions, keys=node id, values=(x,y) coordinates of patch (only y needed)
+        :return: Dictionary of attributes, keys = node id, values=Dictionary, keys=attribute, values=attribute value
+                 for patch
+        """
+        # Initialise attributes
+        patch_attributes = dict()
+        # Process each node
+        for node_id in range(len(positions)):
+            # Create a new record in attribute dictionary
+            patch_attributes[node_id] = dict()
+            # TODO - find out specifics
+            # V - Ventilation - O2 reaching the alveolar tissue
+            patch_attributes[node_id][VENTILATION] = 1.0 / positions[node_id][1]
+            # Q - Perfusion - blood that reaches the alveolar tissue
+            patch_attributes[node_id][PERFUSION] = 1.0 / positions[node_id][1]
+            # V/Q - Ventilation Perfusion ratio
+            patch_attributes[node_id][OXYGEN_TENSION] = patch_attributes[node_id][VENTILATION] / \
+                                                          patch_attributes[node_id][PERFUSION]
+        return patch_attributes
+
     def set_weights(self, weight_method):
         """
         Set edge weights.
@@ -135,7 +161,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                 child_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
                                data[WEIGHT] > 0.0]
                 # Get the weights
-                child_orders = [data[WEIGHT] for _,_,data in child_edges]
+                child_orders = [data[WEIGHT] for _, _, data in child_edges]
                 # Determine new weight based on method chosen
                 if weight_method == HORSFIELD:
                     new_order = max(child_orders) + 1.0
@@ -148,32 +174,6 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                     raise Exception, "Invalid ordering method: {0}".format(weight_method)
                 # Set the parent weight
                 parent_edge[WEIGHT] = new_order
-
-    def compute_attributes(self, positions):
-        """
-        Calculate the environment attributes for each patch.
-
-        Determines the ventilation, perfusion and ventilation/perfusion ratio for each patch based on it's position
-        vertically within the lung
-        :param positions: Dictionary of positions, keys=node id, values=(x,y) coordinates of patch (only y needed)
-        :return: Dictionary of attributes, keys = node id, values=Dictionary, keys=attribute, values=attribute value
-                 for patch
-        """
-        # Initialise attributes
-        patch_attributes = dict()
-        # Process each node
-        for node_id in range(len(positions)):
-            # Create a new record in attribute dictionary
-            patch_attributes[node_id] = dict()
-            # TODO - find out specifics
-            # V - Ventilation - O2 reaching the alveolar tissue
-            patch_attributes[node_id][VENTILATION] = 1.0 / positions[node_id][1]
-            # Q - Perfusion - blood that reaches the alveolar tissue
-            patch_attributes[node_id][PERFUSION] = 1.0 / positions[node_id][1]
-            # V/Q - Ventilation Perfusion ratio
-            patch_attributes[node_id][OXYGEN_TENSION] = patch_attributes[node_id][VENTILATION] / \
-                                                          patch_attributes[node_id][PERFUSION]
-        return patch_attributes
 
     def events(self):
         """ Rate of events and specific function for event - to be defined in overriding class """
