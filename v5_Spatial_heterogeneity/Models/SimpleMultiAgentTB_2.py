@@ -113,7 +113,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
             # TODO - check usage of degree
             self.total_f_degree += node.subpopulations[FAST] * node.degree
             self.total_s_degree += node.subpopulations[SLOW] * node.degree
-            self.total_f_o2 += node.subpopulations[FAST] * node.attributes[OXYGEN_TENSION]
+            self.total_f_o2 += node.subpopulations[FAST] * (1/node.attributes[OXYGEN_TENSION])
             self.total_s_o2 += node.subpopulations[SLOW] * node.attributes[OXYGEN_TENSION]
             pass
 
