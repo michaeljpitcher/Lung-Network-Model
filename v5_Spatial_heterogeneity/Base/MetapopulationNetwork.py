@@ -78,13 +78,13 @@ class MetapopulationNetwork(nx.Graph):
         self.data = dict()
         self.record_data()
 
-    def display(self,  title="", save_name=None, node_contents_species=[], show_edge_labels=True):
+    def display(self, node_contents_species, title="", save_name=None, show_edge_labels=True):
         """
-        Show the network
-        :param title: Title of image
-        :param save_name: Filename to save image (None to not save)
-        :param show_node_contents: Boolean to show the contents of each patch
-        :param show_edge_labels: Boolean to show the weight of each edge
+
+        :param node_contents_species: List of species to display for nodes
+        :param title:
+        :param save_name: Filename to save as png
+        :param show_edge_labels: Boolean to show edge labels
         :return:
         """
         fig = plt.figure(figsize=(10, 10))
@@ -96,8 +96,9 @@ class MetapopulationNetwork(nx.Graph):
         for n in self.nodes():
             pos[n] = n.position
             node_labels[n] = ""
-            for species in node_contents_species:
-                node_labels[n] += str(n.subpopulations[species]) + ":"
+            if node_contents_species is not None:
+                for species in node_contents_species:
+                    node_labels[n] += str(n.subpopulations[species]) + ":"
 
         # Nodes
         nx.draw_networkx_nodes(self, pos, node_size=400, node_color="green")
@@ -149,7 +150,7 @@ class MetapopulationNetwork(nx.Graph):
         print "RUNNING"
         while self.time < time_limit:
 
-            print "t=", self.time
+            self.timestep_output()
             # Get the events and their rates
             events = self.events()
             # Pick an event and a time (dt) for it to occur
@@ -171,8 +172,11 @@ class MetapopulationNetwork(nx.Graph):
                 (rate_for_event, chosen_event) = events[event_index]
                 running_total = running_total + rate_for_event
                 event_index += 1
-            # perform the event
+            # Perform the event
             chosen_event(self)
             # Increment current time and record
             self.time += dt
             self.record_data()
+
+    def timestep_output(self):
+        print "t=", self.time
