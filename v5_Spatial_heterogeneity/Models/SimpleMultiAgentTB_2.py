@@ -33,9 +33,11 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
                  weight_method=HORSFIELD):
         """
 
-        :param rates: User-defined rates for events
-        :param initial_loads: Where to place initial populations
-        :param weight_method: method of edge weighting
+        :param rates: Rates for events
+        :param number_of_macrophages_per_patch: Amount of macrophages to start in each patch
+        :param number_of_fast_bacteria: Fast bacteria to be deposited
+        :param number_of_slow_bacteria: Slow bacteria to be deposited
+        :param weight_method: Method for weighting edges
         """
 
         # Initialise initial loads
@@ -102,7 +104,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         self.total_f_o2 = 0.0
         self.total_s_o2 = 0.0
 
-        for node in self.nodes():
+        for node in self.node_list.values():
             self.total_f += node.subpopulations[FAST]
             self.total_s += node.subpopulations[SLOW]
             self.total_mac += node.subpopulations[MACROPHAGE]
@@ -292,20 +294,22 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
 
 if __name__ == '__main__':
     rates = dict()
-    rates[P_REPLICATE_FAST] = 0.0
-    rates[P_REPLICATE_SLOW] = 0.0
-    rates[P_MIGRATE_FAST] = 0.0
-    rates[P_MIGRATE_SLOW] = 0.0
-    rates[P_CHANGE_FAST_SLOW] = 0.0
-    rates[P_CHANGE_SLOW_FAST] = 0.0
+    rates[P_REPLICATE_FAST] = 0.1
+    rates[P_REPLICATE_SLOW] = 0.01
+    rates[P_MIGRATE_FAST] = 0.01
+    rates[P_MIGRATE_SLOW] = 0.001
+    rates[P_CHANGE_FAST_SLOW] = 0.3
+    rates[P_CHANGE_SLOW_FAST] = 0.2
 
     # Recruitment rate * 100 to maintain mac levels
     rates[P_RECRUIT] = 0.01 * 100
     rates[P_DEATH] = 0.01
 
-    rates[P_INGEST_FAST] = 0.0
-    rates[P_INGEST_SLOW] = 0.0
+    rates[P_INGEST_FAST] = 0.001
+    rates[P_INGEST_SLOW] = 0.001
 
-    netw = TBSimpleMultiAgentMetapopulationNetwork_v2(rates, 100, 1, 1)
+    netw = TBSimpleMultiAgentMetapopulationNetwork_v2(rates, 100, 10, 10)
 
-    netw.display(show_edge_labels=False)
+    netw.run(100)
+
+    netw.display(node_contents_species=[MACROPHAGE, FAST, SLOW])
