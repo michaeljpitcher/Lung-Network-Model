@@ -77,7 +77,7 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         self.total_f_o2 = 0.0
         self.total_s_o2 = 0.0
 
-        for node in self.nodes():
+        for node in self.node_list.values():
             self.total_f += node.subpopulations[FAST]
             self.total_s += node.subpopulations[SLOW]
             self.total_mac += node.subpopulations[MACROPHAGE]
@@ -267,25 +267,27 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
 if __name__ == '__main__':
     rates = dict()
-    rates[P_REPLICATE_FAST] = 0.0
-    rates[P_REPLICATE_SLOW] = 0.0
-    rates[P_MIGRATE_FAST] = 0.0
-    rates[P_MIGRATE_SLOW] = 0.0
-    rates[P_CHANGE_FAST_SLOW] = 0.0
-    rates[P_CHANGE_SLOW_FAST] = 0.0
+    rates[P_REPLICATE_FAST] = 0.1
+    rates[P_REPLICATE_SLOW] = 0.01
+    rates[P_MIGRATE_FAST] = 0.01
+    rates[P_MIGRATE_SLOW] = 0.01
+    rates[P_CHANGE_FAST_SLOW] = 0.01
+    rates[P_CHANGE_SLOW_FAST] = 0.1
 
-    # Recruitment rate * 100 to maintain mac levels
-    rates[P_RECRUIT] = 0.01 * 100
+    rates[P_RECRUIT] = 0.01 * 10
     rates[P_DEATH] = 0.01
 
     rates[P_INGEST_FAST] = 0.0
     rates[P_INGEST_SLOW] = 0.0
 
     loads = dict()
+    loads[5] = dict()
+    loads[5][MACROPHAGE] = 10
+    loads[13] = dict()
+    loads[13][FAST] = 10
+    loads[27] = dict()
+    loads[27][SLOW] = 4
 
-    for n in range(36):
-        loads[n] = dict()
-        loads[n][MACROPHAGE] = 100
 
     netw = TBSimpleMultiAgentMetapopulationNetwork(rates, loads)
 
@@ -293,8 +295,8 @@ if __name__ == '__main__':
 
     p = cProfile.Profile()
     p.enable()
-    netw.run(500)
+    netw.run(50)
     p.disable()
     p.print_stats('tottime')
 
-    netw.display(show_node_contents=True, show_edge_labels=False)
+    netw.display([FAST,SLOW,MACROPHAGE], show_edge_labels=False)
