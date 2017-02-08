@@ -26,9 +26,9 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
     """
     Metapopulation model of TB infection with host interaction.
 
-    4 populations - Fast bacteria, slow bacteria and regular macrophages and infected macrophages. Fast and slow
-    bacteria replicate at their own individual rates, and can migrate to new patches at their own rates and can change
-    between each other.
+    4 populations - Fast bacteria, slow bacteria, regular macrophages and infected macrophages.
+    Fast and slow bacteria replicate at their own individual rates, and can migrate to new patches at their own rates
+    and can change between each other.
     Macrophages are recruited at defined rate, ingest each type of bacteria at individual rates - ingestion of bacteria
     causes infection (removal of a regular macrophage and bacteria and addition of an infected macrophage). Death
     rates can be specified to differ between regular and infected.
@@ -44,7 +44,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
         :param number_of_macrophages_per_patch: Number of macrophages in each patch at start
         :param number_of_fast_bacteria: Number of fast bacteria to be deposited
         :param number_of_slow_bacteria: Number of slow bacteria to be deposited
-        :param weight_method: Method weighting edges
+        :param weight_method: Method for weighting edges
         """
 
         # Initialise loads
@@ -119,7 +119,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
         self.total_f_o2 = 0.0
         self.total_s_o2 = 0.0
 
-        for node in self.nodes():
+        for node in self.node_list.values():
             self.total_f += node.subpopulations[BACTERIA_FAST]
             self.total_s += node.subpopulations[BACTERIA_SLOW]
             self.total_mac_regular += node.subpopulations[MACROPHAGE_REGULAR]
@@ -227,11 +227,14 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
 
         # Count through node until count exceeds r
         running_total = 0
-        for node in self.nodes():
+        for node in self.node_list.values():
             running_total += node.subpopulations[metabolism] * node.subpopulations[mac_state]
             if running_total >= r:
                 # Reduce the count for metabolism by 1
                 self.update_node(node, metabolism, -1)
+                if mac_state == MACROPHAGE_REGULAR:
+                    self.update_node(node, MACROPHAGE_REGULAR, -1)
+                    self.update_node(node, MACROPHAGE_INFECTED, 1)
                 return
 
     def recruit_mac(self):
@@ -327,6 +330,9 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
                 self.update_node(node, old_metabolism, -1)
                 return
 
+    def timestep_output(self):
+        print "t=", self.time, "bac=", self.total_f + self.total_s, "mac=", self.total_mac_infected + \
+                                                                            self.total_mac_regular
 
 if __name__ == '__main__':
     rates = dict()
@@ -342,10 +348,10 @@ if __name__ == '__main__':
     rates[P_DEATH_REGULAR] = 0.01
     rates[P_DEATH_INFECTED] = 0.1
 
-    rates[P_REGULAR_INGEST_FAST] = 0.001
-    rates[P_REGULAR_INGEST_SLOW] = 0.001
-    rates[P_INFECTED_INGEST_FAST] = 0.001
-    rates[P_INFECTED_INGEST_SLOW] = 0.001
+    rates[P_REGULAR_INGEST_FAST] = 0.01
+    rates[P_REGULAR_INGEST_SLOW] = 0.01
+    rates[P_INFECTED_INGEST_FAST] = 0.01
+    rates[P_INFECTED_INGEST_SLOW] = 0.01
 
     netw = TBSimpleMultiAgentMetapopulationNetwork_v3(rates, 100, 10, 10)
 
