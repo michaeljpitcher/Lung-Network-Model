@@ -38,7 +38,8 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
     Spatial element - bacteria rate of change fast-slow differs based on the oxygen tension attribute of the patch
     """
 
-    def __init__(self, rates, number_of_macrophages_per_patch, number_of_bacteria_to_deposit, weight_method=HORSFIELD):
+    def __init__(self, rates, number_of_macrophages_per_patch, num_fast_bacteria_to_deposit,
+                 num_slow_bacteria_to_deposit, weight_method=HORSFIELD):
         """
 
         :param rates: Rates for events
@@ -61,7 +62,15 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         # Deposit bacteria based on ventilation
         # Bacteria deposition
         total_ventilation = sum([patch.attributes[VENTILATION] for patch in self.terminal_nodes])
-        self.deposit_bacteria(total_ventilation, number_of_bacteria_to_deposit)
+
+        r = np.random.random() * total_ventilation
+        running_total = 0
+        for node in self.terminal_nodes:
+            running_total += node.attributes[VENTILATION]
+            if running_total > r:
+                node.subpopulations[BACTERIA_FAST] += num_fast_bacteria_to_deposit
+                node.subpopulations[BACTERIA_SLOW] += num_slow_bacteria_to_deposit
+                return
 
         # Assert all rates present
         expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW,
@@ -88,21 +97,6 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         self.total_s_degree = 0
         self.total_f_o2 = 0.0
         self.total_s_o2 = 0.0
-
-    def deposit_bacteria(self, total_ventilation, number_of_bacteria_to_deposit):
-        """
-        Deposit the given number of bacteria into an alveolus - biased to those with greater ventilation
-        :param total_ventilation:
-        :param number_of_bacteria_to_deposit:
-        :return:
-        """
-        r = np.random.random() * total_ventilation
-        running_total = 0
-        for node in self.terminal_nodes:
-            running_total += node.attributes[VENTILATION]
-            if running_total > r:
-                node.subpopulations[BACTERIA_FAST] += number_of_bacteria_to_deposit
-                return
 
     def update_totals(self):
         """
@@ -356,7 +350,7 @@ if __name__ == '__main__':
     rates[P_INFECTED_INGEST_FAST] = 0.001
     rates[P_INFECTED_INGEST_SLOW] = 0.001
 
-    netw = TBSimpleMultiAgentMetapopulationNetwork_v4(rates, 100, 10)
+    netw = TBSimpleMultiAgentMetapopulationNetwork_v4(rates, 100, 10, 10)
 
     netw.run(100)
 
