@@ -22,8 +22,10 @@ P_INFECTED_INGEST_FAST = 'infected_ingests_fast'
 P_INFECTED_INGEST_SLOW = 'infected_ingests_slow'
 
 
-class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
+class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
     """
+    Adaptive immune response
+
     Metapopulation model of TB infection with host interaction.
 
     4 populations - Fast bacteria, slow bacteria, regular macrophages and infected macrophages.
@@ -36,14 +38,12 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
     Spatial element - bacteria rate of change fast-slow differs based on the oxygen tension attribute of the patch
     """
 
-    def __init__(self, rates, number_of_macrophages_per_patch, number_of_fast_bacteria, number_of_slow_bacteria,
-                 weight_method=HORSFIELD):
+    def __init__(self, rates, number_of_macrophages_per_patch, number_of_bacteria_to_deposit, weight_method=HORSFIELD):
         """
 
         :param rates: Rates for events
         :param number_of_macrophages_per_patch: Number of macrophages in each patch at start
-        :param number_of_fast_bacteria: Number of fast bacteria to be deposited
-        :param number_of_slow_bacteria: Number of slow bacteria to be deposited
+        :param number_of_bacteria_to_deposit: Number of bacteria to be deposited
         :param weight_method: Method for weighting edges
         """
 
@@ -61,10 +61,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
         # Deposit bacteria based on ventilation
         # Bacteria deposition
         total_ventilation = sum([patch.attributes[VENTILATION] for patch in self.terminal_nodes])
-        for i in range(number_of_fast_bacteria):
-            self.deposit_bacteria(total_ventilation, BACTERIA_FAST)
-        for i in range(number_of_slow_bacteria):
-            self.deposit_bacteria(total_ventilation, BACTERIA_SLOW)
+        self.deposit_bacteria(total_ventilation, number_of_bacteria_to_deposit)
 
         # Assert all rates present
         expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW,
@@ -92,13 +89,19 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
         self.total_f_o2 = 0.0
         self.total_s_o2 = 0.0
 
-    def deposit_bacteria(self, total_ventilation, metabolism):
+    def deposit_bacteria(self, total_ventilation, number_of_bacteria_to_deposit):
+        """
+        Deposit the given number of bacteria into an alveolus - biased to those with greater ventilation
+        :param total_ventilation:
+        :param number_of_bacteria_to_deposit:
+        :return:
+        """
         r = np.random.random() * total_ventilation
         running_total = 0
         for node in self.terminal_nodes:
             running_total += node.attributes[VENTILATION]
             if running_total > r:
-                node.subpopulations[metabolism] += 1
+                node.subpopulations[BACTERIA_FAST] += number_of_bacteria_to_deposit
                 return
 
     def update_totals(self):
@@ -331,17 +334,17 @@ class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
                 return
 
     def timestep_output(self):
-        print "t=", self.time, "bac=", self.total_f + self.total_s, "mac=", self.total_mac_infected + \
-                                                                            self.total_mac_regular
+        print "t=", self.time, "bac=", self.total_f + self.total_s, "mac r=", self.total_mac_regular, "mac i=",  \
+            self.total_mac_infected
 
 if __name__ == '__main__':
     rates = dict()
     rates[P_REPLICATE_FAST] = 0.1
     rates[P_REPLICATE_SLOW] = 0.01
     rates[P_MIGRATE_FAST] = 0.01
-    rates[P_MIGRATE_SLOW] = 0.001
-    rates[P_CHANGE_FAST_SLOW] = 0.3
-    rates[P_CHANGE_SLOW_FAST] = 0.2
+    rates[P_MIGRATE_SLOW] = 0.01
+    rates[P_CHANGE_FAST_SLOW] = 0.1
+    rates[P_CHANGE_SLOW_FAST] = 0.5
 
     # Recruitment rate * 100 to maintain mac levels
     rates[P_RECRUIT] = 0.01 * 100
@@ -353,7 +356,7 @@ if __name__ == '__main__':
     rates[P_INFECTED_INGEST_FAST] = 0.001
     rates[P_INFECTED_INGEST_SLOW] = 0.001
 
-    netw = TBSimpleMultiAgentMetapopulationNetwork_v3(rates, 100, 10, 10)
+    netw = TBSimpleMultiAgentMetapopulationNetwork_v4(rates, 100, 10)
 
     netw.run(100)
 
