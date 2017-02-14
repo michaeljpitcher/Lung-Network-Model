@@ -2,11 +2,13 @@ from v5_Spatial_heterogeneity.Base.LungMetapopulationNetwork import *
 
 BACTERIA_FAST = 'bac_fast'
 BACTERIA_SLOW = 'bac_slow'
+BACTERIA_INTRACELLULAR = 'bac_intra'
 MACROPHAGE_REGULAR = 'mac_regular'
 MACROPHAGE_INFECTED = 'mac_infected'
 
 P_REPLICATE_FAST = 'replication_fast'
 P_REPLICATE_SLOW = 'replication_slow'
+P_REPLICATE_INTRACELLULAR = 'replication_intra'
 P_CHANGE_FAST_SLOW = 'change_fast_to_slow'
 P_CHANGE_SLOW_FAST = 'change_slow_to_fast'
 P_MIGRATE_FAST = 'fast_migrate'
@@ -22,9 +24,9 @@ P_INFECTED_INGEST_FAST = 'infected_ingests_fast'
 P_INFECTED_INGEST_SLOW = 'infected_ingests_slow'
 
 
-class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
+class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
     """
-    Adaptive immune response
+    Intracellular bac
 
     Metapopulation model of TB infection with host interaction.
 
@@ -48,6 +50,8 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         :param weight_method: Method for weighting edges
         """
 
+        self.test = "HELLO"
+
         # Initialise loads
         initial_loads = dict()
         for id in range(36):
@@ -56,8 +60,9 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
             initial_loads[id][MACROPHAGE_REGULAR] = number_of_macrophages_per_patch
 
         # Create the network
-        LungMetapopulationNetwork.__init__(self, [BACTERIA_FAST, BACTERIA_SLOW, MACROPHAGE_REGULAR,
-                                                  MACROPHAGE_INFECTED], initial_loads, weight_method)
+        LungMetapopulationNetwork.__init__(self, [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR,
+                                                  MACROPHAGE_REGULAR, MACROPHAGE_INFECTED], initial_loads,
+                                           weight_method)
 
         # Deposit bacteria based on ventilation
         # Bacteria deposition
@@ -70,10 +75,10 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
             if running_total > r:
                 node.subpopulations[BACTERIA_FAST] += num_fast_bacteria_to_deposit
                 node.subpopulations[BACTERIA_SLOW] += num_slow_bacteria_to_deposit
-                return
+                break
 
         # Assert all rates present
-        expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW,
+        expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW, P_REPLICATE_INTRACELLULAR,
                           P_CHANGE_FAST_SLOW, P_CHANGE_SLOW_FAST,
                           P_MIGRATE_FAST, P_MIGRATE_SLOW,
                           P_REGULAR_INGEST_FAST, P_REGULAR_INGEST_SLOW,
@@ -87,6 +92,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         # Initialise totals
         self.total_f = 0
         self.total_s = 0
+        self.total_intra = 0
         self.total_mac_regular = 0
         self.total_mac_infected = 0
         self.total_regular_fast = 0
@@ -105,6 +111,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         """
         self.total_f = 0
         self.total_s = 0
+        self.total_intra = 0
         self.total_mac_regular = 0
         self.total_mac_infected = 0
         self.total_regular_fast = 0
@@ -119,6 +126,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         for node in self.node_list.values():
             self.total_f += node.subpopulations[BACTERIA_FAST]
             self.total_s += node.subpopulations[BACTERIA_SLOW]
+            self.total_intra += node.subpopulations[BACTERIA_INTRACELLULAR]
             self.total_mac_regular += node.subpopulations[MACROPHAGE_REGULAR]
             self.total_mac_infected += node.subpopulations[MACROPHAGE_INFECTED]
             self.total_regular_fast += node.subpopulations[BACTERIA_FAST] * node.subpopulations[MACROPHAGE_REGULAR]
@@ -144,6 +152,8 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         # Replication - total number of bacteria of metabolism * prob of replication
         events.append((self.total_f * self.rates[P_REPLICATE_FAST], lambda f: self.replicate(BACTERIA_FAST)))
         events.append((self.total_s * self.rates[P_REPLICATE_SLOW], lambda f: self.replicate(BACTERIA_SLOW)))
+        events.append((self.total_intra * self.rates[P_REPLICATE_INTRACELLULAR], lambda f:
+                                                                                self.replicate(BACTERIA_INTRACELLULAR)))
 
         # Metabolism change - sum of (number of bacteria of metabolism in patch * o2 tension) * prob of change
         # TODO - check if this is ok
@@ -187,6 +197,8 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
             r = np.random.random() * self.total_f
         elif metabolism == BACTERIA_SLOW:
             r = np.random.random() * self.total_s
+        elif metabolism == BACTERIA_INTRACELLULAR:
+            r = np.random.random() * self.total_intra
         else:
             raise Exception, "Replication: {0} metabolism not valid".format(type)
 
@@ -229,6 +241,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
             if running_total >= r:
                 # Reduce the count for metabolism by 1
                 self.update_node(node, metabolism, -1)
+                self.update_node(node, BACTERIA_INTRACELLULAR, 1)
                 if mac_state == MACROPHAGE_REGULAR:
                     self.update_node(node, MACROPHAGE_REGULAR, -1)
                     self.update_node(node, MACROPHAGE_INFECTED, 1)
@@ -259,6 +272,11 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
         for node in self.node_list.values():
             running_total += node.subpopulations[state]
             if running_total >= r:
+                # Calculate number of bacteria in mac if infected
+                if state == MACROPHAGE_INFECTED:
+                    amount = int(round(float(node.subpopulations[BACTERIA_INTRACELLULAR])
+                                   / float(node.subpopulations[MACROPHAGE_INFECTED])))
+                    self.update_node(node, BACTERIA_SLOW, amount)
                 # reduce the macrophage count by 1
                 self.update_node(node, state, -1)
                 return
@@ -328,30 +346,39 @@ class TBSimpleMultiAgentMetapopulationNetwork_v4(LungMetapopulationNetwork):
                 return
 
     def timestep_output(self):
-        print "t=", self.time, "bac=", self.total_f + self.total_s, "mac r=", self.total_mac_regular, "mac i=",  \
-            self.total_mac_infected
+
+        output = ""
+        output += "t=" + str(self.time)
+        output += " fast=" + str(self.total_f)
+        output += " slow=" + str(self.total_s)
+        output += " intra=" + str(self.total_intra)
+        output += " reg mac=" + str(self.total_mac_regular)
+        output += " inf mac=" + str(self.total_mac_infected)
+
+        print output
 
 if __name__ == '__main__':
     rates = dict()
     rates[P_REPLICATE_FAST] = 0.1
     rates[P_REPLICATE_SLOW] = 0.01
+    rates[P_REPLICATE_INTRACELLULAR] = 0.0
     rates[P_MIGRATE_FAST] = 0.01
     rates[P_MIGRATE_SLOW] = 0.01
-    rates[P_CHANGE_FAST_SLOW] = 0.1
-    rates[P_CHANGE_SLOW_FAST] = 0.5
+    rates[P_CHANGE_FAST_SLOW] = 0.0
+    rates[P_CHANGE_SLOW_FAST] = 0.2
 
     # Recruitment rate * 100 to maintain mac levels
     rates[P_RECRUIT] = 0.01 * 100
     rates[P_DEATH_REGULAR] = 0.01
     rates[P_DEATH_INFECTED] = 0.1
 
-    rates[P_REGULAR_INGEST_FAST] = 0.001
-    rates[P_REGULAR_INGEST_SLOW] = 0.001
-    rates[P_INFECTED_INGEST_FAST] = 0.001
-    rates[P_INFECTED_INGEST_SLOW] = 0.001
+    rates[P_REGULAR_INGEST_FAST] = 0.01
+    rates[P_REGULAR_INGEST_SLOW] = 0.0
+    rates[P_INFECTED_INGEST_FAST] = 0.01
+    rates[P_INFECTED_INGEST_SLOW] = 0.0
 
-    netw = TBSimpleMultiAgentMetapopulationNetwork_v4(rates, 100, 10, 10)
+    netw = TBMultiAgentMetapopulationNetwork(rates, 100, 10, 0)
 
-    netw.run(100)
+    netw.run(50)
 
-    netw.display(node_contents_species=[MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, BACTERIA_FAST, BACTERIA_SLOW])
+    netw.display(node_contents_species=[BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR])
