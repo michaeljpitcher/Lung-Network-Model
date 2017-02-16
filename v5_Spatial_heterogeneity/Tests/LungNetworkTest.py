@@ -77,7 +77,5 @@ class LungMetapopTestCase(unittest.TestCase):
         # Attributes - TODO: tests when realistic attributes
 
 
-
-
 if __name__ == '__main__':
     unittest.main()
