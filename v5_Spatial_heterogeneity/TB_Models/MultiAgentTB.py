@@ -379,6 +379,7 @@ if __name__ == '__main__':
 
     netw = TBMultiAgentMetapopulationNetwork(rates, 100, 10, 0)
 
-    netw.run(50)
+    #netw.run(50)
 
     netw.display(node_contents_species=[BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR])
+    print netw.node_list[0].position

@@ -8,6 +8,7 @@ from v5_Spatial_heterogeneity.Base.Patch import *
 
 WEIGHT = 'weight'
 
+
 class MetapopulationNetwork(nx.Graph):
     """ Network with added metapopulation dynamics
 
@@ -103,7 +104,7 @@ class MetapopulationNetwork(nx.Graph):
         :param amendment: The integer amount to amend total by (positive or negative)
         :return:
         """
-        assert species in self.species, "update_node: Invalid species"
+        assert species in self.species, "update_node: Invalid species {0}".format(species)
         assert patch.subpopulations[species] + amendment >= 0, "update_node: Count cannot drop below zero"
         patch.subpopulations[species] += amendment
 
@@ -129,11 +130,11 @@ class MetapopulationNetwork(nx.Graph):
             total = 0.0
             for (r, _) in events:
                 total = total + r
+            if total == 0.0:
+                print "0% chance of any event - ending simulation"
+                break
             # Calculate the timestep delta based on the total rates
             x = np.random.random()
-            if total == 0.0:
-                print "0% of any event - ending simulation"
-                break
             dt = (1.0 / total) * math.log(1.0 / x)
             # Calculate which event happens based on their individual rates
             x = np.random.random() * total

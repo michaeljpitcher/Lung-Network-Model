@@ -75,14 +75,14 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
 
         nodes = []
         for id in range(36):
-            # Create a bronchopulmonary segment instance
-            node = BronchopulmonarySegment(id, species_keys, positions[id], ventilations[id], perfusions[id],
-                                           oxygen_tensions[id])
-            # Set up the initial loads
             if id in initial_loads:
                 loads_for_node = initial_loads[id]
-                for species in loads_for_node:
-                    node.subpopulations[species] = loads_for_node[species]
+            else:
+                # Empty dict
+                loads_for_node = dict()
+            # Create a bronchopulmonary segment instance
+            node = BronchopulmonarySegment(id, species_keys, loads_for_node, positions[id], ventilations[id],
+                                           perfusions[id], oxygen_tensions[id])
             # Add to list
             nodes.append(node)
 

@@ -122,7 +122,7 @@ class MetapopulationModelTestCase(unittest.TestCase):
         node = self.network.node_list[5]
         with self.assertRaises(AssertionError) as context:
             self.network.update_node(node, 'R', -1)
-        self.assertTrue("update_node: Invalid species" in context.exception)
+        self.assertTrue("update_node: Invalid species R" in context.exception)
 
     def test_update_node_unacceptable_invalid_amount(self):
         node = self.network.node_list[5]
