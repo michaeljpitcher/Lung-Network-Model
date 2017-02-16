@@ -26,18 +26,18 @@ P_INFECTED_INGEST_SLOW = 'infected_ingests_slow'
 
 class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
     """
-    Intracellular bac
-
     Metapopulation model of TB infection with host interaction.
 
-    4 populations - Fast bacteria, slow bacteria, regular macrophages and infected macrophages.
-    Fast and slow bacteria replicate at their own individual rates, and can migrate to new patches at their own rates
-    and can change between each other.
+    5 populations - Fast bacteria, slow bacteria, intracellular bacteria, regular macrophages and infected macrophages.
+    Fast, slow, intracellular bacteria replicate at their own individual rates, and can migrate to new patches at their
+    own rates and fast and slow can change between each other (based on oxygen in node).
     Macrophages are recruited at defined rate, ingest each type of bacteria at individual rates - ingestion of bacteria
-    causes infection (removal of a regular macrophage and bacteria and addition of an infected macrophage). Death
-    rates can be specified to differ between regular and infected.
+    causes infection (removal of a regular macrophage and bacteria and addition of an infected macrophage and an
+    intracellular bacteria).
+    Death rates can be specified to differ between regular and infected. Death of infection returns bacteria to
+    extracellular (i.e. -1 intracellular and +1 slow)
 
-    Spatial element - bacteria rate of change fast-slow differs based on the oxygen tension attribute of the patch
+    TODO - bacteria can't die so always epidemic. Need adaptive immune system
     """
 
     def __init__(self, rates, number_of_macrophages_per_patch, num_fast_bacteria_to_deposit,
@@ -45,12 +45,23 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         """
 
         :param rates: Rates for events
-        :param number_of_macrophages_per_patch: Number of macrophages in each patch at start
-        :param number_of_bacteria_to_deposit: Number of bacteria to be deposited
-        :param weight_method: Method for weighting edges
+        :param number_of_macrophages_per_patch: Number of macrophages in each node at start
+        :param num_fast_bacteria_to_deposit: Number of fast bacteria to place in a terminal node
+        :param num_slow_bacteria_to_deposit: Number of slow bacteria to place in a terminal node
+        :param weight_method: Method to weight edges
         """
 
-        self.test = "HELLO"
+        # Assert all rates present
+        expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW, P_REPLICATE_INTRACELLULAR,
+                          P_CHANGE_FAST_SLOW, P_CHANGE_SLOW_FAST,
+                          P_MIGRATE_FAST, P_MIGRATE_SLOW,
+                          P_REGULAR_INGEST_FAST, P_REGULAR_INGEST_SLOW,
+                          P_INFECTED_INGEST_FAST, P_INFECTED_INGEST_SLOW,
+                          P_RECRUIT, P_DEATH_REGULAR, P_DEATH_INFECTED]
+
+        for r in expected_rates:
+            assert r in rates.keys(), "initialise: Rate {0} is not present".format(r)
+        self.rates = rates
 
         # Initialise loads
         initial_loads = dict()
@@ -65,11 +76,10 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
                                            weight_method)
 
         # Deposit bacteria based on ventilation
-        # Bacteria deposition
         total_ventilation = sum([patch.ventilation for patch in self.terminal_nodes])
-
         r = np.random.random() * total_ventilation
         running_total = 0
+        # All bacteria are placed in one node
         for node in self.terminal_nodes:
             running_total += node.ventilation
             if running_total > r:
@@ -77,17 +87,6 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
                 node.subpopulations[BACTERIA_SLOW] += num_slow_bacteria_to_deposit
                 break
 
-        # Assert all rates present
-        expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW, P_REPLICATE_INTRACELLULAR,
-                          P_CHANGE_FAST_SLOW, P_CHANGE_SLOW_FAST,
-                          P_MIGRATE_FAST, P_MIGRATE_SLOW,
-                          P_REGULAR_INGEST_FAST, P_REGULAR_INGEST_SLOW,
-                          P_INFECTED_INGEST_FAST, P_INFECTED_INGEST_SLOW,
-                          P_RECRUIT, P_DEATH_REGULAR, P_DEATH_INFECTED]
-
-        for r in expected_rates:
-            assert r in rates.keys(), "initialise: Rate {0} is not present".format(r)
-        self.rates = rates
 
         # Initialise totals
         self.total_f = 0
