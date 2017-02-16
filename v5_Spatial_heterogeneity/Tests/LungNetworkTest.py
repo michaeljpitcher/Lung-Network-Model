@@ -57,7 +57,7 @@ class LungMetapopTestCase(unittest.TestCase):
 
         for (n1,n2) in expected_weights_s:
             expected_weight = expected_weights_s[(n1,n2)]
-            actual_weight = self.network_s.edge[self.network_s.node_list[n1]][self.network_s.node_list[n2]]['weight']
+            actual_weight = self.network_s.edge[self.network_s.node_list[n1]][self.network_s.node_list[n2]]['edge_object']['weight']
             self.assertEqual(expected_weight, actual_weight)
 
         # HORSFIELD
@@ -71,7 +71,7 @@ class LungMetapopTestCase(unittest.TestCase):
 
         for (n1, n2) in expected_weights_h:
             expected_weight = expected_weights_h[(n1, n2)]
-            actual_weight = self.network_h.edge[self.network_h.node_list[n1]][self.network_h.node_list[n2]]['weight']
+            actual_weight = self.network_h.edge[self.network_h.node_list[n1]][self.network_h.node_list[n2]]['edge_object']['weight']
             self.assertEqual(expected_weight, actual_weight)
 
         # Attributes - TODO: tests when realistic attributes

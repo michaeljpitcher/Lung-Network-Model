@@ -6,7 +6,7 @@ import numpy as np
 
 from v5_Spatial_heterogeneity.Base.Patch import *
 
-WEIGHT = 'weight'
+EDGE_OBJECT ='edge_object'
 
 
 class MetapopulationNetwork(nx.Graph):
@@ -35,10 +35,11 @@ class MetapopulationNetwork(nx.Graph):
 
         # Add edges
         for (node1_index, node2_index) in edges:
-            # Get weight from values
-            weight_ = edges[(node1_index, node2_index)]
-            self.add_edge(self.node_list[node1_index], self.node_list[node2_index])
-            self.edge[self.node_list[node1_index]][self.node_list[node2_index]][WEIGHT] = weight_
+            node1 = self.node_list[node1_index]
+            node2 = self.node_list[node2_index]
+            self.add_edge(node1, node2)
+            object = edges[(node1_index, node2_index)]
+            self.edge[node1][node2][EDGE_OBJECT] = object
 
         # Degree is stored within each Patch (to speed up degree referencing)
         for node in self.nodes():
@@ -83,7 +84,7 @@ class MetapopulationNetwork(nx.Graph):
         if show_edge_labels:
             edge_labels = {}
             for n1, n2, data in self.edges(data=True):
-                edge_labels[(n1, n2)] = data[WEIGHT]
+                edge_labels[(n1, n2)] = data[EDGE_OBJECT]
             nx.draw_networkx_edge_labels(self, pos, edge_labels=edge_labels, font_family='sans-serif')
 
         plt.show()

@@ -302,14 +302,14 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
             running_total += node.subpopulations[metabolism] * node.degree
             if running_total > r:
                 # Find a new patch based on the weights of edges from node
-                total_weights = sum(edge_data[WEIGHT] for _, _, edge_data in self.edges(node, data=True))
+                total_weights = sum(edge_data[EDGE_OBJECT][WEIGHT] for _, _, edge_data in self.edges(node, data=True))
                 r2 = np.random.random() * total_weights
                 running_total_weights = 0
                 # Process all neighbours, adding edge weights until r2 exceeded
                 neighbours = sorted(self.neighbors(node), key=lambda x: x.id, reverse=False)
                 for neighbour in neighbours:
                     edge = self.edge[node][neighbour]
-                    running_total_weights += edge[WEIGHT]
+                    running_total_weights += edge[EDGE_OBJECT][WEIGHT]
                     if running_total_weights > r2:
                         # Move bacteria from node to neighbour
                         self.update_node(node, metabolism, -1)

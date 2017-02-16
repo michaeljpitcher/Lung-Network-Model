@@ -31,7 +31,6 @@ class TBFastAndSlowTestCase(unittest.TestCase):
             self.assertEqual(self.network.rates[a], self.rates[a])
 
         for a in self.loads_fast:
-            print a, self.network.node_list[a].subpopulations
             self.assertEqual(self.network.node_list[a].subpopulations[FAST], self.loads_fast[a])
         for a in self.loads_slow:
             self.assertEqual(self.network.node_list[a].subpopulations[SLOW], self.loads_slow[a])

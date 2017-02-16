@@ -24,8 +24,13 @@ class MetapopulationModelTestCase(unittest.TestCase):
             p = Patch(i, self.species, self.initial_loads[i], self.node_positions[i])
             nodes.append(p)
 
-        self.edges = {(0, 1): 1, (1, 2): 1, (2, 3): 1, (3, 4): 1, (4, 5): 1, (5, 6): 1, (6, 7): 1, (7, 8): 1,
-                      (8, 9): 10, (0, 5): 1, (0, 6): 1}
+        self.edges = dict()
+        edges_to_add = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (0, 5), (0, 6)]
+        for (n1, n2) in edges_to_add:
+            self.edges[(n1,n2)] = dict()
+            self.edges[(n1, n2)]['weight'] = 1
+        self.edges[(2, 3)]['weight'] = 10
+        self.edges[(6, 7)]['weight'] = 16
 
         self.time_limit = 10
         self.network = MetapopulationNetwork(nodes,self.edges,self.species)
@@ -46,8 +51,8 @@ class MetapopulationModelTestCase(unittest.TestCase):
             node1 = self.network.node_list[n1]
             node2 = self.network.node_list[n2]
             self.assertTrue((node1, node2) in self.network.edges() or (node2, node1) in self.network.edges())
-            expected_weight = self.edges[(n1, n2)]
-            self.assertEqual(expected_weight, self.network.edge[node1][node2]['weight'])
+            expected_weight = self.edges[(n1, n2)]['weight']
+            self.assertEqual(expected_weight, self.network.edge[node1][node2]['edge_object']['weight'])
         # Initial infections
         for n in range(10):
             patch = self.network.node_list[n]
