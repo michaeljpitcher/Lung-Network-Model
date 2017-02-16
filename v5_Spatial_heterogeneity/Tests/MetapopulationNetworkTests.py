@@ -1,35 +1,44 @@
 import unittest
 
-from v5_Spatial_heterogeneity import Patch
-from v5_Spatial_heterogeneity.Base import MetapopulationNetwork as mn, Patch
+from v5_Spatial_heterogeneity.Base.Patch import Patch
+from v5_Spatial_heterogeneity.Base.MetapopulationNetwork import MetapopulationNetwork
 
 
 class MetapopulationModelTestCase(unittest.TestCase):
     def setUp(self):
         node_count = 10
-        self.edges = {(0, 1): 1, (1, 2): 1, (2, 3): 1, (3, 4): 1, (4, 5): 1, (5, 6): 1, (6, 7): 1, (7, 8): 1,
-                      (8, 9): 10, (0, 5): 1, (0, 6): 1}
         self.species = ['F', 'S']
         self.initial_loads = dict()
-        self.initial_loads[0] = {'F': 10, 'S': 2}
-        self.initial_loads[3] = {'F': 1}
-        self.initial_loads[9] = {'S': 1}
+        for i in range(10):
+            self.initial_loads[i] = {'F': 0, 'S': 0}
+
+        self.initial_loads[0]['F'] = 10
+        self.initial_loads[0]['S'] = 2
+        self.initial_loads[3]['F'] = 1
+        self.initial_loads[9]['S'] = 1
         self.node_positions = {}
         for i in range(10):
             self.node_positions[i] = (i / 2.0, i / 2.0)
+        nodes = []
+        for i in range(node_count):
+            p = Patch(i, self.species, self.initial_loads[i], self.node_positions[i])
+            nodes.append(p)
+
+        self.edges = {(0, 1): 1, (1, 2): 1, (2, 3): 1, (3, 4): 1, (4, 5): 1, (5, 6): 1, (6, 7): 1, (7, 8): 1,
+                      (8, 9): 10, (0, 5): 1, (0, 6): 1}
+
         self.time_limit = 10
-        self.network = mn.MetapopulationNetwork(node_count, self.edges, self.species, self.initial_loads,
-                                                self.node_positions)
+        self.network = MetapopulationNetwork(nodes,self.edges,self.species)
 
     def test_initialisation(self):
         # Nodes
         self.assertEqual(len(self.network.node_list), 10)
         self.assertItemsEqual(self.network.node_list.keys(), range(10))
         for i in range(10):
-            self.assertTrue(isinstance(self.network.node_list[i], Patch.Patch))
+            self.assertTrue(isinstance(self.network.node_list[i], Patch))
         self.assertEqual(len(self.network.nodes()), 10)
         for i in range(10):
-            self.assertTrue(isinstance(self.network.nodes()[i], Patch.Patch))
+            self.assertTrue(isinstance(self.network.nodes()[i], Patch))
             id = self.network.nodes()[i].id
             self.assertEqual(self.network.nodes()[i], self.network.node_list[id])
         # Edges & weights
@@ -81,12 +90,11 @@ class MetapopulationModelTestCase(unittest.TestCase):
         self.assertItemsEqual(self.network.data[0.5].keys(), range(10))
         for n in self.network.data[0.5]:
             for c in self.species:
-                if n in self.initial_loads and c in self.initial_loads[n]:
+                if n!= 5 or c != 'F':
                     self.assertEqual(self.network.data[0.5][n][c], self.initial_loads[n][c])
-                elif n == 5 and c == 'F':
-                    self.assertEqual(self.network.data[0.5][n][c], 66)
                 else:
-                    self.assertEqual(self.network.data[0.5][n][c], 0.0)
+                    self.assertEqual(self.network.data[0.5][n][c], 66)
+
 
     def test_update_node_acceptable(self):
         # Make infected

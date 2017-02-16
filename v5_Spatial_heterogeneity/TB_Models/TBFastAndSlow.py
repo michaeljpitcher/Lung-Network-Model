@@ -1,4 +1,4 @@
-from v5_Spatial_heterogeneity.Base.LungMetapopulationNetwork import *
+from v5_Spatial_heterogeneity.Lung_Models.LungMetapopulationNetwork import *
 
 FAST = 'F'
 SLOW = 'S'
@@ -68,8 +68,8 @@ class TBFastSlowMetapopulationNetwork(LungMetapopulationNetwork):
 
         # Change is based on total number of bacteria * oxygen tension of patch where they reside
         # TODO - check use of O2 tension & prob - maybe should just be a constant event
-        self.total_f_O2 = sum([node.subpopulations[FAST] * (1/node.attributes[OXYGEN_TENSION]) for node in self.nodes()])
-        self.total_s_O2 = sum([node.subpopulations[SLOW] * node.attributes[OXYGEN_TENSION] for node in self.nodes()])
+        self.total_f_O2 = sum([node.subpopulations[FAST] * (1/node.oxygen_tension) for node in self.nodes()])
+        self.total_s_O2 = sum([node.subpopulations[SLOW] * node.oxygen_tension for node in self.nodes()])
 
     def events(self):
         """
@@ -213,4 +213,4 @@ if __name__ == '__main__':
     limit = 50
     model.run(limit)
 
-    model.display()
+    model.display([FAST, SLOW])

@@ -1,6 +1,7 @@
 import unittest
 
-from v5_Spatial_heterogeneity.Base import LungMetapopulationNetwork
+from v5_Spatial_heterogeneity.Lung_Models.LungMetapopulationNetwork import LungMetapopulationNetwork
+from v5_Spatial_heterogeneity.Lung_Models.BronchopulmonarySegment import BronchopulmonarySegment
 
 
 class LungMetapopTestCase(unittest.TestCase):
@@ -15,11 +16,16 @@ class LungMetapopTestCase(unittest.TestCase):
         loads[10] = dict()
         loads[10]['b'] = 3
 
-        self.network_s = LungMetapopulationNetwork.LungMetapopulationNetwork(species, loads, 'stahler')
-        self.network_h = LungMetapopulationNetwork.LungMetapopulationNetwork(species, loads, 'horsfield')
+        self.network_s = LungMetapopulationNetwork(species, loads, 'stahler')
+        self.network_h = LungMetapopulationNetwork(species, loads, 'horsfield')
 
     def test_initialise(self):
         self.assertEqual(len(self.network_h.nodes()), 36)
+
+        for i in range(36):
+            self.assertTrue(isinstance(self.network_h.node_list[i], BronchopulmonarySegment))
+            self.assertTrue(isinstance(self.network_s.node_list[i], BronchopulmonarySegment))
+
         self.assertEqual(len(self.network_h.edges()), 35)
 
         expected_edges = [(0, 1), (1, 2), (2, 3), (1, 4), (2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11),

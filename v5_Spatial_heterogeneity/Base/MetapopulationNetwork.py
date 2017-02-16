@@ -17,48 +17,20 @@ class MetapopulationNetwork(nx.Graph):
     contain attributes - resulting in spatial heterogeneity over the environment.
     """
 
-    def __init__(self, node_count, edges, species_keys, initial_loads, patch_attributes,
-                 node_positions=None):
-        """
+    def __init__(self, nodes, edges, species_keys):
 
-        :param node_count: Number of nodes
-        :param edges: Edges between specific nodes - dictionary keys=(x,y) values where 0 <= x, y < node_count, x!=y,
-               values=weight for edge
-        :param species_keys: List of species that will be present in patches
-        :param initial_loads: Dictionary defining how many of each species reside in each compartment initially.
-               keys=node id, values= dictionary, keys=species, values=count of species
-        :param patch_attributes: Dictionary of environment attributes for each patch. Keys=Node id, values=dictionary,
-               keys=attribute, values=attribute value for patch
-        :param node_positions: Dictionary of positions for each node, keys=node id, values=(x,y) coordinates for patch
-        """
         # Create a NetworkX graph
         nx.Graph.__init__(self)
         self.species = species_keys
         # Creating patches
         # Node list is used for obtaining a patch via the ID
         self.node_list = {}
-        for node_id in range(node_count):
-            # Set position
-            if node_positions is not None:
-                position = node_positions[node_id]
-            else:
-                # Set random if not defined
-                position = (np.random.uniform(0, 10))
-            # Check for each species if the count for this node has been specified, else set to 0
-            subpopulations_of_patch = dict()
-            for species in species_keys:
-                # Initial count of species in this node has been defined
-                if node_id in initial_loads and species in initial_loads[node_id]:
-                    subpopulations_of_patch[species] = initial_loads[node_id][species]
-                else:
-                    # Not defined, so set to 0
-                    subpopulations_of_patch[species] = 0
-            # Create patch
-            p = Patch(node_id, subpopulations_of_patch, patch_attributes[node_id], position)
+        for node in nodes:
+            assert isinstance(node, Patch), "Node {0} is not instance of Patch class".format(node.id)
             # Add to graph
-            self.add_node(p)
+            self.add_node(node)
             # Add to list
-            self.node_list[node_id] = p
+            self.node_list[node.id] = node
 
         # Add edges
         for (node1_index, node2_index) in edges:

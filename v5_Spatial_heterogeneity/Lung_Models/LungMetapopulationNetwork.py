@@ -1,10 +1,9 @@
 from v5_Spatial_heterogeneity.Base.MetapopulationNetwork import *
+from v5_Spatial_heterogeneity.Lung_Models.BronchopulmonarySegment import BronchopulmonarySegment
 
-VENTILATION = 'v'
-PERFUSION = 'q'
-OXYGEN_TENSION = 'v/q'
 HORSFIELD = 'horsfield'
 STAHLER = 'stahler'
+
 
 class LungMetapopulationNetwork(MetapopulationNetwork):
     """
@@ -20,6 +19,73 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                keys=node id, values= dictionary, keys=species, values=count of species
         :param weight_method: Method to weight the edges (Stahler or Horsfield)
         """
+
+        # Node positions TODO: currently done by eye
+        positions = dict()
+        positions[0] = (5, 10)
+        positions[1] = (5, 8)
+        positions[2] = (4, 7)
+        positions[3] = (3.5, 5)
+        positions[4] = (6, 6)
+        positions[5] = (3, 8)
+        positions[6] = (2.75, 8.5)
+        positions[7] = (2.5, 5)
+        positions[8] = (4, 4)
+        positions[9] = (3.5, 3)
+        positions[10] = (3, 2.5)
+        positions[11] = (2.5, 2)
+        positions[12] = (7, 7)
+        positions[13] = (7.5, 8)
+        positions[14] = (8, 7)
+        positions[15] = (6.5, 5)
+        positions[16] = (7.5, 4)
+        positions[17] = (8, 3.5)
+        positions[18] = (2.5, 7.5)
+        positions[19] = (2.5, 9)
+        positions[20] = (3, 9)
+        positions[21] = (2, 5.5)
+        positions[22] = (2, 4)
+        positions[23] = (3.5, 4.25)
+        positions[24] = (4, 2)
+        positions[25] = (2.5, 3.25)
+        positions[26] = (1.5, 1)
+        positions[27] = (2.75, 1)
+        positions[28] = (7.25, 8.5)
+        positions[29] = (8, 8.5)
+        positions[30] = (8.5, 7.5)
+        positions[31] = (8.5, 6.5)
+        positions[32] = (7, 5.5)
+        positions[33] = (7.5, 3)
+        positions[34] = (8.5, 4.25)
+        positions[35] = (8.5, 3)
+
+        ventilations = dict()
+        perfusions = dict()
+        oxygen_tensions = dict()
+
+        # Process each node
+        for node_id in range(36):
+            # TODO - find out specifics
+            # V - Ventilation - O2 reaching the alveolar tissue
+            ventilations[node_id] = 1.0 / positions[node_id][1]
+            # Q - Perfusion - blood that reaches the alveolar tissue
+            perfusions[node_id] = 1.0 / positions[node_id][1]
+            # V/Q - Ventilation Perfusion ratio
+            oxygen_tensions[node_id] = ventilations[node_id] / perfusions[node_id]
+
+        nodes = []
+        for id in range(36):
+            # Create a bronchopulmonary segment instance
+            node = BronchopulmonarySegment(id, species_keys, positions[id], ventilations[id], perfusions[id],
+                                           oxygen_tensions[id])
+            # Set up the initial loads
+            if id in initial_loads:
+                loads_for_node = initial_loads[id]
+                for species in loads_for_node:
+                    node.subpopulations[species] = loads_for_node[species]
+            # Add to list
+            nodes.append(node)
+
         # List of edges - names give rough approximation of which parts of anatomy are represented
         # Trachea
         edges = [(0, 1)]
@@ -36,51 +102,8 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
         for e in edges:
             edge_weights[e] = 0.0
 
-        # Node positions TODO: currently done by eye
-        pos = dict()
-        pos[0] = (5, 10)
-        pos[1] = (5, 8)
-        pos[2] = (4, 7)
-        pos[3] = (3.5, 5)
-        pos[4] = (6, 6)
-        pos[5] = (3, 8)
-        pos[6] = (2.75, 8.5)
-        pos[7] = (2.5, 5)
-        pos[8] = (4, 4)
-        pos[9] = (3.5, 3)
-        pos[10] = (3, 2.5)
-        pos[11] = (2.5, 2)
-        pos[12] = (7, 7)
-        pos[13] = (7.5, 8)
-        pos[14] = (8, 7)
-        pos[15] = (6.5, 5)
-        pos[16] = (7.5, 4)
-        pos[17] = (8, 3.5)
-        pos[18] = (2.5, 7.5)
-        pos[19] = (2.5, 9)
-        pos[20] = (3, 9)
-        pos[21] = (2, 5.5)
-        pos[22] = (2, 4)
-        pos[23] = (3.5, 4.25)
-        pos[24] = (4, 2)
-        pos[25] = (2.5, 3.25)
-        pos[26] = (1.5, 1)
-        pos[27] = (2.75, 1)
-        pos[28] = (7.25, 8.5)
-        pos[29] = (8, 8.5)
-        pos[30] = (8.5, 7.5)
-        pos[31] = (8.5, 6.5)
-        pos[32] = (7, 5.5)
-        pos[33] = (7.5, 3)
-        pos[34] = (8.5, 4.25)
-        pos[35] = (8.5, 3)
-
-        # Calculate environment attributes of each patch
-        patch_attributes = self.compute_attributes(pos)
-
         # Create the network (allows use of NetworkX functions like neighbours for calculating edge weights)
-        MetapopulationNetwork.__init__(self, 36, edge_weights, species_keys, initial_loads,
-                                       patch_attributes, pos)
+        MetapopulationNetwork.__init__(self, nodes, edge_weights, species_keys)
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0
@@ -88,32 +111,6 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
         self.non_terminal_nodes = [n for n in self.node_list.values() if n.degree != 1]
         # Calculate edge weights
         self.set_weights(weight_method)
-
-    def compute_attributes(self, positions):
-        """
-        Calculate the environment attributes for each patch.
-
-        Determines the ventilation, perfusion and ventilation/perfusion ratio for each patch based on it's position
-        vertically within the lung
-        :param positions: Dictionary of positions, keys=node id, values=(x,y) coordinates of patch (only y needed)
-        :return: Dictionary of attributes, keys = node id, values=Dictionary, keys=attribute, values=attribute value
-                 for patch
-        """
-        # Initialise attributes
-        patch_attributes = dict()
-        # Process each node
-        for node_id in range(len(positions)):
-            # Create a new record in attribute dictionary
-            patch_attributes[node_id] = dict()
-            # TODO - find out specifics
-            # V - Ventilation - O2 reaching the alveolar tissue
-            patch_attributes[node_id][VENTILATION] = 1.0 / positions[node_id][1]
-            # Q - Perfusion - blood that reaches the alveolar tissue
-            patch_attributes[node_id][PERFUSION] = 1.0 / positions[node_id][1]
-            # V/Q - Ventilation Perfusion ratio
-            patch_attributes[node_id][OXYGEN_TENSION] = patch_attributes[node_id][VENTILATION] / \
-                                                          patch_attributes[node_id][PERFUSION]
-        return patch_attributes
 
     def set_weights(self, weight_method):
         """

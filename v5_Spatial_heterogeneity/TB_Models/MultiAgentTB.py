@@ -1,4 +1,4 @@
-from v5_Spatial_heterogeneity.Base.LungMetapopulationNetwork import *
+from v5_Spatial_heterogeneity.Lung_Models.LungMetapopulationNetwork import *
 
 BACTERIA_FAST = 'bac_fast'
 BACTERIA_SLOW = 'bac_slow'
@@ -66,12 +66,12 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
 
         # Deposit bacteria based on ventilation
         # Bacteria deposition
-        total_ventilation = sum([patch.attributes[VENTILATION] for patch in self.terminal_nodes])
+        total_ventilation = sum([patch.ventilation for patch in self.terminal_nodes])
 
         r = np.random.random() * total_ventilation
         running_total = 0
         for node in self.terminal_nodes:
-            running_total += node.attributes[VENTILATION]
+            running_total += node.ventilation
             if running_total > r:
                 node.subpopulations[BACTERIA_FAST] += num_fast_bacteria_to_deposit
                 node.subpopulations[BACTERIA_SLOW] += num_slow_bacteria_to_deposit
@@ -136,8 +136,8 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
             # TODO - check usage of degree
             self.total_f_degree += node.subpopulations[BACTERIA_FAST] * node.degree
             self.total_s_degree += node.subpopulations[BACTERIA_SLOW] * node.degree
-            self.total_f_o2 += node.subpopulations[BACTERIA_FAST] * (1/node.attributes[OXYGEN_TENSION])
-            self.total_s_o2 += node.subpopulations[BACTERIA_SLOW] * node.attributes[OXYGEN_TENSION]
+            self.total_f_o2 += node.subpopulations[BACTERIA_FAST] * (1/node.oxygen_tension)
+            self.total_s_o2 += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
 
     def events(self):
         """
@@ -338,7 +338,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         running_total = 0
         for id in self.node_list:
             node = self.node_list[id]
-            running_total += node.subpopulations[old_metabolism] * node.attributes[OXYGEN_TENSION]
+            running_total += node.subpopulations[old_metabolism] * node.oxygen_tension
             if running_total >= r:
                 # Reduce old count by 1 and increment new count by 1
                 self.update_node(node, new_metabolism, 1)

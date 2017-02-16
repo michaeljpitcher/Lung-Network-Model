@@ -1,8 +1,9 @@
-from v5_Spatial_heterogeneity.Base.LungMetapopulationNetwork import *
+from v5_Spatial_heterogeneity.Lung_Models.LungMetapopulationNetwork import *
 
-FAST = 'fast'
-SLOW = 'slow'
-MACROPHAGE = 'macrophage'
+BACTERIA_FAST = 'bac_fast'
+BACTERIA_SLOW = 'bac_slow'
+MACROPHAGE_REGULAR = 'mac_regular'
+MACROPHAGE_INFECTED = 'mac_infected'
 
 P_REPLICATE_FAST = 'replication_fast'
 P_REPLICATE_SLOW = 'replication_slow'
@@ -12,19 +13,25 @@ P_MIGRATE_FAST = 'fast_migrate'
 P_MIGRATE_SLOW = 'slow_migrate'
 
 P_RECRUIT = 'recruit_macrophage'
-P_DEATH = 'mac_death'
+P_DEATH_REGULAR = 'mac_regular_death'
+P_DEATH_INFECTED = 'mac_infected_death'
 
-P_INGEST_FAST = 'mac_ingests_fast'
-P_INGEST_SLOW = 'mac_ingests_slow'
+P_REGULAR_INGEST_FAST = 'regular_ingests_fast'
+P_REGULAR_INGEST_SLOW = 'regular_ingests_slow'
+P_INFECTED_INGEST_FAST = 'infected_ingests_fast'
+P_INFECTED_INGEST_SLOW = 'infected_ingests_slow'
 
 
-class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
+class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
     """
     Metapopulation model of TB infection with host interaction.
 
-    3 populations - Fast bacteria, slow bacteria and macrophages. Fast and slow bacteria replicate at their own
-    individual rates, and can migrate to new patches at their own rates and can change between each other. Macrophages
-    are recruited at defined rate, die at a defined rate and ingest each type of bacteria at individual rates.
+    4 populations - Fast bacteria, slow bacteria, regular macrophages and infected macrophages.
+    Fast and slow bacteria replicate at their own individual rates, and can migrate to new patches at their own rates
+    and can change between each other.
+    Macrophages are recruited at defined rate, ingest each type of bacteria at individual rates - ingestion of bacteria
+    causes infection (removal of a regular macrophage and bacteria and addition of an infected macrophage). Death
+    rates can be specified to differ between regular and infected.
 
     Spatial element - bacteria rate of change fast-slow differs based on the oxygen tension attribute of the patch
     """
@@ -34,36 +41,38 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         """
 
         :param rates: Rates for events
-        :param number_of_macrophages_per_patch: Amount of macrophages to start in each patch
-        :param number_of_fast_bacteria: Fast bacteria to be deposited
-        :param number_of_slow_bacteria: Slow bacteria to be deposited
+        :param number_of_macrophages_per_patch: Number of macrophages in each patch at start
+        :param number_of_fast_bacteria: Number of fast bacteria to be deposited
+        :param number_of_slow_bacteria: Number of slow bacteria to be deposited
         :param weight_method: Method for weighting edges
         """
 
-        # Initialise initial loads
+        # Initialise loads
         initial_loads = dict()
         for id in range(36):
             initial_loads[id] = dict()
             # Set initial macrophage levels
-            initial_loads[id][MACROPHAGE] = number_of_macrophages_per_patch
+            initial_loads[id][MACROPHAGE_REGULAR] = number_of_macrophages_per_patch
 
         # Create the network
-        LungMetapopulationNetwork.__init__(self, [FAST, SLOW, MACROPHAGE], initial_loads, weight_method)
+        LungMetapopulationNetwork.__init__(self, [BACTERIA_FAST, BACTERIA_SLOW, MACROPHAGE_REGULAR,
+                                                  MACROPHAGE_INFECTED], initial_loads, weight_method)
 
         # Deposit bacteria based on ventilation
         # Bacteria deposition
-        total_ventilation = sum([patch.attributes[VENTILATION] for patch in self.terminal_nodes])
+        total_ventilation = sum([node.ventilation for node in self.terminal_nodes])
         for i in range(number_of_fast_bacteria):
-            self.deposit_bacteria(total_ventilation, FAST)
+            self.deposit_bacteria(total_ventilation, BACTERIA_FAST)
         for i in range(number_of_slow_bacteria):
-            self.deposit_bacteria(total_ventilation, SLOW)
+            self.deposit_bacteria(total_ventilation, BACTERIA_SLOW)
 
         # Assert all rates present
         expected_rates = [P_REPLICATE_FAST, P_REPLICATE_SLOW,
                           P_CHANGE_FAST_SLOW, P_CHANGE_SLOW_FAST,
                           P_MIGRATE_FAST, P_MIGRATE_SLOW,
-                          P_INGEST_FAST, P_INGEST_SLOW,
-                          P_RECRUIT, P_DEATH]
+                          P_REGULAR_INGEST_FAST, P_REGULAR_INGEST_SLOW,
+                          P_INFECTED_INGEST_FAST, P_INFECTED_INGEST_SLOW,
+                          P_RECRUIT, P_DEATH_REGULAR, P_DEATH_INFECTED]
 
         for r in expected_rates:
             assert r in rates.keys(), "initialise: Rate {0} is not present".format(r)
@@ -72,9 +81,12 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         # Initialise totals
         self.total_f = 0
         self.total_s = 0
-        self.total_mac = 0
-        self.total_mac_fast = 0
-        self.total_mac_slow = 0
+        self.total_mac_regular = 0
+        self.total_mac_infected = 0
+        self.total_regular_fast = 0
+        self.total_regular_slow = 0
+        self.total_infected_fast = 0
+        self.total_infected_slow = 0
         self.total_f_degree = 0
         self.total_s_degree = 0
         self.total_f_o2 = 0.0
@@ -84,7 +96,7 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         r = np.random.random() * total_ventilation
         running_total = 0
         for node in self.terminal_nodes:
-            running_total += node.attributes[VENTILATION]
+            running_total += node.ventilation
             if running_total > r:
                 node.subpopulations[metabolism] += 1
                 return
@@ -96,26 +108,31 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         """
         self.total_f = 0
         self.total_s = 0
-        self.total_mac = 0
-        self.total_mac_fast = 0
-        self.total_mac_slow = 0
+        self.total_mac_regular = 0
+        self.total_mac_infected = 0
+        self.total_regular_fast = 0
+        self.total_regular_slow = 0
+        self.total_infected_fast = 0
+        self.total_infected_slow = 0
         self.total_f_degree = 0
         self.total_s_degree = 0
         self.total_f_o2 = 0.0
         self.total_s_o2 = 0.0
 
         for node in self.node_list.values():
-            self.total_f += node.subpopulations[FAST]
-            self.total_s += node.subpopulations[SLOW]
-            self.total_mac += node.subpopulations[MACROPHAGE]
-            self.total_mac_fast += node.subpopulations[FAST] * node.subpopulations[MACROPHAGE]
-            self.total_mac_slow += node.subpopulations[SLOW] * node.subpopulations[MACROPHAGE]
+            self.total_f += node.subpopulations[BACTERIA_FAST]
+            self.total_s += node.subpopulations[BACTERIA_SLOW]
+            self.total_mac_regular += node.subpopulations[MACROPHAGE_REGULAR]
+            self.total_mac_infected += node.subpopulations[MACROPHAGE_INFECTED]
+            self.total_regular_fast += node.subpopulations[BACTERIA_FAST] * node.subpopulations[MACROPHAGE_REGULAR]
+            self.total_regular_slow += node.subpopulations[BACTERIA_SLOW] * node.subpopulations[MACROPHAGE_REGULAR]
+            self.total_infected_fast += node.subpopulations[BACTERIA_FAST] * node.subpopulations[MACROPHAGE_INFECTED]
+            self.total_infected_slow += node.subpopulations[BACTERIA_SLOW] * node.subpopulations[MACROPHAGE_INFECTED]
             # TODO - check usage of degree
-            self.total_f_degree += node.subpopulations[FAST] * node.degree
-            self.total_s_degree += node.subpopulations[SLOW] * node.degree
-            self.total_f_o2 += node.subpopulations[FAST] * (1/node.attributes[OXYGEN_TENSION])
-            self.total_s_o2 += node.subpopulations[SLOW] * node.attributes[OXYGEN_TENSION]
-            pass
+            self.total_f_degree += node.subpopulations[BACTERIA_FAST] * node.degree
+            self.total_s_degree += node.subpopulations[BACTERIA_SLOW] * node.degree
+            self.total_f_o2 += node.subpopulations[BACTERIA_FAST] * (1/node.oxygen_tension)
+            self.total_s_o2 += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
 
     def events(self):
         """
@@ -128,28 +145,37 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         self.update_totals()
 
         # Replication - total number of bacteria of metabolism * prob of replication
-        events.append((self.total_f * self.rates[P_REPLICATE_FAST], lambda f: self.replicate(FAST)))
-        events.append((self.total_s * self.rates[P_REPLICATE_SLOW], lambda f: self.replicate(SLOW)))
+        events.append((self.total_f * self.rates[P_REPLICATE_FAST], lambda f: self.replicate(BACTERIA_FAST)))
+        events.append((self.total_s * self.rates[P_REPLICATE_SLOW], lambda f: self.replicate(BACTERIA_SLOW)))
 
         # Metabolism change - sum of (number of bacteria of metabolism in patch * o2 tension) * prob of change
         # TODO - check if this is ok
-        events.append((self.total_f_o2 * self.rates[P_CHANGE_FAST_SLOW], lambda f: self.change(SLOW)))
-        events.append((self.total_s_o2 * self.rates[P_CHANGE_SLOW_FAST], lambda f: self.change(FAST)))
+        events.append((self.total_f_o2 * self.rates[P_CHANGE_FAST_SLOW], lambda f: self.change(BACTERIA_SLOW)))
+        events.append((self.total_s_o2 * self.rates[P_CHANGE_SLOW_FAST], lambda f: self.change(BACTERIA_FAST)))
 
         # Migrate - sum of (number of bacteria of metabolism in patch * degree of patch) * prob of migration
-        events.append((self.total_f_degree * self.rates[P_MIGRATE_FAST], lambda f: self.migrate(FAST)))
-        events.append((self.total_s_degree * self.rates[P_MIGRATE_SLOW], lambda f: self.migrate(SLOW)))
+        events.append((self.total_f_degree * self.rates[P_MIGRATE_FAST], lambda f: self.migrate(BACTERIA_FAST)))
+        events.append((self.total_s_degree * self.rates[P_MIGRATE_SLOW], lambda f: self.migrate(BACTERIA_SLOW)))
 
         # Recruit mac - num of nodes * prob of recruit
         # TODO - this should probably be based on the level of infection
         events.append((len(self.nodes()) * self.rates[P_RECRUIT], lambda f: self.recruit_mac()))
 
         # Death of mac - total number of macs * prob of death
-        events.append((self.total_mac * self.rates[P_DEATH], lambda f: self.death_mac()))
+        events.append((self.total_mac_regular * self.rates[P_DEATH_REGULAR],
+                       lambda f: self.death_mac(MACROPHAGE_REGULAR)))
+        events.append((self.total_mac_infected * self.rates[P_DEATH_INFECTED],
+                       lambda f: self.death_mac(MACROPHAGE_INFECTED)))
 
         # Mac ingest - sum of (number of bacteria of metabolism in patch * num of macrophages in patch) * prob of ingest
-        events.append((self.total_mac_fast * self.rates[P_INGEST_FAST], lambda f: self.ingest(FAST)))
-        events.append((self.total_mac_slow * self.rates[P_INGEST_SLOW], lambda f: self.ingest(SLOW)))
+        events.append((self.total_regular_fast * self.rates[P_REGULAR_INGEST_FAST],
+                       lambda f: self.ingest(BACTERIA_FAST, MACROPHAGE_REGULAR)))
+        events.append((self.total_regular_slow * self.rates[P_REGULAR_INGEST_SLOW],
+                       lambda f: self.ingest(BACTERIA_SLOW, MACROPHAGE_REGULAR)))
+        events.append((self.total_infected_fast * self.rates[P_INFECTED_INGEST_FAST],
+                       lambda f: self.ingest(BACTERIA_FAST, MACROPHAGE_INFECTED)))
+        events.append((self.total_infected_slow * self.rates[P_INFECTED_INGEST_SLOW],
+                       lambda f: self.ingest(BACTERIA_SLOW, MACROPHAGE_INFECTED)))
 
         return events
 
@@ -160,12 +186,12 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         :return:
         """
         # Set r based on metabolism
-        if metabolism == FAST:
+        if metabolism == BACTERIA_FAST:
             r = np.random.random() * self.total_f
-        elif metabolism == SLOW:
+        elif metabolism == BACTERIA_SLOW:
             r = np.random.random() * self.total_s
         else:
-            raise Exception, "Invalid replication: {0} metabolism not valid".format(type)
+            raise Exception, "Replication: {0} metabolism not valid".format(type)
 
         # Check nodes until total bac exceeds r
         running_total = 0
@@ -179,27 +205,36 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
                 self.update_node(node, metabolism, 1)
                 return
 
-    def ingest(self, metabolism):
+    def ingest(self, metabolism, mac_state):
         """
         A macrophage ingests a bacteria, reducing the count for given metabolism by 1
         :param metabolism:
         :return:
         """
         # Set r based on metabolism count
-        if metabolism == FAST:
-            r = np.random.random() * self.total_mac_fast
-        elif metabolism == SLOW:
-            r = np.random.random() *self.total_mac_slow
+        if metabolism == BACTERIA_FAST:
+            if mac_state == MACROPHAGE_REGULAR:
+                r = np.random.random() * self.total_regular_fast
+            else:
+                r = np.random.random() * self.total_infected_fast
+        elif metabolism == BACTERIA_SLOW:
+            if mac_state == MACROPHAGE_REGULAR:
+                r = np.random.random() * self.total_regular_slow
+            else:
+                r = np.random.random() * self.total_infected_slow
         else:
-            raise Exception, "Invalid ingest: bacteria {0} not valid".format(metabolism)
+            raise Exception, "Ingest: bacteria {0} not valid".format(metabolism)
 
         # Count through node until count exceeds r
         running_total = 0
-        for node in self.nodes():
-            running_total += node.subpopulations[metabolism] * node.subpopulations[MACROPHAGE]
+        for node in self.node_list.values():
+            running_total += node.subpopulations[metabolism] * node.subpopulations[mac_state]
             if running_total >= r:
                 # Reduce the count for metabolism by 1
                 self.update_node(node, metabolism, -1)
+                if mac_state == MACROPHAGE_REGULAR:
+                    self.update_node(node, MACROPHAGE_REGULAR, -1)
+                    self.update_node(node, MACROPHAGE_INFECTED, 1)
                 return
 
     def recruit_mac(self):
@@ -210,21 +245,25 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         # TODO - Based on level of infection?
         id = np.random.randint(0, len(self.nodes()))
         node = self.node_list[id]
-        self.update_node(node, MACROPHAGE, 1)
+        self.update_node(node, MACROPHAGE_REGULAR, 1)
 
-    def death_mac(self):
+    def death_mac(self, state):
         """
         A macrophage dies
         :return:
         """
         # Generate r based on total mac numbers
-        r = np.random.random() * self.total_mac
+        if state == MACROPHAGE_REGULAR:
+            r = np.random.random() * self.total_mac_regular
+        else:
+            r = np.random.random() * self.total_mac_infected
+
         running_total = 0
         for node in self.node_list.values():
-            running_total += node.subpopulations[MACROPHAGE]
+            running_total += node.subpopulations[state]
             if running_total >= r:
                 # reduce the macrophage count by 1
-                self.update_node(node, MACROPHAGE, -1)
+                self.update_node(node, state, -1)
                 return
 
     def migrate(self, metabolism):
@@ -236,12 +275,12 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         # TODO - check usage of degree / weights
 
         # Generate r based on metabolism and degree
-        if metabolism == FAST:
+        if metabolism == BACTERIA_FAST:
             r = np.random.random() * self.total_f_degree
-        elif metabolism == SLOW:
+        elif metabolism == BACTERIA_SLOW:
             r = np.random.random() * self.total_s_degree
         else:
-            raise Exception, "Invalid migrate: {0} not valid".format(metabolism)
+            raise Exception, "Migrate: {0} not valid".format(metabolism)
 
         # Process each node adding count of bacteria * degree until r exceeded
         running_total = 0
@@ -271,26 +310,29 @@ class TBSimpleMultiAgentMetapopulationNetwork_v2(LungMetapopulationNetwork):
         :return:
         """
         # Calculate r and get old metabolism
-        if new_metabolism == FAST:
+        if new_metabolism == BACTERIA_FAST:
             r = np.random.random() * self.total_s_o2
-            old_metabolism = SLOW
-        elif new_metabolism == SLOW:
+            old_metabolism = BACTERIA_SLOW
+        elif new_metabolism == BACTERIA_SLOW:
             r = np.random.random() * self.total_f_o2
-            old_metabolism = FAST
+            old_metabolism = BACTERIA_FAST
         else:
-            raise Exception, "Invalid metabolism change: {0} metabolism not valid".format(new_metabolism)
+            raise Exception, "Metabolism change: {0} metabolism not valid".format(new_metabolism)
 
         # Process all nodes, adding num of bacteria of metabolism * oxygen tension until r exceeded
         running_total = 0
         for id in self.node_list:
             node = self.node_list[id]
-            running_total += node.subpopulations[old_metabolism] * node.attributes[OXYGEN_TENSION]
+            running_total += node.subpopulations[old_metabolism] * node.oxygen_tension
             if running_total >= r:
                 # Reduce old count by 1 and increment new count by 1
                 self.update_node(node, new_metabolism, 1)
                 self.update_node(node, old_metabolism, -1)
                 return
 
+    def timestep_output(self):
+        print "t=", self.time, "bac=", self.total_f + self.total_s, "mac=", self.total_mac_infected + \
+                                                                            self.total_mac_regular
 
 if __name__ == '__main__':
     rates = dict()
@@ -303,13 +345,16 @@ if __name__ == '__main__':
 
     # Recruitment rate * 100 to maintain mac levels
     rates[P_RECRUIT] = 0.01 * 100
-    rates[P_DEATH] = 0.01
+    rates[P_DEATH_REGULAR] = 0.01
+    rates[P_DEATH_INFECTED] = 0.1
 
-    rates[P_INGEST_FAST] = 0.001
-    rates[P_INGEST_SLOW] = 0.001
+    rates[P_REGULAR_INGEST_FAST] = 0.001
+    rates[P_REGULAR_INGEST_SLOW] = 0.001
+    rates[P_INFECTED_INGEST_FAST] = 0.001
+    rates[P_INFECTED_INGEST_SLOW] = 0.001
 
-    netw = TBSimpleMultiAgentMetapopulationNetwork_v2(rates, 100, 10, 10)
+    netw = TBSimpleMultiAgentMetapopulationNetwork_v3(rates, 100, 10, 10)
 
     netw.run(100)
 
-    netw.display(node_contents_species=[MACROPHAGE, FAST, SLOW])
+    netw.display(node_contents_species=[MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, BACTERIA_FAST, BACTERIA_SLOW])
