@@ -1,5 +1,6 @@
 from v5_Spatial_heterogeneity.Base.MetapopulationNetwork import *
 from v5_Spatial_heterogeneity.Lung_Models.BronchopulmonarySegment import BronchopulmonarySegment
+from v5_Spatial_heterogeneity.Lung_Models.Bronchus import Bronchus
 
 HORSFIELD = 'horsfield'
 STAHLER = 'stahler'
@@ -101,8 +102,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
         # Set edge weights to zero to begin
         edge_weights = {}
         for e in edges:
-            edge_weights[e] = dict()
-            edge_weights[e][WEIGHT] = 0.0
+            edge_weights[e] = Bronchus()
 
         # Create the network (allows use of NetworkX functions like neighbours for calculating edge weights)
         MetapopulationNetwork.__init__(self, nodes, edge_weights, species_keys)
@@ -148,19 +148,19 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                 break
             # Find the parent edge (should only be one) as edge where weight hasn't already been set
             parent_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
-                            data[EDGE_OBJECT][WEIGHT] == 0.0]
+                            data[EDGE_OBJECT].weight == 0.0]
             assert len(parent_edges) == 1
             # Get the data from parent edge to update
             parent_edge = parent_edges[0][2]
             # If the node is terminal, weight is 1.0
             if node in self.terminal_nodes:
-                parent_edge[EDGE_OBJECT][WEIGHT] = 1.0
+                parent_edge[EDGE_OBJECT].weight = 1.0
             else:
                 # Get the child edges (those with weights already set)
                 child_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
-                               data[EDGE_OBJECT][WEIGHT] > 0.0]
+                               data[EDGE_OBJECT].weight > 0.0]
                 # Get the weights
-                child_orders = [data[EDGE_OBJECT][WEIGHT] for _, _, data in child_edges]
+                child_orders = [data[EDGE_OBJECT].weight for _, _, data in child_edges]
                 # Determine new weight based on method chosen
                 if weight_method == HORSFIELD:
                     new_order = max(child_orders) + 1.0
@@ -172,7 +172,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                 else:
                     raise Exception, "Invalid ordering method: {0}".format(weight_method)
                 # Set the parent weight
-                parent_edge[EDGE_OBJECT][WEIGHT] = new_order
+                parent_edge[EDGE_OBJECT].weight = new_order
 
     def events(self):
         """ Rate of events and specific function for event - to be defined in overriding class """

@@ -123,7 +123,7 @@ class TBFastSlowMetapopulationNetwork(LungMetapopulationNetwork):
             if running_total >= r:
                 # Pick a neighbour based on the weights of the edges from patch 1
                 # Get total edge weight
-                total_weights = sum(edge[EDGE_OBJECT][WEIGHT] for _, _, edge in self.edges(node, data=True))
+                total_weights = sum(edge[EDGE_OBJECT].weight for _, _, edge in self.edges(node, data=True))
                 r2 = np.random.random() * total_weights
                 running_total_weights = 0
                 # Get neighbours
@@ -132,7 +132,7 @@ class TBFastSlowMetapopulationNetwork(LungMetapopulationNetwork):
                 for neighbour_id in neighbour_ids:
                     neighbour = self.node_list[neighbour_id]
                     edge = self.edge[node][neighbour][EDGE_OBJECT]
-                    running_total_weights += edge[WEIGHT]
+                    running_total_weights += edge.weight
                     # Neighbour patch chosen
                     if running_total_weights > r2:
                         # Update node and neighbour to move one bacteria to neighbour from patch
