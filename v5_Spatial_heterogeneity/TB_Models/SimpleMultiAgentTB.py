@@ -114,7 +114,6 @@ class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         events.append((self.total_s_degree * self.rates[P_MIGRATE_SLOW], lambda f: self.migrate(SLOW)))
 
         # Recruit mac - num of nodes * prob of recruit
-        # TODO - this should probably be based on the level of infection
         events.append((len(self.nodes()) * self.rates[P_RECRUIT], lambda f: self.recruit_mac()))
 
         # Death of mac - total number of macs * prob of death
