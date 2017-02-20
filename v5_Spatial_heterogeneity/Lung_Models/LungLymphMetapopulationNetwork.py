@@ -2,6 +2,8 @@ from v5_Spatial_heterogeneity.Base.MetapopulationNetwork import *
 from v5_Spatial_heterogeneity.Lung_Models.BronchopulmonarySegment import BronchopulmonarySegment
 from v5_Spatial_heterogeneity.Lung_Models.Bronchus import Bronchus
 from v5_Spatial_heterogeneity.Lung_Models.LymphNode import LymphNode
+from v5_Spatial_heterogeneity.Lung_Models.LymphaticVessel import LymphaticVessel
+from v5_Spatial_heterogeneity.Lung_Models.Drainage import Drainage
 
 HORSFIELD = 'horsfield'
 STAHLER = 'stahler'
@@ -89,19 +91,19 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
 
         # List of bronchial edges - names give rough approximation of which parts of anatomy are represented
         # Trachea
-        edges = [(0, 1)]
+        bronchi_edges = [(0, 1)]
         # Main bronchi
-        edges += [(1, 2), (2, 3), (1, 4)]
+        bronchi_edges += [(1, 2), (2, 3), (1, 4)]
         # Lobar bronchi
-        edges += [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
+        bronchi_edges += [(2, 5), (5, 6), (3, 7), (3, 8), (8, 9), (9, 10), (10, 11), (4, 12), (12, 13), (12, 14), (4, 15),
                   (15, 16), (16, 17)]
         # Segmental bronchi
-        edges += [(5, 18), (6, 19), (6, 20), (7, 21), (7, 22), (8, 23), (9, 24), (10, 25), (11, 26), (11, 27), (13, 28),
+        bronchi_edges += [(5, 18), (6, 19), (6, 20), (7, 21), (7, 22), (8, 23), (9, 24), (10, 25), (11, 26), (11, 27), (13, 28),
                   (13, 29), (14, 30), (14, 31), (15, 32), (16, 33), (17, 34), (17, 35)]
         # Set edge weights to zero to begin
-        edge_weights = {}
-        for e in edges:
-            edge_weights[e] = Bronchus()
+        edges = {}
+        for e in bronchi_edges:
+            edges[e] = Bronchus()
 
         # Lymphatic system
         # TODO - realistic lymph node anatomy
@@ -125,13 +127,32 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
             nodes.append(node)
             id += 1
 
+        # Lymphatic vessels
+        lymph_edges = [(36,37),(37,38),(39,40),(40,41)]
+        for e in lymph_edges:
+            edges[e] = LymphaticVessel()
+
+        # Drainage
+        nodes_to_drain_to_right_upper = range(18,23)
+        for e in nodes_to_drain_to_right_upper:
+            edges[(e, 37)] = Drainage()
+        nodes_to_drain_to_right_lower = range(23, 28)
+        for e in nodes_to_drain_to_right_lower:
+            edges[(e, 36)] = Drainage()
+        nodes_to_drain_to_left_upper = range(28, 32)
+        for e in nodes_to_drain_to_left_upper:
+            edges[(e, 40)] = Drainage()
+        nodes_to_drain_to_left_lower = range(32, 36)
+        for e in nodes_to_drain_to_left_lower:
+            edges[(e, 39)] = Drainage()
+
         # Create the network (allows use of NetworkX functions like neighbours for calculating edge weights)
-        MetapopulationNetwork.__init__(self, nodes, edge_weights, species_keys_bronch)
+        MetapopulationNetwork.__init__(self, nodes, edges, species_keys_bronch)
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0
-        self.terminal_nodes = [n for n in self.node_list.values() if n.degree == 1 and n.id != self.origin]
-        self.non_terminal_nodes = [n for n in self.node_list.values() if n.degree != 1]
+        self.alveoli = [n for n in self.node_list.values() if n.id in range(18,36)]
+
         # Calculate edge weights
         self.set_weights(weight_method)
 
@@ -158,7 +179,8 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
             # Insert the new node at the start
             ordered_nodes.insert(0, node)
             # Queue up the neighbours (that aren't already ordered) of this node
-            queued_nodes += [n for n in self.neighbors(node) if n not in ordered_nodes]
+            queued_nodes += [n for n in self.neighbors(node) if n not in ordered_nodes and
+                             isinstance(n, BronchopulmonarySegment)]
 
         # Process all nodes from ordered list
         while len(ordered_nodes) > 0:
@@ -168,18 +190,21 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
             if node.id == self.origin:
                 break
             # Find the parent edge (should only be one) as edge where weight hasn't already been set
+            # (only check bronchi)
             parent_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
-                            data[EDGE_OBJECT].weight == 0.0]
+                            isinstance(data[EDGE_OBJECT], Bronchus) and data[EDGE_OBJECT].weight == 0.0]
+
             assert len(parent_edges) == 1
             # Get the data from parent edge to update
             parent_edge = parent_edges[0][2]
             # If the node is terminal, weight is 1.0
-            if node in self.terminal_nodes:
+            if node in self.alveoli:
                 parent_edge[EDGE_OBJECT].weight = 1.0
             else:
-                # Get the child edges (those with weights already set)
+                # Get the child edges (those with weights already set) (only get bronchi)
                 child_edges = [(node1, node2, data) for node1, node2, data in self.edges(node, data=True) if
-                               data[EDGE_OBJECT].weight > 0.0]
+                               isinstance(data[EDGE_OBJECT], Bronchus) and data[EDGE_OBJECT].weight > 0.0]
+
                 # Get the weights
                 child_orders = [data[EDGE_OBJECT].weight for _, _, data in child_edges]
                 # Determine new weight based on method chosen
@@ -198,6 +223,62 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
     def events(self):
         """ Rate of events and specific function for event - to be defined in overriding class """
         raise NotImplementedError
+
+    def display(self, node_contents_species, title="", save_name=None, show_edge_labels=False):
+        """
+        Override the display method - colour nodes based on their type
+
+        :param node_contents_species: List of species to display for nodes
+        :param title:
+        :param save_name: Filename to save as png
+        :param show_edge_labels: Boolean to show edge labels
+        :return:
+        """
+        fig = plt.figure(figsize=(10, 10))
+        plt.axis('off')
+        plt.title(title)
+
+        pos = {}
+        node_labels = {}
+        for n in self.nodes():
+            pos[n] = n.position
+            node_labels[n] = ""
+            if node_contents_species is not None:
+                for species in node_contents_species:
+                    node_labels[n] += str(n.subpopulations[species]) + ":"
+
+        # Nodes
+        # Bronchi nodes
+        bronchi_nodes = [n for n in self.node_list.values() if isinstance(n, BronchopulmonarySegment)]
+        nx.draw_networkx_nodes(self, nodelist=bronchi_nodes, pos=pos, node_size=400, node_color="red")
+
+        # Lymph nodes
+        lymph_nodes = [n for n in self.node_list.values() if isinstance(n, LymphNode)]
+        nx.draw_networkx_nodes(self, nodelist=lymph_nodes, pos=pos, node_size=400, node_color="white")
+
+        # Node labels
+        nx.draw_networkx_labels(self, pos, labels=node_labels, font_family='sans-serif')
+
+        # Edges
+        bronchi_edges = [(e1,e2) for (e1,e2,data) in self.edges(data=True) if isinstance(data[EDGE_OBJECT], Bronchus)]
+        nx.draw_networkx_edges(self, edgelist=bronchi_edges, pos=pos, edge_color='red')
+        lymph_edges = [(e1, e2) for (e1, e2, data) in self.edges(data=True)
+                       if isinstance(data[EDGE_OBJECT], LymphaticVessel)]
+        nx.draw_networkx_edges(self, edgelist=lymph_edges, pos=pos, edge_color='white')
+        drain_edges = [(e1, e2) for (e1, e2, data) in self.edges(data=True)
+                       if isinstance(data[EDGE_OBJECT], Drainage)]
+        nx.draw_networkx_edges(self, edgelist=drain_edges, pos=pos, edge_color='green')
+
+        # Edge labels
+        if show_edge_labels:
+            edge_labels = {}
+            for n1, n2, data in self.edges(data=True):
+                edge_labels[(n1, n2)] = str(data[EDGE_OBJECT])
+            nx.draw_networkx_edge_labels(self, pos, edge_labels=edge_labels, font_family='sans-serif')
+
+        plt.show()
+        if save_name is not None:
+            fig.savefig(save_name + ".png")  # save as png
 
 if __name__ == '__main__':
     n = LungLymphMetapopulationNetwork(['a','b'],{},['a','b'],{})
