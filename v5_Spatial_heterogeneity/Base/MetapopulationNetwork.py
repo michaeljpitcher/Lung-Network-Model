@@ -52,7 +52,7 @@ class MetapopulationNetwork(nx.Graph):
         self.data = dict()
         self.record_data()
 
-    def display(self, node_contents_species, title="", save_name=None, show_edge_labels=True):
+    def display(self, node_contents_species, title="", save_name=None, show_edge_labels=False):
         """
 
         :param node_contents_species: List of species to display for nodes
