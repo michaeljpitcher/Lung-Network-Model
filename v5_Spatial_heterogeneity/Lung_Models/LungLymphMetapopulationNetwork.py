@@ -1,6 +1,7 @@
 from v5_Spatial_heterogeneity.Base.MetapopulationNetwork import *
 from v5_Spatial_heterogeneity.Lung_Models.BronchopulmonarySegment import BronchopulmonarySegment
 from v5_Spatial_heterogeneity.Lung_Models.Bronchus import Bronchus
+from v5_Spatial_heterogeneity.Lung_Models.LymphNode import LymphNode
 
 HORSFIELD = 'horsfield'
 STAHLER = 'stahler'
@@ -14,53 +15,47 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
     TODO - explanation
     """
 
-    def __init__(self, species_keys, initial_loads, weight_method=HORSFIELD):
-        """
+    def __init__(self, species_keys_bronch, initial_loads_bronch, species_key_lymph, initial_loads_lymph,
+                 weight_method=HORSFIELD):
 
-        :param species_keys: Indicators for species of patch subpopulations
-        :param initial_loads: Dictionary defining how many of each species reside in each compartment initially.
-               keys=node id, values= dictionary, keys=species, values=count of species
-        :param weight_method: Method to weight the edges (Stahler or Horsfield)
-        """
-
-        # Node positions TODO: currently done by eye
-        positions = dict()
-        positions[0] = (5, 10)
-        positions[1] = (5, 8)
-        positions[2] = (4, 7)
-        positions[3] = (3.5, 5)
-        positions[4] = (6, 6)
-        positions[5] = (3, 8)
-        positions[6] = (2.75, 8.5)
-        positions[7] = (2.5, 5)
-        positions[8] = (4, 4)
-        positions[9] = (3.5, 3)
-        positions[10] = (3, 2.5)
-        positions[11] = (2.5, 2)
-        positions[12] = (7, 7)
-        positions[13] = (7.5, 8)
-        positions[14] = (8, 7)
-        positions[15] = (6.5, 5)
-        positions[16] = (7.5, 4)
-        positions[17] = (8, 3.5)
-        positions[18] = (2.5, 7.5)
-        positions[19] = (2.5, 9)
-        positions[20] = (3, 9)
-        positions[21] = (2, 5.5)
-        positions[22] = (2, 4)
-        positions[23] = (3.5, 4.25)
-        positions[24] = (4, 2)
-        positions[25] = (2.5, 3.25)
-        positions[26] = (1.5, 1)
-        positions[27] = (2.75, 1)
-        positions[28] = (7.25, 8.5)
-        positions[29] = (8, 8.5)
-        positions[30] = (8.5, 7.5)
-        positions[31] = (8.5, 6.5)
-        positions[32] = (7, 5.5)
-        positions[33] = (7.5, 3)
-        positions[34] = (8.5, 4.25)
-        positions[35] = (8.5, 3)
+        # Node bronchopulmonary segment positions TODO: currently done by eye
+        bps_positions = dict()
+        bps_positions[0] = (5, 10)
+        bps_positions[1] = (5, 8)
+        bps_positions[2] = (4, 7)
+        bps_positions[3] = (3.5, 5)
+        bps_positions[4] = (6, 6)
+        bps_positions[5] = (3, 8)
+        bps_positions[6] = (2.75, 8.5)
+        bps_positions[7] = (2.5, 5)
+        bps_positions[8] = (4, 4)
+        bps_positions[9] = (3.5, 3)
+        bps_positions[10] = (3, 2.5)
+        bps_positions[11] = (2.5, 2)
+        bps_positions[12] = (7, 7)
+        bps_positions[13] = (7.5, 8)
+        bps_positions[14] = (8, 7)
+        bps_positions[15] = (6.5, 5)
+        bps_positions[16] = (7.5, 4)
+        bps_positions[17] = (8, 3.5)
+        bps_positions[18] = (2.5, 7.5)
+        bps_positions[19] = (2.5, 9)
+        bps_positions[20] = (3, 9)
+        bps_positions[21] = (2, 5.5)
+        bps_positions[22] = (2, 4)
+        bps_positions[23] = (3.5, 4.25)
+        bps_positions[24] = (4, 2)
+        bps_positions[25] = (2.5, 3.25)
+        bps_positions[26] = (1.5, 1)
+        bps_positions[27] = (2.75, 1)
+        bps_positions[28] = (7.25, 8.5)
+        bps_positions[29] = (8, 8.5)
+        bps_positions[30] = (8.5, 7.5)
+        bps_positions[31] = (8.5, 6.5)
+        bps_positions[32] = (7, 5.5)
+        bps_positions[33] = (7.5, 3)
+        bps_positions[34] = (8.5, 4.25)
+        bps_positions[35] = (8.5, 3)
 
         ventilations = dict()
         perfusions = dict()
@@ -70,28 +65,29 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
         for node_id in range(36):
             # TODO - find out specifics
             # V - Ventilation - O2 reaching the alveolar tissue
-            ventilations[node_id] = 1.0 / positions[node_id][1]
+            ventilations[node_id] = 1.0 / bps_positions[node_id][1]
             # Q - Perfusion - blood that reaches the alveolar tissue
-            perfusions[node_id] = 1.0 / positions[node_id][1]
+            perfusions[node_id] = 1.0 / bps_positions[node_id][1]
             # V/Q - Ventilation Perfusion ratio
             oxygen_tensions[node_id] = ventilations[node_id] / perfusions[node_id]
 
+        # Add bronchopulmonary nodes
         nodes = []
         id = 0
         while id < 36:
-            if id in initial_loads:
-                loads_for_node = initial_loads[id]
+            if id in initial_loads_bronch:
+                loads_for_node = initial_loads_bronch[id]
             else:
                 # Empty dict
                 loads_for_node = dict()
             # Create a bronchopulmonary segment instance
-            node = BronchopulmonarySegment(id, species_keys, loads_for_node, positions[id], ventilations[id],
+            node = BronchopulmonarySegment(id, species_keys_bronch, loads_for_node, bps_positions[id], ventilations[id],
                                            perfusions[id], oxygen_tensions[id])
             # Add to list
             nodes.append(node)
             id += 1
 
-        # List of bronhcial edges - names give rough approximation of which parts of anatomy are represented
+        # List of bronchial edges - names give rough approximation of which parts of anatomy are represented
         # Trachea
         edges = [(0, 1)]
         # Main bronchi
@@ -108,12 +104,29 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
             edge_weights[e] = Bronchus()
 
         # Lymphatic system
-        # TODO - Lymph Nodes
+        # TODO - realistic lymph node anatomy
+        lymph_pos = dict()
+        # Right side
+        lymph_pos[36] = (4.5, 3.3)
+        lymph_pos[37] = (4.5, 6.6)
+        lymph_pos[38] = (4.5, 9.9)
+        # Left side
+        lymph_pos[39] = (5.5, 3.3)
+        lymph_pos[40] = (5.5, 6.6)
+        lymph_pos[41] = (5.5, 9.9)
 
-
+        while id < 42:
+            if id in initial_loads_lymph:
+                loads_for_node = initial_loads_lymph[id]
+            else:
+                # Empty dict
+                loads_for_node = dict()
+            node = LymphNode(id, species_key_lymph, loads_for_node, lymph_pos[id])
+            nodes.append(node)
+            id += 1
 
         # Create the network (allows use of NetworkX functions like neighbours for calculating edge weights)
-        MetapopulationNetwork.__init__(self, nodes, edge_weights, species_keys)
+        MetapopulationNetwork.__init__(self, nodes, edge_weights, species_keys_bronch)
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0
@@ -186,4 +199,7 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
         """ Rate of events and specific function for event - to be defined in overriding class """
         raise NotImplementedError
 
+if __name__ == '__main__':
+    n = LungLymphMetapopulationNetwork(['a','b'],{},['a','b'],{})
+    n.display([])
 
