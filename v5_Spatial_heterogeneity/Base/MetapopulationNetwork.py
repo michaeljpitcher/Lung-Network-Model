@@ -151,6 +151,7 @@ class MetapopulationNetwork(nx.Graph):
             # Increment current time and record
             self.time += dt
             self.record_data()
+        self.timestep_output()
 
     def timestep_output(self):
         print "t=", self.time

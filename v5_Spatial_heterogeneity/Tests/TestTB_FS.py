@@ -1,6 +1,6 @@
 import unittest
 
-from v5_Spatial_heterogeneity.TB_Models.Old.TBFastAndSlow import *
+from v5_Spatial_heterogeneity.TB_Models.TB_FS import *
 
 
 class TBFastAndSlowTestCase(unittest.TestCase):
@@ -21,7 +21,7 @@ class TBFastAndSlowTestCase(unittest.TestCase):
         self.loads_slow = dict()
         self.loads_slow[13] = 3
 
-        self.network = TBFastSlowMetapopulationNetwork(self.rates, self.loads_fast, self.loads_slow)
+        self.network = TBMetapopulationNetwork_FS(self.rates, self.loads_fast, self.loads_slow)
 
     def test_initialise(self):
         self.assertItemsEqual(self.network.rates.keys(), [P_MIGRATE_F, P_MIGRATE_S, P_CHANGE_F_TO_S, P_CHANGE_S_TO_F,

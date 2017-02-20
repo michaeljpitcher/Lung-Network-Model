@@ -1,6 +1,6 @@
 import unittest
 
-from v5_Spatial_heterogeneity.TB_Models.Old.SimpleMultiAgentTB_3 import *
+from v5_Spatial_heterogeneity.TB_Models.TB_FSRIn import *
 
 
 class SimpleMultiAgent_v3_TestCase(unittest.TestCase):
@@ -28,8 +28,8 @@ class SimpleMultiAgent_v3_TestCase(unittest.TestCase):
 
         np.random.seed(101)
 
-        self.network = TBSimpleMultiAgentMetapopulationNetwork_v3(self.rates, self.mac_per_patch, self.initial_fast_bac,
-                                                                  self.initial_slow_bac)
+        self.network = TBMetapopulationNetwork_FSRIn(self.rates, self.mac_per_patch, self.initial_fast_bac,
+                                                     self.initial_slow_bac)
         self.network.update_totals()
 
     def test_initialise(self):

@@ -18,7 +18,7 @@ P_INGEST_FAST = 'mac_ingests_fast'
 P_INGEST_SLOW = 'mac_ingests_slow'
 
 
-class TBSimpleMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
+class TBMetapopulationNetwork_FSM(LungMetapopulationNetwork):
     """
     Metapopulation model of TB infection with host interaction.
 
@@ -288,7 +288,7 @@ if __name__ == '__main__':
     loads[27][SLOW] = 4
 
 
-    netw = TBSimpleMultiAgentMetapopulationNetwork(rates, loads)
+    netw = TBMetapopulationNetwork_FSM(rates, loads)
 
     import cProfile
 

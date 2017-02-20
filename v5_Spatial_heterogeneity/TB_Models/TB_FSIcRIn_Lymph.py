@@ -23,7 +23,7 @@ P_REGULAR_INGEST_BAC = 'regular_ingests_bac'
 P_INFECTED_INGEST_BAC = 'infected_ingests_bac'
 
 
-class TBMetapopulationNetwork(LungLymphMetapopulationNetwork):
+class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
     """
     Metapopulation model of TB infection with host interaction.
 
@@ -70,14 +70,13 @@ class TBMetapopulationNetwork(LungLymphMetapopulationNetwork):
 
         # Initialise loads
         initial_loads_lymph = dict()
-        for node_id in range(36):
+        for node_id in range(36, 42):
             initial_loads_lymph[node_id] = dict()
             # Set initial macrophage levels
             initial_loads_lymph[node_id][MACROPHAGE_REGULAR] = number_of_macrophages_per_lymph
 
         # Create the network
         species = [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR, MACROPHAGE_REGULAR, MACROPHAGE_INFECTED]
-
         # Species in bronch and lymph are same
         LungLymphMetapopulationNetwork.__init__(self, species, initial_loads_bronch, species, initial_loads_lymph,
                                            weight_method)
@@ -284,6 +283,9 @@ class TBMetapopulationNetwork(LungLymphMetapopulationNetwork):
     def death_mac(self, state):
         """
         A macrophage dies
+
+        If infected, a number of intracellular bacteria are returned to surface as slow bacteria (taken as average
+        intracellular per infected macrophage)
         :return:
         """
         # Generate r based on total mac numbers
@@ -352,7 +354,7 @@ class TBMetapopulationNetwork(LungLymphMetapopulationNetwork):
 
 if __name__ == '__main__':
     rates_ = dict()
-    rates_[P_REPLICATE_FAST] = 0.01
+    rates_[P_REPLICATE_FAST] = 0.02
     rates_[P_REPLICATE_SLOW] = 0.001
     rates_[P_REPLICATE_INTRACELLULAR] = 0.0
     rates_[P_MIGRATE_BRONCHI_FAST] = 0.01
@@ -365,11 +367,11 @@ if __name__ == '__main__':
     rates_[P_DEATH_REGULAR] = 0.01
     rates_[P_DEATH_INFECTED] = 0.1
 
-    rates_[P_REGULAR_INGEST_BAC] = 0.01
-    rates_[P_INFECTED_INGEST_BAC] = 0.01
+    rates_[P_REGULAR_INGEST_BAC] = 0.002
+    rates_[P_INFECTED_INGEST_BAC] = 0.001
 
-    netw = TBMetapopulationNetwork(rates_, 100, 0, 10, 0)
+    netw = TBMetapopulationNetwork_FSIcRIn_Lymph(rates_, 100, 0, 10, 0)
 
     netw.run(50)
     #
-    # netw.display([BACTERIA_FAST])
+    netw.display([BACTERIA_FAST])

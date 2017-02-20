@@ -10,7 +10,7 @@ P_CHANGE_F_TO_S = 'p_change_f_s'
 P_CHANGE_S_TO_F = 'p_change_s_f'
 
 
-class TBFastSlowMetapopulationNetwork(LungMetapopulationNetwork):
+class TBMetapopulationNetwork_FS(LungMetapopulationNetwork):
     """ Metapopulation network with Fast and Slow bacteria as species
 
     Two species of bacteria: fast and slow. Both have user-specified individual growth rates, rates for migration to a
@@ -208,7 +208,7 @@ if __name__ == '__main__':
 
     loads_slow = dict()
 
-    model = TBFastSlowMetapopulationNetwork(rates, loads_fast, loads_slow)
+    model = TBMetapopulationNetwork_FS(rates, loads_fast, loads_slow)
 
     limit = 50
     model.run(limit)

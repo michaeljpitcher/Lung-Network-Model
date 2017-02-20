@@ -1,6 +1,6 @@
 import unittest
 
-from v5_Spatial_heterogeneity.TB_Models.TBFastSlowIntraRegInf import *
+from v5_Spatial_heterogeneity.TB_Models.TB_FSIcRIn import *
 
 
 class MultiAgentTestCase(unittest.TestCase):
@@ -29,8 +29,8 @@ class MultiAgentTestCase(unittest.TestCase):
 
         np.random.seed(101)
 
-        self.network = TBMetapopulationNetwork(self.rates, self.mac_per_patch, self.initial_fast_bac,
-                                               self.initial_slow_bac)
+        self.network = TBMetapopulationNetwork_FSIcRIn(self.rates, self.mac_per_patch, self.initial_fast_bac,
+                                                       self.initial_slow_bac)
         self.network.update_totals()
 
     def test_initialise(self):

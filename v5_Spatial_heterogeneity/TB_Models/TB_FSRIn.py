@@ -22,7 +22,7 @@ P_INFECTED_INGEST_FAST = 'infected_ingests_fast'
 P_INFECTED_INGEST_SLOW = 'infected_ingests_slow'
 
 
-class TBSimpleMultiAgentMetapopulationNetwork_v3(LungMetapopulationNetwork):
+class TBMetapopulationNetwork_FSRIn(LungMetapopulationNetwork):
     """
     Metapopulation model of TB infection with host interaction.
 
@@ -353,7 +353,7 @@ if __name__ == '__main__':
     rates[P_INFECTED_INGEST_FAST] = 0.001
     rates[P_INFECTED_INGEST_SLOW] = 0.001
 
-    netw = TBSimpleMultiAgentMetapopulationNetwork_v3(rates, 100, 10, 10)
+    netw = TBMetapopulationNetwork_FSRIn(rates, 100, 10, 10)
 
     netw.run(100)
 

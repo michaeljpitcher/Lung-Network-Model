@@ -1,6 +1,6 @@
 import unittest
 
-from v5_Spatial_heterogeneity.TB_Models.Old.SimpleMultiAgentTB import *
+from v5_Spatial_heterogeneity.TB_Models.TB_FSM import *
 
 
 class SimpleMultiAgentTestCase(unittest.TestCase):
@@ -35,7 +35,7 @@ class SimpleMultiAgentTestCase(unittest.TestCase):
         self.loads[3][MACROPHAGE] = 1
         self.loads[7][MACROPHAGE] = 2
 
-        self.network = TBSimpleMultiAgentMetapopulationNetwork(self.rates, self.loads)
+        self.network = TBMetapopulationNetwork_FSM(self.rates, self.loads)
         self.network.update_totals()
 
     def test_initialise(self):
