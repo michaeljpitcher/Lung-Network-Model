@@ -24,7 +24,7 @@ P_INFECTED_INGEST_FAST = 'infected_ingests_fast'
 P_INFECTED_INGEST_SLOW = 'infected_ingests_slow'
 
 
-class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
+class TBMetapopulationNetwork(LungMetapopulationNetwork):
     """
     Metapopulation model of TB infection with host interaction.
 
@@ -164,7 +164,6 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
         events.append((self.total_s_degree * self.rates[P_MIGRATE_SLOW], lambda f: self.migrate(BACTERIA_SLOW)))
 
         # Recruit mac - num of nodes * prob of recruit
-        # TODO - this should probably be based on the level of infection
         events.append((len(self.nodes()) * self.rates[P_RECRUIT], lambda f: self.recruit_mac()))
 
         # Death of mac - total number of macs * prob of death
@@ -276,6 +275,7 @@ class TBMultiAgentMetapopulationNetwork(LungMetapopulationNetwork):
                     amount = int(round(float(node.subpopulations[BACTERIA_INTRACELLULAR]) / float(
                         node.subpopulations[MACROPHAGE_INFECTED])))
                     self.update_node(node, BACTERIA_SLOW, amount)
+                    self.update_node(node, BACTERIA_INTRACELLULAR, -1 * amount)
                 # reduce the macrophage count by 1
                 self.update_node(node, state, -1)
                 return
@@ -375,6 +375,6 @@ if __name__ == '__main__':
     rates_[P_INFECTED_INGEST_FAST] = 0.01
     rates_[P_INFECTED_INGEST_SLOW] = 0.0
 
-    netw = TBMultiAgentMetapopulationNetwork(rates_, 100, 10, 0)
+    netw = TBMetapopulationNetwork(rates_, 100, 10, 0)
 
     netw.run(50)

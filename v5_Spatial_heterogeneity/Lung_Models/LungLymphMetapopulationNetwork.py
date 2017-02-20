@@ -66,10 +66,11 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
         # Bronchopulmonary segment nodes
         for node_id in range(36):
             # TODO - find out specifics
+            # Currently ventilation is on scale 0.2 to 0.65, perfusion 0.1 to 0.91
             # V - Ventilation - O2 reaching the alveolar tissue
-            ventilations[node_id] = 1.0 / bps_positions[node_id][1]
+            ventilations[node_id] = ((10-bps_positions[node_id][1])*0.05)+0.2
             # Q - Perfusion - blood that reaches the alveolar tissue
-            perfusions[node_id] = 1.0 / bps_positions[node_id][1]
+            perfusions[node_id] = ((10-bps_positions[node_id][1])*0.09)+0.1
             # V/Q - Ventilation Perfusion ratio
             oxygen_tensions[node_id] = ventilations[node_id] / perfusions[node_id]
 
@@ -148,6 +149,15 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
 
         # Create the network (allows use of NetworkX functions like neighbours for calculating edge weights)
         MetapopulationNetwork.__init__(self, nodes, edges, species_keys_bronch)
+
+        # Lists for quick referencing
+        self.node_list_bps = [n for n in self.node_list.values() if isinstance(n, BronchopulmonarySegment)]
+        self.node_list_lymph = [n for n in self.node_list.values() if isinstance(n, LymphNode)]
+
+        # Record number adjacent bronchi
+        for n in self.node_list_bps:
+            n.bronchi = [(n1, n2, data) for n1, n2, data in self.edges(n, data=True) if
+                         isinstance(data[EDGE_OBJECT], Bronchus)]
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0
