@@ -129,8 +129,8 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
 
         # Lymphatic vessels
         lymph_edges = [(36,37),(37,38),(39,40),(40,41)]
-        for e in lymph_edges:
-            edges[e] = LymphaticVessel()
+        for (e1, e2) in lymph_edges:
+            edges[(e1, e2)] = LymphaticVessel()
 
         # Drainage
         nodes_to_drain_to_right_upper = range(18,23)
@@ -254,7 +254,7 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
 
         # Lymph nodes
         lymph_nodes = [n for n in self.node_list.values() if isinstance(n, LymphNode)]
-        nx.draw_networkx_nodes(self, nodelist=lymph_nodes, pos=pos, node_size=400, node_color="white")
+        nx.draw_networkx_nodes(self, nodelist=lymph_nodes, pos=pos, node_shape='p', node_size=200, node_color="white")
 
         # Node labels
         nx.draw_networkx_labels(self, pos, labels=node_labels, font_family='sans-serif')
