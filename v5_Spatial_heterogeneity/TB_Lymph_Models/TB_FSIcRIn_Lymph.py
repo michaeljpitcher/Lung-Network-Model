@@ -9,6 +9,7 @@ MACROPHAGE_INFECTED = 'mac_infected'
 P_REPLICATE_FAST = 'replication_fast'
 P_REPLICATE_SLOW = 'replication_slow'
 P_REPLICATE_INTRACELLULAR = 'replication_intra'
+
 P_CHANGE_FAST_SLOW = 'change_fast_to_slow'
 P_CHANGE_SLOW_FAST = 'change_slow_to_fast'
 
@@ -35,8 +36,6 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
     intracellular bacteria).
     Death rates can be specified to differ between regular and infected. Death of infection returns bacteria to
     extracellular (i.e. -1 intracellular and +1 slow)
-
-    TODO - bacteria can't die so always epidemic. Need adaptive immune system
     """
 
     def __init__(self, rates, number_of_macrophages_per_bronch, number_of_macrophages_per_lymph,
@@ -96,14 +95,14 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
         # Initialise totals
         self.total_f = self.total_s = self.total_intra = self.total_mac_regular = self.total_mac_infected = \
             self.total_f_o2 = self.total_s_o2 = self.total_f_migrate_bronchi = self.total_s_migrate_bronchi = \
-            self.total_regular_bac = self.total_infected_bac =\
-            0
+            self.total_regular_bac = self.total_infected_bac = self.total_regular_drainage = \
+            self.total_infected_drainage = 0
 
     def update_totals(self):
         self.total_f = self.total_s = self.total_intra = self.total_mac_regular = self.total_mac_infected = \
             self.total_f_o2 = self.total_s_o2 = self.total_f_migrate_bronchi = self.total_s_migrate_bronchi = \
-            self.total_regular_bac = self.total_infected_bac = \
-            0
+            self.total_regular_bac = self.total_infected_bac = self.total_regular_drainage = \
+            self.total_infected_drainage = 0
 
         # Update Bronchopulmonary segment totals
         for node in self.node_list_bps:
@@ -120,6 +119,7 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
                 node.subpopulations[BACTERIA_FAST] + node.subpopulations[BACTERIA_SLOW])
             self.total_infected_bac += node.subpopulations[MACROPHAGE_INFECTED] * (
                 node.subpopulations[BACTERIA_FAST] + node.subpopulations[BACTERIA_SLOW])
+            self.total_regular_drainage += node.subpopulations[MACROPHAGE_REGULAR] * len(node.drainage)
 
         # Update lymph node total
         for node in self.node_list_lymph:
@@ -261,7 +261,7 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
             running_total += node.subpopulations[metabolism] * len(node.bronchi)
             if running_total > r:
                 # Find a new patch based on the weights of edges from node
-                total_weights = sum([bronchus.weight for (neighbour,bronchus) in node.bronchi])
+                total_weights = sum([bronchus.weight for (neighbour, bronchus) in node.bronchi])
                 r2 = np.random.random() * total_weights
                 running_total_weights = 0
                 # Process all neighbours, adding edge weights until r2 exceeded
@@ -359,8 +359,8 @@ if __name__ == '__main__':
     rates_[P_REPLICATE_FAST] = 0.02
     rates_[P_REPLICATE_SLOW] = 0.001
     rates_[P_REPLICATE_INTRACELLULAR] = 0.0
-    rates_[P_MIGRATE_BRONCHI_FAST] = 0.01
-    rates_[P_MIGRATE_BRONCHI_SLOW] = 0.01
+    rates_[P_MIGRATE_BRONCHI_FAST] = 0.0
+    rates_[P_MIGRATE_BRONCHI_SLOW] = 0.0
     rates_[P_CHANGE_FAST_SLOW] = 0.0
     rates_[P_CHANGE_SLOW_FAST] = 0.2
 
@@ -374,6 +374,6 @@ if __name__ == '__main__':
 
     netw = TBMetapopulationNetwork_FSIcRIn_Lymph(rates_, 100, 0, 10, 0)
 
-    netw.run(50)
+    # netw.run(50)
     #
-    netw.display([BACTERIA_FAST])
+    netw.display([])
