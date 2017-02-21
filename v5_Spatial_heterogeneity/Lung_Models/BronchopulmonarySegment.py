@@ -15,8 +15,8 @@ class BronchopulmonarySegment(Patch):
         self.ventilation = ventilation
         self.perfusion = perfusion
         self.oxygen_tension = oxygen_tension
-        # Number of adjacent bronchi
-        self.bronchi = 0
+        # Adjacent bronchi
+        self.bronchi = []
 
     def __str__(self):
         """ String identifier of patch"""
