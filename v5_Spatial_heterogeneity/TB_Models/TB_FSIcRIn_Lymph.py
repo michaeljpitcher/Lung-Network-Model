@@ -261,12 +261,12 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
             running_total += node.subpopulations[metabolism] * len(node.bronchi)
             if running_total > r:
                 # Find a new patch based on the weights of edges from node
-                total_weights = sum([data[EDGE_OBJECT].weight for (_,_,data) in node.bronchi])
+                total_weights = sum([bronchus.weight for (neighbour,bronchus) in node.bronchi])
                 r2 = np.random.random() * total_weights
                 running_total_weights = 0
                 # Process all neighbours, adding edge weights until r2 exceeded
-                for (_, neighbour, data) in node.bronchi:
-                    running_total_weights += data[EDGE_OBJECT].weight
+                for (neighbour, bronchus) in node.bronchi:
+                    running_total_weights += bronchus.weight
                     if running_total_weights > r2:
                         # Move bacteria from node to neighbour
                         self.update_node(node, metabolism, -1)
