@@ -1,5 +1,6 @@
 import unittest
-from v5_Spatial_heterogeneity.TB_Models.TB_FSIcRIn_Lymph import *
+
+from v5_Spatial_heterogeneity.TB_Lymph_Models.TB_FSIcRIn_Lymph import *
 
 
 class TB_FSIcRIn_Lymph_TestCase(unittest.TestCase):
@@ -147,6 +148,144 @@ class TB_FSIcRIn_Lymph_TestCase(unittest.TestCase):
         # Ingest
         self.assertEqual(events[10][0], (13*11) * 0.11)
         self.assertEqual(events[11][0], (7*11) * 0.12)
+
+    def test_replicate_fast(self):
+
+        self.network.node_list[13].subpopulations[BACTERIA_FAST] = 10
+        self.network.update_totals()
+        self.network.replicate(BACTERIA_FAST)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_FAST], 11)
+
+        self.network.node_list[13].subpopulations[BACTERIA_FAST] = 1
+        self.network.node_list[30].subpopulations[BACTERIA_FAST] = 101
+        self.network.update_totals()
+        self.network.replicate(BACTERIA_FAST)
+        self.assertEqual(self.network.node_list[30].subpopulations[BACTERIA_FAST], 102)
+
+    def test_replicate_slow(self):
+
+        self.network.node_list[7].subpopulations[BACTERIA_SLOW] = 10
+        self.network.update_totals()
+        self.network.replicate(BACTERIA_SLOW)
+        self.assertEqual(self.network.node_list[7].subpopulations[BACTERIA_SLOW], 11)
+
+        self.network.node_list[7].subpopulations[BACTERIA_SLOW] = 1
+        self.network.node_list[1].subpopulations[BACTERIA_SLOW] = 101
+        self.network.update_totals()
+        self.network.replicate(BACTERIA_SLOW)
+        self.assertEqual(self.network.node_list[1].subpopulations[BACTERIA_SLOW], 102)
+
+    def test_replicate_intra(self):
+
+        self.network.node_list[19].subpopulations[BACTERIA_INTRACELLULAR] = 10
+        self.network.update_totals()
+        self.network.replicate(BACTERIA_INTRACELLULAR)
+        self.assertEqual(self.network.node_list[19].subpopulations[BACTERIA_INTRACELLULAR], 11)
+
+        self.network.node_list[19].subpopulations[BACTERIA_INTRACELLULAR] = 1
+        self.network.node_list[3].subpopulations[BACTERIA_INTRACELLULAR] = 101
+        self.network.update_totals()
+        self.network.replicate(BACTERIA_INTRACELLULAR)
+        self.assertEqual(self.network.node_list[3].subpopulations[BACTERIA_INTRACELLULAR], 102)
+
+    def test_change_fast_to_slow(self):
+        self.network.node_list[13].subpopulations[BACTERIA_FAST] = 10
+        self.network.update_totals()
+        self.network.change(BACTERIA_SLOW)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_FAST], 9)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_SLOW], 1)
+
+        self.network.node_list[13].subpopulations[BACTERIA_FAST] = 1
+        self.network.node_list[30].subpopulations[BACTERIA_FAST] = 101
+        self.network.update_totals()
+        self.network.change(BACTERIA_SLOW)
+        self.assertEqual(self.network.node_list[30].subpopulations[BACTERIA_FAST], 100)
+        self.assertEqual(self.network.node_list[30].subpopulations[BACTERIA_SLOW], 1)
+
+    def test_change_slow_to_fast(self):
+        self.network.node_list[13].subpopulations[BACTERIA_SLOW] = 10
+        self.network.update_totals()
+        self.network.change(BACTERIA_FAST)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_FAST], 1)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_SLOW], 9)
+
+        self.network.node_list[13].subpopulations[BACTERIA_SLOW] = 1
+        self.network.node_list[30].subpopulations[BACTERIA_SLOW] = 101
+        self.network.update_totals()
+        self.network.change(BACTERIA_FAST)
+        self.assertEqual(self.network.node_list[30].subpopulations[BACTERIA_FAST], 1)
+        self.assertEqual(self.network.node_list[30].subpopulations[BACTERIA_SLOW], 100)
+
+    def test_migrate_fast(self):
+        self.network.node_list[13].subpopulations[BACTERIA_FAST] = 10
+        self.network.update_totals()
+        self.network.migrate_bronchi(BACTERIA_FAST)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_FAST], 9)
+        self.assertEqual(self.network.node_list[12].subpopulations[BACTERIA_FAST], 1)
+
+    def test_migrate_slow(self):
+        self.network.node_list[13].subpopulations[BACTERIA_SLOW] = 10
+        self.network.update_totals()
+        self.network.migrate_bronchi(BACTERIA_SLOW)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_SLOW], 9)
+        self.assertEqual(self.network.node_list[12].subpopulations[BACTERIA_SLOW], 1)
+
+    def test_recruit_mac(self):
+        self.network.recruit_mac()
+        self.assertEqual(self.network.node_list[17].subpopulations[MACROPHAGE_REGULAR], 1)
+
+    def test_death_mac_regular(self):
+        self.network.node_list[13].subpopulations[MACROPHAGE_REGULAR] = 10
+        self.network.update_totals()
+        self.network.death_mac(MACROPHAGE_REGULAR)
+        self.assertEqual(self.network.node_list[13].subpopulations[MACROPHAGE_REGULAR], 9)
+
+    def test_death_mac_infected(self):
+        self.network.node_list[13].subpopulations[MACROPHAGE_INFECTED] = 10
+        self.network.update_totals()
+        self.network.death_mac(MACROPHAGE_INFECTED)
+        self.assertEqual(self.network.node_list[13].subpopulations[MACROPHAGE_INFECTED], 9)
+
+    def test_ingest_mac_regular(self):
+        self.network.node_list[13].subpopulations[MACROPHAGE_REGULAR] = 10
+        self.network.node_list[13].subpopulations[BACTERIA_FAST] = 1
+        self.network.update_totals()
+        self.network.ingest(MACROPHAGE_REGULAR)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_FAST], 0)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_INTRACELLULAR], 1)
+        self.assertEqual(self.network.node_list[13].subpopulations[MACROPHAGE_REGULAR], 9)
+        self.assertEqual(self.network.node_list[13].subpopulations[MACROPHAGE_INFECTED], 1)
+
+        self.network.node_list[8].subpopulations[MACROPHAGE_REGULAR] = 10
+        self.network.node_list[8].subpopulations[BACTERIA_SLOW] = 1
+        self.network.update_totals()
+        self.network.ingest(MACROPHAGE_REGULAR)
+        self.assertEqual(self.network.node_list[8].subpopulations[BACTERIA_SLOW], 0)
+        self.assertEqual(self.network.node_list[8].subpopulations[BACTERIA_INTRACELLULAR], 1)
+        self.assertEqual(self.network.node_list[8].subpopulations[MACROPHAGE_REGULAR], 9)
+        self.assertEqual(self.network.node_list[8].subpopulations[MACROPHAGE_INFECTED], 1)
+
+    def test_ingest_mac_infected(self):
+        self.network.node_list[13].subpopulations[MACROPHAGE_INFECTED] = 10
+        self.network.node_list[13].subpopulations[BACTERIA_INTRACELLULAR] = 10
+        self.network.node_list[13].subpopulations[BACTERIA_FAST] = 1
+        self.network.update_totals()
+        self.network.ingest(MACROPHAGE_INFECTED)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_FAST], 0)
+        self.assertEqual(self.network.node_list[13].subpopulations[BACTERIA_INTRACELLULAR], 11)
+        self.assertEqual(self.network.node_list[13].subpopulations[MACROPHAGE_REGULAR], 0)
+        self.assertEqual(self.network.node_list[13].subpopulations[MACROPHAGE_INFECTED], 10)
+
+        self.network.node_list[8].subpopulations[MACROPHAGE_INFECTED] = 10
+        self.network.node_list[8].subpopulations[BACTERIA_INTRACELLULAR] = 10
+        self.network.node_list[8].subpopulations[BACTERIA_SLOW] = 1
+        self.network.update_totals()
+        self.network.ingest(MACROPHAGE_INFECTED)
+        self.assertEqual(self.network.node_list[8].subpopulations[BACTERIA_SLOW], 0)
+        self.assertEqual(self.network.node_list[8].subpopulations[BACTERIA_INTRACELLULAR], 11)
+        self.assertEqual(self.network.node_list[8].subpopulations[MACROPHAGE_REGULAR], 0)
+        self.assertEqual(self.network.node_list[8].subpopulations[MACROPHAGE_INFECTED], 10)
+
 
 
 if __name__ == '__main__':
