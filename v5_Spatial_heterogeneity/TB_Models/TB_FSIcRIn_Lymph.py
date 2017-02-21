@@ -128,9 +128,9 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
             self.total_intra += node.subpopulations[BACTERIA_INTRACELLULAR]
             self.total_mac_regular += node.subpopulations[MACROPHAGE_REGULAR]
             self.total_mac_infected += node.subpopulations[MACROPHAGE_INFECTED]
-            # TODO - assumes lymph nodes have v little O2 - check this
-            self.total_f_o2 += node.subpopulations[BACTERIA_FAST] * 9999
-            self.total_s_o2 += node.subpopulations[BACTERIA_SLOW] * 0
+            # TODO - assumes lymph nodes don't have change
+            # self.total_f_o2 += node.subpopulations[BACTERIA_FAST] * 9999
+            # self.total_s_o2 += node.subpopulations[BACTERIA_SLOW] * 0
             self.total_regular_bac += node.subpopulations[MACROPHAGE_REGULAR] * (
                 node.subpopulations[BACTERIA_FAST] + node.subpopulations[BACTERIA_SLOW])
             self.total_infected_bac += node.subpopulations[MACROPHAGE_INFECTED] * (
@@ -225,11 +225,13 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
         else:
             raise Exception("Metabolism change: {0} metabolism not valid".format(new_metabolism))
 
-        # Process all nodes, adding num of bacteria of metabolism * oxygen tension until r exceeded
+        # Process all bps nodes, adding num of bacteria of metabolism * oxygen tension until r exceeded
         running_total = 0
-        for node_id in self.node_list:
-            node = self.node_list[node_id]
-            running_total += node.subpopulations[old_metabolism] * node.oxygen_tension
+        for node in self.node_list_bps:
+            if new_metabolism == BACTERIA_SLOW:
+                running_total += node.subpopulations[old_metabolism] * (1/node.oxygen_tension)
+            else:
+                running_total += node.subpopulations[old_metabolism] * node.oxygen_tension
             if running_total >= r:
                 # Reduce old count by 1 and increment new count by 1
                 self.update_node(node, new_metabolism, 1)
