@@ -17,6 +17,8 @@ class BronchopulmonarySegment(Patch):
         self.oxygen_tension = oxygen_tension
         # Adjacent bronchi
         self.bronchi = []
+        # Adjacent drainage
+        self.drainage = []
 
     def __str__(self):
         """ String identifier of patch"""
