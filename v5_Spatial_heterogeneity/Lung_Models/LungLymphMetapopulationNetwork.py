@@ -155,9 +155,13 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
         self.node_list_lymph = [n for n in self.node_list.values() if isinstance(n, LymphNode)]
 
         # Record number adjacent bronchi
-        for n in self.node_list_bps:
-            n.bronchi = [(n1, n2, data) for n1, n2, data in self.edges(n, data=True) if
-                         isinstance(data[EDGE_OBJECT], Bronchus)]
+        for node in self.node_list_bps:
+            neighbours = sorted([neighbour.id for neighbour in self.neighbors(node)])
+            for neighbour_id in neighbours:
+                neighbour = self.node_list[neighbour_id]
+                edge = self.edge[node][neighbour]
+                if isinstance(edge[EDGE_OBJECT], Bronchus):
+                    node.bronchi.append((neighbour, edge[EDGE_OBJECT]))
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0
