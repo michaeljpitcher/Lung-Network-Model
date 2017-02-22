@@ -1,12 +1,11 @@
 import math
-
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-
-from v5_Spatial_heterogeneity.Base.Patch import *
+from Patch import *
 
 EDGE_TYPE = 'edge_type'
+
 
 class MetapopulationNetwork(nx.Graph):
     """ Network with added metapopulation dynamics
@@ -40,10 +39,6 @@ class MetapopulationNetwork(nx.Graph):
             assert EDGE_TYPE in edge_dict.keys(), "Must specify all edge types"
             for attribute_key in edge_dict:
                 self.edge[node1][node2][attribute_key] = edge_dict[attribute_key]
-
-        # Degree is stored within each Patch (to speed up degree referencing)
-        for node in self.nodes():
-            node.degree = self.degree(node)
 
         # Time
         self.time = 0.0
