@@ -1,3 +1,5 @@
 from Models.Lung.LungLymph import LungLymph
 
-a = LungLymph(['a'])
+a = LungLymph([], {})
+
+a.display([])

@@ -32,11 +32,11 @@ class MetapopulationNetwork(nx.Graph):
             self.node_list[node.id] = node
 
         # Add edges
-        for (node1_index, node2_index, edge_dict) in edges:
-            node1 = self.node_list[node1_index]
-            node2 = self.node_list[node2_index]
+        for (node1, node2, edge_dict) in edges:
+            assert node1 in self.node_list.values(), "Must supply valid node for edge: {0}".format(node1)
+            assert node2 in self.node_list.values(), "Must supply valid node for edge: {0}".format(node2)
             self.add_edge(node1, node2)
-            assert EDGE_TYPE in edge_dict.keys(), "Must specify all edge types"
+            assert EDGE_TYPE in edge_dict.keys(), "Edge type for edge {0},{1} not supplied".format(node1,node2)
             for attribute_key in edge_dict:
                 self.edge[node1][node2][attribute_key] = edge_dict[attribute_key]
 

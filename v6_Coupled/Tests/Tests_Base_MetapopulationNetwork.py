@@ -9,18 +9,18 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
 
     def setUp(self):
 
-        self.nodes = []
+        self.nodes_ = []
         self.species = ['a','b','c']
         for n in range(7):
             load = {'a':n, 'b': n*2}
             node = Patch(n, self.species, load)
-            self.nodes.append(node)
+            self.nodes_.append(node)
 
         self.edges = []
         for n in range(6):
-            self.edges.append((n, n+1, {EDGE_TYPE:'edge',"test_key":n}))
+            self.edges.append((self.nodes_[n], self.nodes_[n + 1], {EDGE_TYPE: 'edge', "test_key":n}))
 
-        self.network = MetapopulationNetwork(self.nodes, self.edges, self.species)
+        self.network = MetapopulationNetwork(self.nodes_, self.edges, self.species)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.network, networkx.Graph))
@@ -29,14 +29,12 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
         # Nodes
         self.assertEqual(len(self.network.node_list), 7)
         self.assertItemsEqual(self.network.node_list.keys(), range(7))
-        self.assertItemsEqual(self.network.node_list.values(), self.nodes)
+        self.assertItemsEqual(self.network.node_list.values(), self.nodes_)
         for n in range(7):
             self.assertEqual(self.network.node_list[n].id, n)
 
         # Edges - check all specified edges present
-        for (id_1,id_2,edge_data) in self.edges:
-            node1 = self.network.node_list[id_1]
-            node2 = self.network.node_list[id_2]
+        for (node1,node2,edge_data) in self.edges:
             self.assertTrue(self.network.has_edge(node1, node2))
             self.assertItemsEqual(self.network.edge[node1][node2].keys(), edge_data.keys())
             for key in self.network.edge[node1][node2].keys():
@@ -117,7 +115,7 @@ class RunMetapopulationNetworkTestCase(unittest.TestCase):
 
                 edges = []
                 for n in range(6):
-                    edges.append((n, n + 1, {EDGE_TYPE: 'edge', "test_key": n}))
+                    edges.append((nodes[n], nodes[n + 1], {EDGE_TYPE: 'edge', "test_key": n}))
 
                 MetapopulationNetwork.__init__(self, nodes, edges, species)
 
