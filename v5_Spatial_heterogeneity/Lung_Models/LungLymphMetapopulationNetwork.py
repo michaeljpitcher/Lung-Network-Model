@@ -154,7 +154,7 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
         self.node_list_bps = [n for n in self.node_list.values() if isinstance(n, BronchopulmonarySegment)]
         self.node_list_lymph = [n for n in self.node_list.values() if isinstance(n, LymphNode)]
 
-        # Record number adjacent bronchi
+        # Record adjacent bronchi for bps
         for node in self.node_list_bps:
             neighbours = sorted([neighbour.id for neighbour in self.neighbors(node)])
             for neighbour_id in neighbours:
@@ -162,6 +162,19 @@ class LungLymphMetapopulationNetwork(MetapopulationNetwork):
                 edge = self.edge[node][neighbour]
                 if isinstance(edge[EDGE_OBJECT], Bronchus):
                     node.bronchi.append((neighbour, edge[EDGE_OBJECT]))
+                if isinstance(edge[EDGE_OBJECT], Drainage):
+                    node.drainage.append((neighbour, edge[EDGE_OBJECT]))
+
+        # Record adjacent drainage & lymphatic vessels for lymph nodes
+        for node in self.node_list_lymph:
+            neighbours = sorted([neighbour.id for neighbour in self.neighbors(node)])
+            for neighbour_id in neighbours:
+                neighbour = self.node_list[neighbour_id]
+                edge = self.edge[node][neighbour]
+                if isinstance(edge[EDGE_OBJECT], Drainage):
+                    node.drainage.append((neighbour, edge[EDGE_OBJECT]))
+                elif isinstance(edge[EDGE_OBJECT], LymphaticVessel):
+                    node.lymphatic_vessels.append((neighbour, edge[EDGE_OBJECT]))
 
         # Origin and terminal nodes (to compute edge weights)
         self.origin = 0

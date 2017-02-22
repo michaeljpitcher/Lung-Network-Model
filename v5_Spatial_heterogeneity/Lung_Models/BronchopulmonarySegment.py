@@ -17,7 +17,7 @@ class BronchopulmonarySegment(Patch):
         self.oxygen_tension = oxygen_tension
         # Adjacent bronchi
         self.bronchi = []
-        # Adjacent drainage
+        # Drainage
         self.drainage = []
 
     def __str__(self):

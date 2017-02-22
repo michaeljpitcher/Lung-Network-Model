@@ -374,12 +374,11 @@ class TBMetapopulationNetwork_FSIcRInA(LungMetapopulationNetwork):
         output += " reg_mac=" + str(self.total_mac_regular)
         output += " inf_mac=" + str(self.total_mac_infected)
         output += " act_mac=" + str(self.total_mac_activated)
-        output += " ACT=" + str(self.total_activation)
         print output
 
 if __name__ == '__main__':
     rates_ = dict()
-    rates_[P_REPLICATE_FAST] = 0.1
+    rates_[P_REPLICATE_FAST] = 0.05
     rates_[P_REPLICATE_SLOW] = 0.01
     rates_[P_REPLICATE_INTRACELLULAR] = 0.0
     rates_[P_MIGRATE_FAST] = 0.01
@@ -400,7 +399,7 @@ if __name__ == '__main__':
     rates_[P_ACTIVATED_INGEST_FAST] = 0.1
     rates_[P_ACTIVATED_INGEST_SLOW] = 0.0
 
-    rates_[P_ACTIVATION] = 0.2
+    rates_[P_ACTIVATION] = 0.002
 
     np.random.seed(101)
     netw = TBMetapopulationNetwork_FSIcRInA(rates_, 100, 10, 0)

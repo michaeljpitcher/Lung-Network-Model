@@ -12,6 +12,8 @@ class LymphNode(Patch):
         :param position: Spatial coordinates of the patch
         """
         Patch.__init__(self, patch_id, subpopulation_keys, loads, position)
+        self.drainage = []
+        self.lymphatic_vessels = []
 
     def __str__(self):
         """ String identifier of patch"""

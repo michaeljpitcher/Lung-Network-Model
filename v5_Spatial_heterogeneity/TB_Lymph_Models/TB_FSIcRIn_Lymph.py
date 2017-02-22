@@ -23,6 +23,9 @@ P_DEATH_INFECTED = 'mac_infected_death'
 P_REGULAR_INGEST_BAC = 'regular_ingests_bac'
 P_INFECTED_INGEST_BAC = 'infected_ingests_bac'
 
+P_REGULAR_DRAIN = 'drain_regular'
+P_INFECTED_DRAIN = 'drain_infected'
+
 
 class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
     """
@@ -120,6 +123,7 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
             self.total_infected_bac += node.subpopulations[MACROPHAGE_INFECTED] * (
                 node.subpopulations[BACTERIA_FAST] + node.subpopulations[BACTERIA_SLOW])
             self.total_regular_drainage += node.subpopulations[MACROPHAGE_REGULAR] * len(node.drainage)
+            self.total_infected_drainage += node.subpopulations[MACROPHAGE_INFECTED] * len(node.drainage)
 
         # Update lymph node total
         for node in self.node_list_lymph:
@@ -135,6 +139,9 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
                 node.subpopulations[BACTERIA_FAST] + node.subpopulations[BACTERIA_SLOW])
             self.total_infected_bac += node.subpopulations[MACROPHAGE_INFECTED] * (
                 node.subpopulations[BACTERIA_FAST] + node.subpopulations[BACTERIA_SLOW])
+            self.total_regular_drainage += node.subpopulations[MACROPHAGE_REGULAR] * len(node.drainage)
+            self.total_infected_drainage += node.subpopulations[MACROPHAGE_REGULAR] * len(node.drainage)
+
 
     def events(self):
         """
@@ -177,6 +184,10 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
                        lambda f: self.ingest(MACROPHAGE_INFECTED)))
 
         # Mac drain lymph
+        events.append((self.total_regular_drainage * self.rates[P_REGULAR_DRAIN],
+                       lambda f: self.drain(MACROPHAGE_REGULAR)))
+        events.append((self.total_infected_drainage * self.rates[P_INFECTED_DRAIN],
+                       lambda f: self.drain(MACROPHAGE_INFECTED)))
 
         # Mac migrate lymph
 
@@ -342,6 +353,23 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
                     self.update_node(node, MACROPHAGE_INFECTED, 1)
                 return
 
+    def drain(self, mac_state):
+        # Set r based on mac state count
+        if mac_state == MACROPHAGE_REGULAR:
+            r = np.random.random() * self.total_regular_drainage
+        else:
+            r = np.random.random() * self.total_infected_drainage
+
+        running_total = 0
+        for node in self.node_list.values():
+            running_total += node.subpopulations[mac_state] * len(node.drainage)
+            if running_total >= r:
+                self.update_node(node, mac_state, -1)
+                index = np.random.randint(0, len(node.drainage))
+                (neighbour, drainage_edge) = node.drainage[index]
+                self.update_node(neighbour, mac_state, 1)
+                return
+
     def timestep_output(self):
 
         output = "t=" + str(self.time)
@@ -369,11 +397,14 @@ if __name__ == '__main__':
     rates_[P_DEATH_REGULAR] = 0.01
     rates_[P_DEATH_INFECTED] = 0.1
 
-    rates_[P_REGULAR_INGEST_BAC] = 0.002
+    rates_[P_REGULAR_INGEST_BAC] = 0.1
     rates_[P_INFECTED_INGEST_BAC] = 0.001
 
-    netw = TBMetapopulationNetwork_FSIcRIn_Lymph(rates_, 100, 0, 10, 0)
+    rates_[P_REGULAR_DRAIN] = 0.1
+    rates_[P_INFECTED_DRAIN] = 0.1
 
-    # netw.run(50)
-    #
-    netw.display([])
+    netw = TBMetapopulationNetwork_FSIcRIn_Lymph(rates_, 100, 0, 0, 0)
+
+    netw.run(1)
+
+    netw.display([MACROPHAGE_REGULAR])
