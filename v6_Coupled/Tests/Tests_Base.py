@@ -117,6 +117,53 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
             self.network.update_node(node, 'c', -1)
         self.assertTrue('update_node: Count cannot drop below zero' in context.exception)
 
+class RunMetapopulationNetworkTestCase(unittest.TestCase):
+
+    def setUp(self):
+        # Need to sub-class
+        class Test(MetapopulationNetwork):
+            def __init__(self):
+                nodes = []
+                species = ['a', 'b', 'c']
+                for n in range(7):
+                    load = {'a': n, 'b': n * 2}
+                    node = Patch(n, species, load)
+                    nodes.append(node)
+
+                edges = []
+                for n in range(6):
+                    edges.append((n, n + 1, {EDGE_TYPE: 'edge', "test_key": n}))
+
+                MetapopulationNetwork.__init__(self, nodes, edges, species)
+
+                self.rate_for_function_1 = 0.0
+                self.rate_for_function_2 = 0.0
+
+                self.counter_for_function_1 = 0
+                self.counter_for_function_2 = 0
+
+            def events(self):
+                return [(self.rate_for_function_1, lambda f: self.function_1()),
+                        (self.rate_for_function_2, lambda f: self.function_2())]
+
+            def function_1(self):
+                self.counter_for_function_1 += 1
+
+            def function_2(self):
+                self.counter_for_function_2 += 1
+
+        self.network = Test()
+
+    def test_run_0_prob(self):
+        self.network.run(10)
+        self.assertEqual(self.network.time, 0.0)
+
+    def test_run(self):
+        self.network.rate_for_function_1 = 1.0
+        self.network.run(10)
+        self.assertTrue(self.network.time >= 10.0)
+        self.assertTrue(self.network.counter_for_function_1 > 10)
+        self.assertEqual(self.network.counter_for_function_2, 0)
 
 
 if __name__ == '__main__':
