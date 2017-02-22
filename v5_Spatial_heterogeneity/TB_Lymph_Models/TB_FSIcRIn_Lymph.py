@@ -289,8 +289,8 @@ class TBMetapopulationNetwork_FSIcRIn_Lymph(LungLymphMetapopulationNetwork):
         A new macrophage is recruited to the node
         :return:
         """
-        node_id = np.random.randint(0, len(self.nodes()))
-        node = self.node_list[node_id]
+        node_id = np.random.randint(0, len(self.node_list_bps))
+        node = self.node_list_bps[node_id]
         self.update_node(node, MACROPHAGE_REGULAR, 1)
 
     def death_mac(self, state):
