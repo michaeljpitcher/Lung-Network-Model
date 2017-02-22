@@ -1,6 +1,3 @@
-from ..Base.Patch import *
-
-
 class BronchopulmonarySegment(Patch):
 
     def __init__(self, patch_id, species, loads, position):

@@ -1,5 +1,4 @@
-from Base.MetapopulationNetwork import *
-import ConfigParser
+from ..Base.MetapopulationNetwork import MetapopulationNetwork
 
 class LungLymph(MetapopulationNetwork):
 

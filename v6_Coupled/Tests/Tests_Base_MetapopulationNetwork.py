@@ -1,24 +1,9 @@
 import unittest
 import networkx
-from v6_Coupled.Base.MetapopulationNetwork import *
 
+from ..Models.Base.MetapopulationNetwork import *
+from ..Models.Base.Patch import Patch
 
-class PatchTestCase(unittest.TestCase):
-
-    def setUp(self):
-
-        self.keys = ['a','b','c']
-        self.loads = {'a':1,'b':2}
-        self.position = (8,8)
-        self.patch = Patch(0, self.keys, self.loads, self.position)
-
-    def test_initialise(self):
-        self.assertEqual(self.patch.id, 0)
-        self.assertItemsEqual(self.patch.subpopulations.keys(), ['a','b','c'])
-        self.assertEqual(self.patch.subpopulations['a'], self.loads['a'])
-        self.assertEqual(self.patch.subpopulations['b'], self.loads['b'])
-        self.assertEqual(self.patch.subpopulations['c'], 0)
-        self.assertSequenceEqual(self.patch.position, self.position)
 
 class MetapopulationNetworkTestCase(unittest.TestCase):
 
@@ -161,8 +146,8 @@ class RunMetapopulationNetworkTestCase(unittest.TestCase):
     def test_run(self):
         self.network.rate_for_function_1 = 1.0
         self.network.run(10)
-        self.assertTrue(self.network.time >= 10.0)
-        self.assertTrue(self.network.counter_for_function_1 > 10)
+        self.assertTrue(self.network.time >= 0.0)
+        self.assertTrue(self.network.counter_for_function_1 > 0)
         self.assertEqual(self.network.counter_for_function_2, 0)
 
 
