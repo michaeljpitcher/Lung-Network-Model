@@ -14,16 +14,11 @@ STAHLER = 'stahler'
 
 class LungLymph(MetapopulationNetwork):
 
-    def __init__(self, species, loads, position_config_filename='node_positions.properties', weight_method=HORSFIELD):
+    def __init__(self, species, loads, positions, weight_method=HORSFIELD):
 
-        self.bps_ids = range(0, 36)
-        self.terminal_bps_ids = range(18, 36)
-        self.ln_ids = range(36, 45)
-
-        # Check the config file for node positions is set up
-        node_pos_config = ConfigParser.RawConfigParser()
-        if not node_pos_config.read(position_config_filename):
-            raise IOError("Node position file ({0}) not found".format(position_config_filename))
+        bps_ids = range(0, 36)
+        terminal_bps_ids = range(18, 36)
+        ln_ids = range(36, 45)
 
         # -----------START NODES ---------------------------
         self.node_list_bps = []
@@ -33,11 +28,10 @@ class LungLymph(MetapopulationNetwork):
         nodes = []
 
         # BPSs
-        specified_nodes = [int(neighbour) for neighbour in node_pos_config.options(BPS_POSITIONS)]
-        for bps_id in self.bps_ids:
-            assert bps_id in specified_nodes, "Node {0} position has not been specified".format(bps_id)
-            position = tuple([float(a) for a in node_pos_config.get(BPS_POSITIONS, str(bps_id))
-                             .split(",")])
+        # specified_nodes = [int(neighbour) for neighbour in node_pos_config.options(BPS_POSITIONS)]
+        for bps_id in bps_ids:
+            assert bps_id in positions.keys(), "Node {0} position has not been specified".format(bps_id)
+            position = positions[bps_id]
             if bps_id in loads:
                 load_for_bps = loads[bps_id]
             else:
@@ -45,15 +39,14 @@ class LungLymph(MetapopulationNetwork):
             node = BronchopulmonarySegment(bps_id, species, load_for_bps, position)
             nodes.append(node)
             self.node_list_bps.append(node)
-            if bps_id in self.terminal_bps_ids:
+            if bps_id in terminal_bps_ids:
                 self.node_list_terminal_bps.append(node)
 
         # Lymph nodes
-        specified_nodes = [int(neighbour) for neighbour in node_pos_config.options(LN_POSITIONS)]
-        for ln_id in self.ln_ids:
-            assert ln_id in specified_nodes, "Node {0} position has not been specified".format(ln_id)
-            position = tuple([float(a) for a in node_pos_config.get(LN_POSITIONS, str(ln_id))
-                             .split(",")])
+        # specified_nodes = [int(neighbour) for neighbour in node_pos_config.options(LN_POSITIONS)]
+        for ln_id in ln_ids:
+            assert ln_id in positions.keys(), "Node {0} position has not been specified".format(ln_id)
+            position = positions[ln_id]
             if ln_id in loads:
                 load_for_bps = loads[ln_id]
             else:
