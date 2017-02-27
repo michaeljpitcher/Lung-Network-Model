@@ -1,5 +1,4 @@
 from ..Base.MetapopulationNetwork import *
-import ConfigParser
 from .BronchopulmonarySegment import BronchopulmonarySegment
 from .LymphNode import LymphNode
 
@@ -171,6 +170,10 @@ class LungLymph(MetapopulationNetwork):
         node_labels = {}
         for n in self.nodes():
             pos[n] = n.position
+            node_labels[n] = ""
+            if node_contents_species is not None:
+                for species in node_contents_species:
+                    node_labels[n] += str(n.subpopulations[species]) + ":"
 
         # Nodes
         nx.draw_networkx_nodes(self, nodelist=self.node_list_bps, pos=pos, node_size=500, node_color="red")
