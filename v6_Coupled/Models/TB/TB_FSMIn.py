@@ -31,7 +31,7 @@ P_MIGRATE_INFECTED_MACROPHAGE = 'prob_inf_mac_migrate'
 
 
 
-class TB_FSM(LungLymph):
+class TB_FSMIn(LungLymph):
 
     def __init__(self, positions, parameters, weight_method=HORSFIELD):
 
