@@ -32,6 +32,7 @@ class TB_FSM(LungLymph):
         species = [BACTERIA_FAST, BACTERIA_SLOW, MACROPHAGE]
 
         expected_parameters = [FAST_BACTERIA_TO_LOAD, SLOW_BACTERIA_TO_LOAD,
+                               MACROPHAGES_PER_BPS, MACROPHAGES_PER_LYMPH,
                                P_REPLICATE_FAST, P_REPLICATE_SLOW,
                                P_MIGRATE_FAST, P_MIGRATE_SLOW,
                                P_CHANGE_FAST_TO_SLOW, P_CHANGE_SLOW_TO_FAST,
