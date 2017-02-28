@@ -252,12 +252,12 @@ class TB_FSMIn(LungLymph):
     def recruit_macrophage_bps(self):
         index = np.random.randint(0, len(self.node_list_bps))
         node = self.node_list_bps[index]
-        node.update(MACROPHAGE, 1)
+        node.update(MACROPHAGE_REGULAR, 1)
 
     def recruit_macrophage_lymph(self):
         index = np.random.randint(0, len(self.node_list_ln))
         node = self.node_list_ln[index]
-        node.update(MACROPHAGE, 1)
+        node.update(MACROPHAGE_REGULAR, 1)
 
     def macrophage_death(self, mac_state):
 
