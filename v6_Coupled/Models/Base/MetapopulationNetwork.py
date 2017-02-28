@@ -92,18 +92,6 @@ class MetapopulationNetwork(nx.Graph):
         for n in self.nodes():
             self.data[self.time][n.id] = n.subpopulations.copy()
 
-    def update_node(self, patch, species, amendment):
-        """
-        Amend the count of a species with a node
-        :param patch: The patch to be updated
-        :param species: The indicator of the species to update
-        :param amendment: The integer amount to amend total by (positive or negative)
-        :return:
-        """
-        assert species in self.species, "update_node: Invalid species {0}".format(species)
-        assert patch.subpopulations[species] + amendment >= 0, "update_node: Count cannot drop below zero"
-        patch.subpopulations[species] += amendment
-
     def events(self):
         """ Rate of events and specific function for event - to be defined in overriding class """
         raise NotImplementedError

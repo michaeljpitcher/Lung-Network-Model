@@ -20,3 +20,8 @@ class Patch:
     def __str__(self):
         """ String identifier of patch"""
         return "Patch: " + str(self.id)
+
+    def update(self, species, amendment):
+        assert species in self.subpopulations.keys(), "update_node: Invalid species {0}".format(species)
+        assert self.subpopulations[species] + amendment >= 0, "update_node: Count cannot drop below zero"
+        self.subpopulations[species] += amendment
