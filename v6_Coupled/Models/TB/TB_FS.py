@@ -52,8 +52,8 @@ class TB_FS(LungLymph):
                 node_to_distribute = n
                 break
 
-        self.update_node(node_to_distribute, BACTERIA_FAST, fast_to_load)
-        self.update_node(node_to_distribute, BACTERIA_SLOW, slow_to_load)
+        node_to_distribute.update(BACTERIA_FAST, fast_to_load)
+        node_to_distribute.update(BACTERIA_SLOW, slow_to_load)
 
         # Totals
         self.total_fast_bac = self.total_slow_bac = self.total_fast_migrate = self.total_slow_migrate = \
@@ -64,12 +64,11 @@ class TB_FS(LungLymph):
         self.total_fast_bac = self.total_slow_bac = self.total_fast_migrate = self.total_slow_migrate = \
             self.total_fast_o2 = self.total_slow_o2 = 0.0
         for node in self.node_list_bps:
-            # TODO - .degree() is slow, may be better to store degree somehow
-            degree = self.degree(node)
+            bronchi_degree = self.get_neighbouring_edges(node, BRONCHUS)
             self.total_fast_bac += node.subpopulations[BACTERIA_FAST]
             self.total_slow_bac += node.subpopulations[BACTERIA_SLOW]
-            self.total_fast_migrate += node.subpopulations[BACTERIA_FAST] * degree
-            self.total_slow_migrate += node.subpopulations[BACTERIA_SLOW] * degree
+            self.total_fast_migrate += node.subpopulations[BACTERIA_FAST] * bronchi_degree
+            self.total_slow_migrate += node.subpopulations[BACTERIA_SLOW] * bronchi_degree
             self.total_fast_o2 += node.subpopulations[BACTERIA_FAST] * (1/node.oxygen_tension)
             self.total_slow_o2 += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
 
@@ -111,7 +110,7 @@ class TB_FS(LungLymph):
         for node in self.node_list_bps:
             running_total += node.subpopulations[metabolism]
             if running_total > r:
-                self.update_node(node, metabolism, 1)
+                node.update(metabolism, 1)
                 return
 
     def migrate(self, metabolism):
@@ -126,16 +125,15 @@ class TB_FS(LungLymph):
         for node in self.node_list_bps:
             running_total += node.subpopulations[metabolism] * self.degree(node)
             if running_total > r:
-                neighbouring_edges = [(neighbour, data[WEIGHT]) for (_, neighbour, data) in self.edges(node, data=True)
-                                      if data[EDGE_TYPE] == BRONCHUS]
+                neighbouring_edges = self.get_neighbouring_edges(node, BRONCHUS)
                 total_weight = sum(weight for _, weight in neighbouring_edges)
                 r2 = np.random.random() * total_weight
                 running_neighbour_weight_total = 0
                 for (neighbour, weight) in neighbouring_edges:
                     running_neighbour_weight_total += weight
                     if running_neighbour_weight_total > r2:
-                        self.update_node(node, metabolism, -1)
-                        self.update_node(neighbour, metabolism, 1)
+                        node.update(metabolism, -1)
+                        neighbour.update(metabolism, 1)
                         return
 
     def change_metabolism(self, previous_metabolism):
@@ -156,6 +154,6 @@ class TB_FS(LungLymph):
                 running_total += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
 
             if running_total > r:
-                self.update_node(node, previous_metabolism, -1)
-                self.update_node(node, new_metabolism, 1)
+                node.update(previous_metabolism, -1)
+                node.update(new_metabolism, 1)
                 return
