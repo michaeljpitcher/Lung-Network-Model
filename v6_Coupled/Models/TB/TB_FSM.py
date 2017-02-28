@@ -76,12 +76,15 @@ class TB_FSM(LungLymph):
 
         # Totals
         self.total_fast_bac = self.total_slow_bac = self.total_fast_migrate = self.total_slow_migrate = \
-            self.total_fast_o2 = self.total_slow_o2 = self.total_macrophage = self.total_mac_migrate = 0.0
+            self.total_fast_o2 = self.total_slow_o2 = self.total_macrophage = self.total_mac_migrate = \
+            self.total_macrophage_and_fast = self.total_macrophage_and_slow = 0.0
 
     def update_totals(self):
 
         self.total_fast_bac = self.total_slow_bac = self.total_fast_migrate = self.total_slow_migrate = \
-            self.total_fast_o2 = self.total_slow_o2 = self.total_macrophage = self.total_mac_migrate = 0.0
+            self.total_fast_o2 = self.total_slow_o2 = self.total_macrophage = self.total_mac_migrate = \
+            self.total_macrophage_and_fast = self.total_macrophage_and_slow = 0.0
+
         for node in self.node_list_bps:
             bronchi_degree = self.get_neighbouring_edges(node, BRONCHUS)
             self.total_fast_bac += node.subpopulations[BACTERIA_FAST]
@@ -93,6 +96,15 @@ class TB_FSM(LungLymph):
             self.total_macrophage += node.subpopulations[MACROPHAGE]
             lymph_degree = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
             self.total_mac_migrate += node.subpopulations[MACROPHAGE] * lymph_degree
+            self.total_macrophage_and_fast += node.subpopulations[MACROPHAGE] * node.subpopulations[BACTERIA_FAST]
+            self.total_macrophage_and_slow += node.subpopulations[MACROPHAGE] * node.subpopulations[BACTERIA_SLOW]
+
+        for node in self.node_list_ln:
+            self.total_macrophage += node.subpopulations[MACROPHAGE]
+            lymph_degree = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
+            self.total_mac_migrate += node.subpopulations[MACROPHAGE] * lymph_degree
+            self.total_macrophage_and_fast += node.subpopulations[MACROPHAGE] * node.subpopulations[BACTERIA_FAST]
+            self.total_macrophage_and_slow += node.subpopulations[MACROPHAGE] * node.subpopulations[BACTERIA_SLOW]
 
     def events(self):
 
@@ -130,6 +142,12 @@ class TB_FSM(LungLymph):
         # Macrophage migration
         events.append((self.parameters[P_MIGRATE_MACROPHAGE] * self.total_mac_migrate,
                        lambda f: self.macrophage_migrate()))
+
+        # Macrophage ingest bacteria
+        events.append((self.parameters[P_MACROPHAGE_INGEST_FAST] * self.total_macrophage_and_fast,
+                       lambda f: self.ingest(BACTERIA_FAST)))
+        events.append((self.parameters[P_MACROPHAGE_INGEST_SLOW] * self.total_macrophage_and_slow,
+                       lambda f: self.ingest(BACTERIA_SLOW)))
 
         return events
 
@@ -224,4 +242,19 @@ class TB_FSM(LungLymph):
                 neighbour = neighbouring_lymph_edges[neighbour_index]
                 node.update(MACROPHAGE, -1)
                 neighbour.update(MACROPHAGE, 1)
+                return
+
+    def ingest(self, bacteria_metabolism):
+        if bacteria_metabolism == BACTERIA_FAST:
+            r = np.random.random() * self.total_macrophage_and_fast
+        elif bacteria_metabolism == BACTERIA_SLOW:
+            r = np.random.random() * self.total_macrophage_and_slow
+        else:
+            raise Exception("Invalid metabolism: {0}".format(bacteria_metabolism))
+
+        running_total = 0
+        for node in self.node_list.values():
+            running_total += node.subpopulations[MACROPHAGE] * node.subpopulations[bacteria_metabolism]
+            if running_total > r:
+                node.update(bacteria_metabolism, -1)
                 return
