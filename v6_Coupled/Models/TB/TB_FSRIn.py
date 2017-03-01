@@ -30,7 +30,6 @@ P_MIGRATE_REGULAR_MACROPHAGE = 'prob_reg_mac_migrate'
 P_MIGRATE_INFECTED_MACROPHAGE = 'prob_inf_mac_migrate'
 
 
-
 class TB_FSRIn(LungLymph):
 
     def __init__(self, positions, parameters, weight_method=HORSFIELD):
@@ -86,7 +85,7 @@ class TB_FSRIn(LungLymph):
         # Totals
         self.total_fast_bac = self.total_slow_bac = self.total_fast_migrate = self.total_slow_migrate = \
             self.total_fast_o2 = self.total_slow_o2 = self.total_reg_macrophage = self.total_inf_macrophage = \
-            self.total_reg_mac_migrate =  self.total_inf_mac_migrate = \
+            self.total_reg_mac_migrate = self.total_inf_mac_migrate = \
             self.total_reg_macrophage_and_fast = self.total_reg_macrophage_and_slow = \
             self.total_inf_macrophage_and_fast = self.total_inf_macrophage_and_slow = 0.0
 

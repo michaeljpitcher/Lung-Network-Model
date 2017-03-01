@@ -201,9 +201,9 @@ class LungLymph(MetapopulationNetwork):
     def get_neighbouring_edges(self, node, edge_type=None):
         # TODO - may be slow to calculate this all the time, better to do it once and save
         if type is None:
-            neighbouring_edges = [(neighbour, data[WEIGHT]) for (_, neighbour, data) in self.edges(node, data=True)]
+            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
         else:
-            neighbouring_edges = [(neighbour, data[WEIGHT]) for (_, neighbour, data) in self.edges(node, data=True)
+            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
                                   if data[EDGE_TYPE] == edge_type]
         return neighbouring_edges
 

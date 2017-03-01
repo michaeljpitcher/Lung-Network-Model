@@ -50,16 +50,16 @@ class TB_FSIcRIn(LungLymph):
                                P_MIGRATE_REGULAR_MACROPHAGE, P_MIGRATE_INFECTED_MACROPHAGE]
 
         for param in expected_parameters:
-            assert param in parameters, "Parameter {0} not provided"
+            assert param in parameters, "Parameter {0} not provided".format(param)
 
         self.parameters = parameters
 
         loads = dict()
-        for node in self.node_list_bps:
+        for node in range(0, 36):
             loads[node] = dict()
             loads[node][MACROPHAGE_REGULAR] = self.parameters[MACROPHAGES_PER_BPS]
 
-        for node in self.node_list_ln:
+        for node in range(36, 45):
             loads[node] = dict()
             loads[node][MACROPHAGE_REGULAR] = self.parameters[MACROPHAGES_PER_LYMPH]
 
@@ -88,7 +88,7 @@ class TB_FSIcRIn(LungLymph):
         self.total_fast_bac = self.total_slow_bac = self.total_intracellular_bac = \
             self.total_fast_migrate = self.total_slow_migrate = \
             self.total_fast_o2 = self.total_slow_o2 = self.total_reg_macrophage = self.total_inf_macrophage = \
-            self.total_reg_mac_migrate =  self.total_inf_mac_migrate = \
+            self.total_reg_mac_migrate = self.total_inf_mac_migrate = \
             self.total_reg_macrophage_and_fast = self.total_reg_macrophage_and_slow = \
             self.total_inf_macrophage_and_fast = self.total_inf_macrophage_and_slow = 0.0
 
@@ -102,7 +102,7 @@ class TB_FSIcRIn(LungLymph):
             self.total_inf_macrophage_and_fast = self.total_inf_macrophage_and_slow = 0.0
 
         for node in self.node_list_bps:
-            bronchi_degree = self.get_neighbouring_edges(node, BRONCHUS)
+            bronchi_degree = len(self.get_neighbouring_edges(node, BRONCHUS))
             self.total_fast_bac += node.subpopulations[BACTERIA_FAST]
             self.total_slow_bac += node.subpopulations[BACTERIA_SLOW]
             self.total_intracellular_bac += node.subpopulations[BACTERIA_INTRACELLULAR]
@@ -112,7 +112,7 @@ class TB_FSIcRIn(LungLymph):
             self.total_slow_o2 += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
             self.total_reg_macrophage += node.subpopulations[MACROPHAGE_REGULAR]
             self.total_inf_macrophage += node.subpopulations[MACROPHAGE_INFECTED]
-            lymph_degree = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
+            lymph_degree = len(self.get_neighbouring_edges(node, LYMPHATIC_VESSEL))
             self.total_reg_mac_migrate += node.subpopulations[MACROPHAGE_REGULAR] * lymph_degree
             self.total_inf_mac_migrate += node.subpopulations[MACROPHAGE_INFECTED] * lymph_degree
             self.total_reg_macrophage_and_fast += node.subpopulations[MACROPHAGE_REGULAR] * \
@@ -130,7 +130,7 @@ class TB_FSIcRIn(LungLymph):
             self.total_intracellular_bac += node.subpopulations[BACTERIA_INTRACELLULAR]
             self.total_reg_macrophage += node.subpopulations[MACROPHAGE_REGULAR]
             self.total_inf_macrophage += node.subpopulations[MACROPHAGE_INFECTED]
-            lymph_degree = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
+            lymph_degree = len(self.get_neighbouring_edges(node, LYMPHATIC_VESSEL))
             self.total_reg_mac_migrate += node.subpopulations[MACROPHAGE_REGULAR] * lymph_degree
             self.total_inf_mac_migrate += node.subpopulations[MACROPHAGE_INFECTED] * lymph_degree
             self.total_reg_macrophage_and_fast += node.subpopulations[MACROPHAGE_REGULAR] * \
@@ -228,7 +228,7 @@ class TB_FSIcRIn(LungLymph):
             running_total += node.subpopulations[metabolism] * self.degree(node)
             if running_total > r:
                 neighbouring_edges = self.get_neighbouring_edges(node, BRONCHUS)
-                total_weight = sum(weight for _, weight in neighbouring_edges)
+                total_weight = sum(data[WEIGHT] for _, data in neighbouring_edges)
                 r2 = np.random.random() * total_weight
                 running_neighbour_weight_total = 0
                 for (neighbour, weight) in neighbouring_edges:
@@ -285,8 +285,8 @@ class TB_FSIcRIn(LungLymph):
             if running_total > r:
                 node.update(mac_state, -1)
                 if mac_state == MACROPHAGE_INFECTED:
-                    bacteria_to_disperse = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] / \
-                                           node.subpopulations[MACROPHAGE_INFECTED]))
+                    bacteria_to_disperse = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
+                                                     node.subpopulations[MACROPHAGE_INFECTED]))
                     node.update(BACTERIA_SLOW, bacteria_to_disperse)
                     node.update(BACTERIA_INTRACELLULAR, -1*bacteria_to_disperse)
                 return
@@ -309,8 +309,8 @@ class TB_FSIcRIn(LungLymph):
                 node.update(mac_state, -1)
                 neighbour.update(mac_state, 1)
                 if mac_state == MACROPHAGE_INFECTED:
-                    bacteria_to_migrate = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] / \
-                                           node.subpopulations[MACROPHAGE_INFECTED]))
+                    bacteria_to_migrate = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
+                                                    node.subpopulations[MACROPHAGE_INFECTED]))
                     node.update(BACTERIA_INTRACELLULAR, -1*bacteria_to_migrate)
                     neighbour.update(BACTERIA_INTRACELLULAR, bacteria_to_migrate)
                 return
