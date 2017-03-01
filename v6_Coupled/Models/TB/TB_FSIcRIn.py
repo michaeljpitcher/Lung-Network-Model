@@ -231,8 +231,8 @@ class TB_FSIcRIn(LungLymph):
                 total_weight = sum(data[WEIGHT] for _, data in neighbouring_edges)
                 r2 = np.random.random() * total_weight
                 running_neighbour_weight_total = 0
-                for (neighbour, weight) in neighbouring_edges:
-                    running_neighbour_weight_total += weight
+                for (neighbour, data) in neighbouring_edges:
+                    running_neighbour_weight_total += data[WEIGHT]
                     if running_neighbour_weight_total > r2:
                         node.update(metabolism, -1)
                         neighbour.update(metabolism, 1)
