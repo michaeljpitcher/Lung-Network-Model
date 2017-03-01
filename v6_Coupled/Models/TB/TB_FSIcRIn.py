@@ -306,13 +306,13 @@ class TB_FSIcRIn(LungLymph):
             if running_total > r:
                 neighbour_index = np.random.randint(0, len(neighbouring_lymph_edges))
                 neighbour = neighbouring_lymph_edges[neighbour_index][0]
-                node.update(mac_state, -1)
-                neighbour.update(mac_state, 1)
                 if mac_state == MACROPHAGE_INFECTED:
                     bacteria_to_migrate = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
                                                     node.subpopulations[MACROPHAGE_INFECTED]))
                     node.update(BACTERIA_INTRACELLULAR, -1*bacteria_to_migrate)
                     neighbour.update(BACTERIA_INTRACELLULAR, bacteria_to_migrate)
+                node.update(mac_state, -1)
+                neighbour.update(mac_state, 1)
                 return
 
     def ingest(self, mac_state, bacteria_metabolism):
