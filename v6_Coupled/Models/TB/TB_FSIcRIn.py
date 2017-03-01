@@ -305,7 +305,7 @@ class TB_FSIcRIn(LungLymph):
             running_total += node.subpopulations[mac_state] * len(neighbouring_lymph_edges)
             if running_total > r:
                 neighbour_index = np.random.randint(0, len(neighbouring_lymph_edges))
-                neighbour = neighbouring_lymph_edges[neighbour_index]
+                neighbour = neighbouring_lymph_edges[neighbour_index][0]
                 node.update(mac_state, -1)
                 neighbour.update(mac_state, 1)
                 if mac_state == MACROPHAGE_INFECTED:
