@@ -333,6 +333,7 @@ class TB_FSIcRIn(LungLymph):
             running_total += node.subpopulations[mac_state] * node.subpopulations[bacteria_metabolism]
             if running_total > r:
                 node.update(bacteria_metabolism, -1)
+                node.update(BACTERIA_INTRACELLULAR, 1)
                 if mac_state == MACROPHAGE_REGULAR:
                     node.update(MACROPHAGE_REGULAR, -1)
                     node.update(MACROPHAGE_INFECTED, 1)
