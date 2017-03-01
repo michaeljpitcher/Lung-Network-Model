@@ -283,12 +283,12 @@ class TB_FSIcRIn(LungLymph):
         for node in self.node_list.values():
             running_total += node.subpopulations[mac_state]
             if running_total > r:
-                node.update(mac_state, -1)
                 if mac_state == MACROPHAGE_INFECTED:
                     bacteria_to_disperse = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
                                                      node.subpopulations[MACROPHAGE_INFECTED]))
                     node.update(BACTERIA_SLOW, bacteria_to_disperse)
                     node.update(BACTERIA_INTRACELLULAR, -1*bacteria_to_disperse)
+                node.update(mac_state, -1)
                 return
 
     def macrophage_migrate(self, mac_state):
