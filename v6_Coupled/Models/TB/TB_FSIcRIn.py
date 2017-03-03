@@ -15,7 +15,7 @@ MACROPHAGE_INFECTED = 'infected_macrophage'
 
 P_REPLICATE_FAST = 'prob_replication_fast'
 P_REPLICATE_SLOW = 'prob_replication_slow'
-P_REPLICATE_INTRACELLULAR = 'prob_replication_intrac'
+P_REPLICATE_INTRACELLULAR = 'prob_replication_intracellular'
 P_MIGRATE_FAST = 'prob_migrate_fast'
 P_MIGRATE_SLOW = 'prob_migrate_slow'
 P_CHANGE_FAST_TO_SLOW = 'prob_change_fast_to_slow'
