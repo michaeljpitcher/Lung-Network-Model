@@ -14,12 +14,16 @@ TOTAL_BACTERIA_SLOW = 'total_B_s'
 TOTAL_BACTERIA_INTRACELLULAR = 'total_B_i'
 TOTAL_BACTERIA_FAST_BY_O2 = 'total_B_f_by_O2'
 TOTAL_BACTERIA_SLOW_BY_O2 = 'total_B_s_by_O2'
+TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE = 'total_B_f_by_bronchus_degree'
+TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE = 'total_B_s_by_bronchus_degree'
 
 P_REPLICATION_BACTERIA_FAST = 'p_replication_B_f'
 P_REPLICATION_BACTERIA_SLOW = 'p_replication_B_s'
 P_REPLICATION_BACTERIA_INTRACELLULAR = 'p_replication_B_i'
 P_CHANGE_BACTERIA_FAST_TO_SLOW = 'p_change_B_f_to_B_s'
 P_CHANGE_BACTERIA_SLOW_TO_FAST = 'p_change_B_s_to_B_f'
+P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST = 'p_translocate_bronchus_B_f'
+P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW = 'p_translocate_bronchus_B_s'
 
 
 class TBMetapopulationModel(LungLymphNetwork):
@@ -33,7 +37,8 @@ class TBMetapopulationModel(LungLymphNetwork):
 
         expected_parameters = [P_REPLICATION_BACTERIA_FAST, P_REPLICATION_BACTERIA_SLOW,
                                P_REPLICATION_BACTERIA_INTRACELLULAR, P_CHANGE_BACTERIA_FAST_TO_SLOW,
-                               P_CHANGE_BACTERIA_SLOW_TO_FAST]
+                               P_CHANGE_BACTERIA_SLOW_TO_FAST, P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST,
+                               P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW]
 
         for expected_parameter in expected_parameters:
             assert expected_parameter in parameters, "Parameter {0} missing".format(expected_parameter)
@@ -51,7 +56,8 @@ class TBMetapopulationModel(LungLymphNetwork):
         :return:
         """
         totals_needed = [TOTAL_BACTERIA_FAST, TOTAL_BACTERIA_SLOW, TOTAL_BACTERIA_INTRACELLULAR,
-                         TOTAL_BACTERIA_FAST_BY_O2, TOTAL_BACTERIA_SLOW_BY_O2]
+                         TOTAL_BACTERIA_FAST_BY_O2, TOTAL_BACTERIA_SLOW_BY_O2, TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE,
+                         TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE]
         for t in totals_needed:
             self.totals[t] = 0.0
 
@@ -69,6 +75,9 @@ class TBMetapopulationModel(LungLymphNetwork):
             self.totals[TOTAL_BACTERIA_INTRACELLULAR] += node.subpopulations[BACTERIA_INTRACELLULAR]
             self.totals[TOTAL_BACTERIA_FAST_BY_O2] += node.subpopulations[BACTERIA_FAST] * (1/node.oxygen_tension)
             self.totals[TOTAL_BACTERIA_SLOW_BY_O2] += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
+            bronchus_degree = self.get_neighbouring_edges(node, BRONCHUS)
+            self.totals[TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE] += node.subpopulations[BACTERIA_FAST] * bronchus_degree
+            self.totals[TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE] += node.subpopulations[BACTERIA_SLOW] * bronchus_degree
         # Loop through all lymph nodes
         for node in self.node_list_ln:
             self.totals[TOTAL_BACTERIA_FAST] += node.subpopulations[BACTERIA_FAST]
@@ -96,6 +105,12 @@ class TBMetapopulationModel(LungLymphNetwork):
                        lambda f: self.bacteria_change_metabolism(BACTERIA_FAST)))
         events.append((self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST] * self.totals[TOTAL_BACTERIA_SLOW_BY_O2],
                        lambda f: self.bacteria_change_metabolism(BACTERIA_SLOW)))
+
+        # Bacteria migrate along bronchi
+        events.append((self.parameters[P_MIGRATE_BRONCHUS_BACTERIA_FAST] * self.totals[TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE],
+                       lambda f: self.bacteria_translocate_bronchi(BACTERIA_FAST)))
+        events.append((self.parameters[P_MIGRATE_BRONCHUS_BACTERIA_SLOW] * self.totals[TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE],
+                       lambda f: self.bacteria_translocate_bronchi(BACTERIA_SLOW)))
 
         return events
 
@@ -154,3 +169,36 @@ class TBMetapopulationModel(LungLymphNetwork):
                 node.update(new_metabolism, 1)
                 node.update(old_metabolism, -1)
                 return
+
+    def bacteria_translocate_bronchi(self, metabolism):
+        """
+        A bacterium moves from on BPS node to another bronchial-adjacent node
+        :param metabolism: State of bacteria that is moving
+        :return:
+        """
+        # Choose random threshold based on relevant counts
+        if metabolism == BACTERIA_FAST:
+            r = np.random.random() * self.totals[TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE]
+        elif metabolism == BACTERIA_SLOW:
+            r = np.random.random() * self.totals[TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE]
+        else:
+            raise Exception("Incorrect metabolism specified: {0}".format(metabolism))
+
+        # Count up members of subpopulations until threshold exceeded
+        running_total = 0
+        for node in self.node_list.values():
+            bronchial_neighbours = self.get_neighbouring_edges(node, BRONCHUS)
+            running_total += node.subpopulations[metabolism] * len(bronchial_neighbours)
+            # Node has been chosen to lose a bacterium
+            if running_total > r:
+                # Pick a neighbour based on edge weight
+                total_weight = [sum(data[WEIGHT] for _,data in bronchial_neighbours)]
+                r2 = np.random.random() * total_weight
+                running_total_weight = 0
+                for (neighbour, data) in bronchial_neighbours:
+                    running_total_weight += data[WEIGHT]
+                    if running_total_weight > r2:
+                        # Move a bacterium from node to neighbour
+                        neighbour.update(metabolism, 1)
+                        node.update(metabolism, -1)
+                        return
