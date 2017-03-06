@@ -22,7 +22,7 @@ class TBMetapopulationModel(LungLymphNetwork):
 
     def __init__(self, positions, parameters, loads, weight_method=HORSFIELD):
 
-        # TODO - don't call species
+        # TODO - shouldn't be called species, find a better name which doesn't have connotations RE bacteria
         species = [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR,
                    MACROPHAGE_REGULAR, MACROPHAGE_INFECTED,
                    T_CELL]
@@ -35,7 +35,7 @@ class TBMetapopulationModel(LungLymphNetwork):
 
         self.parameters = parameters
 
-        LungLymphNetwork.__init__(self, species, loads, positions, weight_method=HORSFIELD)
+        LungLymphNetwork.__init__(self, species, loads, positions, weight_method=weight_method)
 
         # Set totals
         self.totals = dict()
