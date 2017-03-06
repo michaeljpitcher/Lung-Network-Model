@@ -107,9 +107,9 @@ class TBMetapopulationModel(LungLymphNetwork):
                        lambda f: self.bacteria_change_metabolism(BACTERIA_SLOW)))
 
         # Bacteria migrate along bronchi
-        events.append((self.parameters[P_MIGRATE_BRONCHUS_BACTERIA_FAST] * self.totals[TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE],
+        events.append((self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST] * self.totals[TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE],
                        lambda f: self.bacteria_translocate_bronchi(BACTERIA_FAST)))
-        events.append((self.parameters[P_MIGRATE_BRONCHUS_BACTERIA_SLOW] * self.totals[TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE],
+        events.append((self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW] * self.totals[TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE],
                        lambda f: self.bacteria_translocate_bronchi(BACTERIA_SLOW)))
 
         return events
