@@ -9,13 +9,17 @@ MACROPHAGE_REGULAR = 'M_r'
 MACROPHAGE_INFECTED = 'M_i'
 T_CELL = 'T'
 
-TOTAL_BACTERIA_FAST = 'total_b_f'
-TOTAL_BACTERIA_SLOW = 'total_b_s'
-TOTAL_BACTERIA_INTRACELLULAR = 'total_b_i'
+TOTAL_BACTERIA_FAST = 'total_B_f'
+TOTAL_BACTERIA_SLOW = 'total_B_s'
+TOTAL_BACTERIA_INTRACELLULAR = 'total_B_i'
+TOTAL_BACTERIA_FAST_BY_O2 = 'total_B_f_by_O2'
+TOTAL_BACTERIA_SLOW_BY_O2 = 'total_B_s_by_O2'
 
 P_REPLICATION_BACTERIA_FAST = 'p_replication_B_f'
 P_REPLICATION_BACTERIA_SLOW = 'p_replication_B_s'
 P_REPLICATION_BACTERIA_INTRACELLULAR = 'p_replication_B_i'
+P_CHANGE_BACTERIA_FAST_TO_SLOW = 'p_change_B_f_to_B_s'
+P_CHANGE_BACTERIA_SLOW_TO_FAST = 'p_change_B_s_to_B_f'
 
 
 class TBMetapopulationModel(LungLymphNetwork):
@@ -28,7 +32,8 @@ class TBMetapopulationModel(LungLymphNetwork):
                    T_CELL]
 
         expected_parameters = [P_REPLICATION_BACTERIA_FAST, P_REPLICATION_BACTERIA_SLOW,
-                               P_REPLICATION_BACTERIA_INTRACELLULAR]
+                               P_REPLICATION_BACTERIA_INTRACELLULAR, P_CHANGE_BACTERIA_FAST_TO_SLOW,
+                               P_CHANGE_BACTERIA_SLOW_TO_FAST]
 
         for expected_parameter in expected_parameters:
             assert expected_parameter in parameters, "Parameter {0} missing".format(expected_parameter)
@@ -45,7 +50,8 @@ class TBMetapopulationModel(LungLymphNetwork):
         Reset all total counts to zero
         :return:
         """
-        totals_needed = [TOTAL_BACTERIA_FAST, TOTAL_BACTERIA_SLOW, TOTAL_BACTERIA_INTRACELLULAR]
+        totals_needed = [TOTAL_BACTERIA_FAST, TOTAL_BACTERIA_SLOW, TOTAL_BACTERIA_INTRACELLULAR,
+                         TOTAL_BACTERIA_FAST_BY_O2, TOTAL_BACTERIA_SLOW_BY_O2]
         for t in totals_needed:
             self.totals[t] = 0.0
 
@@ -61,6 +67,8 @@ class TBMetapopulationModel(LungLymphNetwork):
             self.totals[TOTAL_BACTERIA_FAST] += node.subpopulations[BACTERIA_FAST]
             self.totals[TOTAL_BACTERIA_SLOW] += node.subpopulations[BACTERIA_SLOW]
             self.totals[TOTAL_BACTERIA_INTRACELLULAR] += node.subpopulations[BACTERIA_INTRACELLULAR]
+            self.totals[TOTAL_BACTERIA_FAST_BY_O2] += node.subpopulations[BACTERIA_FAST] * (1/node.oxygen_tension)
+            self.totals[TOTAL_BACTERIA_SLOW_BY_O2] += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
         # Loop through all lymph nodes
         for node in self.node_list_ln:
             self.totals[TOTAL_BACTERIA_FAST] += node.subpopulations[BACTERIA_FAST]
@@ -82,6 +90,12 @@ class TBMetapopulationModel(LungLymphNetwork):
                        lambda f: self.bacteria_replication(BACTERIA_SLOW)))
         events.append((self.parameters[P_REPLICATION_BACTERIA_INTRACELLULAR] * self.totals[TOTAL_BACTERIA_INTRACELLULAR]
                        , lambda f: self.bacteria_replication(BACTERIA_INTRACELLULAR)))
+
+        # Bacteria change metabolism events
+        events.append((self.parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW] * self.totals[TOTAL_BACTERIA_FAST_BY_O2],
+                       lambda f: self.bacteria_change_metabolism(BACTERIA_FAST)))
+        events.append((self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST] * self.totals[TOTAL_BACTERIA_SLOW_BY_O2],
+                       lambda f: self.bacteria_change_metabolism(BACTERIA_SLOW)))
 
         return events
 
@@ -111,3 +125,32 @@ class TBMetapopulationModel(LungLymphNetwork):
                 node.update(metabolism, 1)
                 return
 
+    def bacteria_change_metabolism(self, old_metabolism):
+        """
+        A bacterium changes metabolism, changing from Fast to Slow (or vice versa), based on oxygen availability
+        :param old_metabolism: The old metabolism to change from
+        :return:
+        """
+
+        # Choose random threshold based on relevant counts
+        if old_metabolism == BACTERIA_FAST:
+            new_metabolism = BACTERIA_SLOW
+            r = np.random.random() * self.totals[TOTAL_BACTERIA_FAST_BY_O2]
+        elif old_metabolism == BACTERIA_SLOW:
+            new_metabolism = BACTERIA_FAST
+            r = np.random.random() * self.totals[TOTAL_BACTERIA_SLOW_BY_O2]
+        else:
+            raise Exception("Incorrect metabolism specified: {0}".format(old_metabolism))
+
+        # Count up members of subpopulations until threshold exceeded
+        running_total = 0
+        for node in self.node_list.values():
+            if old_metabolism == BACTERIA_SLOW:
+                running_total += node.subpopulations[BACTERIA_SLOW] * node.oxygen_tension
+            else:
+                running_total += node.subpopulations[BACTERIA_FAST] * (1/node.oxygen_tension)
+            if running_total > r:
+                # Switch a bacteria from old to new metabolism
+                node.update(new_metabolism, 1)
+                node.update(old_metabolism, -1)
+                return
