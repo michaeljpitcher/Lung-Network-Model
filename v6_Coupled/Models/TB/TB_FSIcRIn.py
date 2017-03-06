@@ -1,6 +1,6 @@
 __author__ = "Michael J. Pitcher"
 
-from ..Lung.LungLymph import *
+from ..Lung.LungLymphNetwork import *
 
 FAST_BACTERIA_TO_LOAD = 'load_fast_bacteria'
 SLOW_BACTERIA_TO_LOAD = 'load_slow_bacteria'
@@ -32,7 +32,7 @@ P_MIGRATE_REGULAR_MACROPHAGE = 'prob_reg_mac_migrate'
 P_MIGRATE_INFECTED_MACROPHAGE = 'prob_inf_mac_migrate'
 
 
-class TB_FSIcRIn(LungLymph):
+class TB_FSIcRIn(LungLymphNetwork):
 
     def __init__(self, positions, parameters, weight_method=HORSFIELD):
 
@@ -63,7 +63,7 @@ class TB_FSIcRIn(LungLymph):
             loads[node] = dict()
             loads[node][MACROPHAGE_REGULAR] = self.parameters[MACROPHAGES_PER_LYMPH]
 
-        LungLymph.__init__(self, species, loads, positions, weight_method)
+        LungLymphNetwork.__init__(self, species, loads, positions, weight_method)
 
         # Bacteria are loaded after network creation to allow use of ventilation attributes
         # Load bacteria

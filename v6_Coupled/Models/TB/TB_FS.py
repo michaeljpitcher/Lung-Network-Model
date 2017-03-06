@@ -1,6 +1,6 @@
 __author__ = "Michael J. Pitcher"
 
-from ..Lung.LungLymph import *
+from ..Lung.LungLymphNetwork import *
 
 FAST_BACTERIA_TO_LOAD = 'load_fast_bacteria'
 SLOW_BACTERIA_TO_LOAD = 'load_slow_bacteria'
@@ -16,7 +16,7 @@ P_CHANGE_FAST_TO_SLOW = 'prob_change_fast_to_slow'
 P_CHANGE_SLOW_TO_FAST = 'prob_change_slow_to_fast'
 
 
-class TB_FS(LungLymph):
+class TB_FS(LungLymphNetwork):
 
     def __init__(self, positions, parameters, weight_method=HORSFIELD):
 
@@ -34,7 +34,7 @@ class TB_FS(LungLymph):
 
         loads = dict()
 
-        LungLymph.__init__(self, species, loads, positions, weight_method)
+        LungLymphNetwork.__init__(self, species, loads, positions, weight_method)
 
         # Bacteria are loaded after network creation to allow use of ventilation attributes
         # Load bacteria

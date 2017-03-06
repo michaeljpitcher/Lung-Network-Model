@@ -1,5 +1,5 @@
 import unittest
-from ..Models.Lung.LungLymph import *
+from ..Models.Lung.LungLymphNetwork import *
 
 
 class LungLymphTestCase(unittest.TestCase):
@@ -15,7 +15,7 @@ class LungLymphTestCase(unittest.TestCase):
         self.positions = dict()
         for i in range(0, 45):
             self.positions[i] = (np.random.randint(0,10), np.random.randint(0, 10))
-        self.network = LungLymph(self.species, self.loads, positions=self.positions)
+        self.network = LungLymphNetwork(self.species, self.loads, positions=self.positions)
 
     def test_initialise(self):
         self.assertEqual(len(self.network.nodes()), 45)

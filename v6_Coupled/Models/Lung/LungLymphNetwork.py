@@ -7,11 +7,12 @@ LN_POSITIONS = "LymphNodePositions"
 BRONCHUS = "bronchus"
 WEIGHT = "weight"
 LYMPHATIC_VESSEL = "lymphatic_vessel"
-HORSFIELD = 'horsfield'
-STAHLER = 'stahler'
+DIRECTION = "direction"
+HORSFIELD = "horsfield"
+STAHLER = "stahler"
 
 
-class LungLymph(MetapopulationNetwork):
+class LungLymphNetwork(MetapopulationNetwork):
 
     def __init__(self, species, loads, positions, weight_method=HORSFIELD):
 
@@ -80,27 +81,21 @@ class LungLymph(MetapopulationNetwork):
         # Lymphatic vessels
         # Between lymph nodes
         lymph_vessels = [(36, 38), (37, 38), (38, 40), (39, 40), (40, 41), (42, 43), (43, 44)]
+
+        # Drainage
+        for drainage_id in range(32, 36):
+            lymph_vessels.append((drainage_id, 36))
+        for drainage_id in range(28, 32):
+            lymph_vessels.append((drainage_id, 42))
+        for drainage_id in range(23, 28):
+            lymph_vessels.append((drainage_id, 37))
+        for drainage_id in range(18, 23):
+            lymph_vessels.append((drainage_id, 39))
+
         for (node1_index, node2_index) in lymph_vessels:
             node1 = nodes[node1_index]
             parent_nodes = nodes[node2_index]
-            edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL}
-            edges.append((node1, parent_nodes, edge_data))
-
-        # Drainage
-        drainage = []
-        for drainage_id in range(32, 36):
-            drainage.append((drainage_id, 36))
-        for drainage_id in range(28, 32):
-            drainage.append((drainage_id, 42))
-        for drainage_id in range(23, 28):
-            drainage.append((drainage_id, 37))
-        for drainage_id in range(18, 23):
-            drainage.append((drainage_id, 39))
-
-        for (node1_index, node2_index) in drainage:
-            node1 = nodes[node1_index]
-            parent_nodes = nodes[node2_index]
-            edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL}
+            edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: nodes[node2_index]}
             edges.append((node1, parent_nodes, edge_data))
 
         # -------------END EDGES ---------------------------
@@ -200,10 +195,15 @@ class LungLymph(MetapopulationNetwork):
 
     def get_neighbouring_edges(self, node, edge_type=None):
         # TODO - may be slow to calculate this all the time, better to do it once and save
-        if type is None:
+        if edge_type is None:
             neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
-        else:
+        elif edge_type == BRONCHUS:
             neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
-                                  if data[EDGE_TYPE] == edge_type]
+                                  if data[EDGE_TYPE] == BRONCHUS]
+        elif edge_type == LYMPHATIC_VESSEL:
+            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
+                                  if data[EDGE_TYPE] == LYMPHATIC_VESSEL and data[DIRECTION] != node]
+        else:
+            raise Exception("Incorrect edge type: {0}".format(edge_type))
         return neighbouring_edges
 
