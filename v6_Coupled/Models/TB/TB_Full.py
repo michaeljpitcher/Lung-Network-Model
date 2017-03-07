@@ -26,6 +26,8 @@ TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST = 'total_M_i_B_f'
 TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW = 'total_M_i_B_s'
 TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE = 'total_M_r_by_lymph_degree'
 TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE = 'total_M_i_by_lymph_degree'
+TOTAL_MACROPHAGE_REGULAR = 'total_M_r'
+TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR = 'total_M_r_B_i'
 
 # Keys for probabilities needed to calculate event rates
 P_REPLICATION_BACTERIA_FAST = 'p_replication_B_f'
@@ -49,6 +51,8 @@ P_INGEST_AND_DESTROY_INFECTED_SLOW = 'p_ingest_destroy_M_i_B_s'
 P_INGEST_AND_RETAIN_INFECTED_SLOW = 'p_ingest_retain_M_i_B_s'
 P_TRANSLOCATE_LYMPH_MACROPHAGE_REGULAR = 'p_translocate_lymph_M_r'
 P_TRANSLOCATE_LYMPH_MACROPHAGE_INFECTED = 'p_translocate_lymph_M_i'
+P_DEATH_MACROPHAGE_REGULAR = 'p_death_M_r'
+P_DEATH_MACROPHAGE_INFECTED = 'p_death_M_i'
 
 
 class TBMetapopulationModel(LungLymphNetwork):
@@ -65,7 +69,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                                P_CHANGE_BACTERIA_SLOW_TO_FAST, P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST,
                                P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW, P_TRANSLOCATE_LYMPH_BACTERIA_FAST,
                                P_TRANSLOCATE_LYMPH_BACTERIA_SLOW, P_RECRUITMENT_BPS_MACROPHAGE,
-                               P_RECRUITMENT_LYMPH_MACROPHAGE]
+                               P_RECRUITMENT_LYMPH_MACROPHAGE, P_DEATH_MACROPHAGE_REGULAR]
 
         for expected_parameter in expected_parameters:
             assert expected_parameter in parameters, "Parameter {0} missing".format(expected_parameter)
@@ -88,7 +92,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                          TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST,
                          TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW, TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST,
                          TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW, TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE,
-                         TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE]
+                         TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR]
         for t in totals_needed:
             self.totals[t] = 0.0
 
@@ -125,6 +129,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                                                                      lymph_degree
             self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_INFECTED] * \
                                                                       lymph_degree
+            self.totals[TOTAL_MACROPHAGE_REGULAR] += node.subpopulations[MACROPHAGE_REGULAR]
 
         # Loop through all lymph nodes
         for node in self.node_list_ln:
@@ -147,6 +152,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                                                                      lymph_degree
             self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_INFECTED] * \
                                                                       lymph_degree
+            self.totals[TOTAL_MACROPHAGE_REGULAR] += node.subpopulations[MACROPHAGE_REGULAR]
 
     def events(self):
         """
@@ -217,6 +223,10 @@ class TBMetapopulationModel(LungLymphNetwork):
         events.append((self.parameters[P_INGEST_AND_RETAIN_INFECTED_SLOW] *
                        self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW],
                        lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_INFECTED, BACTERIA_SLOW, False)))
+
+        # Macrophage death (regular)
+        events.append((self.parameters[P_DEATH_MACROPHAGE_REGULAR] * self.totals[TOTAL_MACROPHAGE_REGULAR],
+                       lambda f: self.death_macrophage(MACROPHAGE_REGULAR)))
 
         return events
 
@@ -396,16 +406,62 @@ class TBMetapopulationModel(LungLymphNetwork):
                         node.update(MACROPHAGE_INFECTED, 1)
                 return
 
-    def translocate_lymph_macrophage(self, mac_state):
+    def translocate_lymph_macrophage(self, macrophage_state):
         """
         A macrophage travels from one node to another along a lymphatic vessel
         :param mac_state:
         :return:
         """
 
-        if mac_state == MACROPHAGE_REGULAR:
+        if macrophage_state == MACROPHAGE_REGULAR:
             r = np.random.random() * self.totals[TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE]
-        elif mac_state == MACROPHAGE_INFECTED:
+        elif macrophage_state == MACROPHAGE_INFECTED:
             r = np.random.random() * self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE]
         else:
-            raise Exception("Invalid macrophage state: {0}".format(mac_state))
+            raise Exception("Invalid macrophage state: {0}".format(macrophage_state))
+
+        running_total = 0
+        for node in self.node_list.values():
+            lymph_neighbours = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
+            running_total += node.subpopulations[macrophage_state] * len(lymph_neighbours)
+            # Node has been chosen to lose a bacterium
+            if running_total > r:
+                # Pick a neighbour
+                r2 = np.random.randint(0, len(lymph_neighbours))
+                (neighbour, data) = lymph_neighbours[r2]
+                # If the macrophage is infected, move some intracellular bacteria as well
+                if macrophage_state == MACROPHAGE_INFECTED:
+                    bacteria_to_move = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
+                                                 node.subpopulations[MACROPHAGE_INFECTED]))
+                    node.update(BACTERIA_INTRACELLULAR, -1*bacteria_to_move)
+                    neighbour.update(BACTERIA_INTRACELLULAR, bacteria_to_move)
+                node.update(macrophage_state, -1)
+                neighbour.update(macrophage_state, 1)
+                return
+
+
+    def death_macrophage(self, mac_state):
+
+        if mac_state == MACROPHAGE_REGULAR:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_REGULAR]
+
+        elif mac_state == MACROPHAGE_INFECTED:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR]
+        else:
+            raise Exception("Invalid macrophage: {0}".format(mac_state))
+
+        running_total = 0
+        for node in self.node_list.values():
+            if mac_state == MACROPHAGE_REGULAR:
+                running_total += node.subpopulations[MACROPHAGE_REGULAR]
+                if running_total > r:
+                    node.update(MACROPHAGE_REGULAR, -1)
+                    return
+            elif mac_state == MACROPHAGE_INFECTED:
+                running_total += node.subpopulations[MACROPHAGE_INFECTED] * node.subpopulations[BACTERIA_INTRACELLULAR]
+                if running_total > r:
+                    bacteria_to_redistribute = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
+                                               node.subpopulations[MACROPHAGE_INFECTED]))
+                    node.update(MACROPHAGE_INFECTED, -1)
+                    node.update(BACTERIA_SLOW, bacteria_to_redistribute)
+                    return
