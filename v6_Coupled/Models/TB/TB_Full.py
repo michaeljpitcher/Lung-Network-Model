@@ -2,6 +2,7 @@ from ..Lung.LungLymphNetwork import *
 
 __author__ = "Michael J. Pitcher"
 
+# Keys for subpopulation species
 BACTERIA_FAST = 'B_f'
 BACTERIA_SLOW = 'B_s'
 BACTERIA_INTRACELLULAR = 'B_i'
@@ -9,6 +10,7 @@ MACROPHAGE_REGULAR = 'M_r'
 MACROPHAGE_INFECTED = 'M_i'
 T_CELL = 'T'
 
+# Keys for totals needed to calculate event rates
 TOTAL_BACTERIA_FAST = 'total_B_f'
 TOTAL_BACTERIA_SLOW = 'total_B_s'
 TOTAL_BACTERIA_INTRACELLULAR = 'total_B_i'
@@ -22,7 +24,10 @@ TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST = 'total_M_r_B_f'
 TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW = 'total_M_r_B_s'
 TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST = 'total_M_i_B_f'
 TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW = 'total_M_i_B_s'
+TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE = 'total_M_r_by_lymph_degree'
+TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE = 'total_M_i_by_lymph_degree'
 
+# Keys for probabilities needed to calculate event rates
 P_REPLICATION_BACTERIA_FAST = 'p_replication_B_f'
 P_REPLICATION_BACTERIA_SLOW = 'p_replication_B_s'
 P_REPLICATION_BACTERIA_INTRACELLULAR = 'p_replication_B_i'
@@ -42,6 +47,9 @@ P_INGEST_AND_DESTROY_INFECTED_FAST = 'p_ingest_destroy_M_i_B_f'
 P_INGEST_AND_RETAIN_INFECTED_FAST = 'p_ingest_retain_M_i_B_f'
 P_INGEST_AND_DESTROY_INFECTED_SLOW = 'p_ingest_destroy_M_i_B_s'
 P_INGEST_AND_RETAIN_INFECTED_SLOW = 'p_ingest_retain_M_i_B_s'
+P_TRANSLOCATE_LYMPH_MACROPHAGE_REGULAR = 'p_translocate_lymph_M_r'
+P_TRANSLOCATE_LYMPH_MACROPHAGE_INFECTED = 'p_translocate_lymph_M_i'
+
 
 class TBMetapopulationModel(LungLymphNetwork):
 
@@ -77,7 +85,10 @@ class TBMetapopulationModel(LungLymphNetwork):
         totals_needed = [TOTAL_BACTERIA_FAST, TOTAL_BACTERIA_SLOW, TOTAL_BACTERIA_INTRACELLULAR,
                          TOTAL_BACTERIA_FAST_BY_O2, TOTAL_BACTERIA_SLOW_BY_O2, TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE,
                          TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE, TOTAL_BACTERIA_FAST_BY_LYMPH_DEGREE,
-                         TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE]
+                         TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST,
+                         TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW, TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST,
+                         TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW, TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE,
+                         TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE]
         for t in totals_needed:
             self.totals[t] = 0.0
 
@@ -110,6 +121,10 @@ class TBMetapopulationModel(LungLymphNetwork):
                                                                    node.subpopulations[BACTERIA_FAST]
             self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW] += node.subpopulations[MACROPHAGE_INFECTED] * \
                                                                    node.subpopulations[BACTERIA_SLOW]
+            self.totals[TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_REGULAR] * \
+                                                                     lymph_degree
+            self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_INFECTED] * \
+                                                                      lymph_degree
 
         # Loop through all lymph nodes
         for node in self.node_list_ln:
@@ -128,6 +143,10 @@ class TBMetapopulationModel(LungLymphNetwork):
                                                                     node.subpopulations[BACTERIA_FAST]
             self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW] += node.subpopulations[MACROPHAGE_INFECTED] * \
                                                                     node.subpopulations[BACTERIA_SLOW]
+            self.totals[TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_REGULAR] * \
+                                                                     lymph_degree
+            self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_INFECTED] * \
+                                                                      lymph_degree
 
     def events(self):
         """
@@ -376,3 +395,17 @@ class TBMetapopulationModel(LungLymphNetwork):
                         node.update(MACROPHAGE_REGULAR, -1)
                         node.update(MACROPHAGE_INFECTED, 1)
                 return
+
+    def translocate_lymph_macrophage(self, mac_state):
+        """
+        A macrophage travels from one node to another along a lymphatic vessel
+        :param mac_state:
+        :return:
+        """
+
+        if mac_state == MACROPHAGE_REGULAR:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE]
+        elif mac_state == MACROPHAGE_INFECTED:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE]
+        else:
+            raise Exception("Invalid macrophage state: {0}".format(mac_state))
