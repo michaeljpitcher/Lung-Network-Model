@@ -112,37 +112,40 @@ class TBMetapopulationModel(LungLymphNetwork):
 
         # Replication events
         events.append((self.parameters[P_REPLICATION_BACTERIA_FAST] * self.totals[TOTAL_BACTERIA_FAST],
-                       lambda f: self.bacteria_replication(BACTERIA_FAST)))
+                       lambda f: self.replicate_bacterium(BACTERIA_FAST)))
         events.append((self.parameters[P_REPLICATION_BACTERIA_SLOW] * self.totals[TOTAL_BACTERIA_SLOW],
-                       lambda f: self.bacteria_replication(BACTERIA_SLOW)))
+                       lambda f: self.replicate_bacterium(BACTERIA_SLOW)))
         events.append((self.parameters[P_REPLICATION_BACTERIA_INTRACELLULAR] * self.totals[TOTAL_BACTERIA_INTRACELLULAR]
-                       , lambda f: self.bacteria_replication(BACTERIA_INTRACELLULAR)))
+                       , lambda f: self.replicate_bacterium(BACTERIA_INTRACELLULAR)))
 
         # Bacteria change metabolism events
         events.append((self.parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW] * self.totals[TOTAL_BACTERIA_FAST_BY_O2],
-                       lambda f: self.bacteria_change_metabolism(BACTERIA_FAST)))
+                       lambda f: self.change_metabolism_bacterium(BACTERIA_FAST)))
         events.append((self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST] * self.totals[TOTAL_BACTERIA_SLOW_BY_O2],
-                       lambda f: self.bacteria_change_metabolism(BACTERIA_SLOW)))
+                       lambda f: self.change_metabolism_bacterium(BACTERIA_SLOW)))
 
         # Bacteria translocate along bronchi
         events.append((self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST] * self.totals[TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE],
-                       lambda f: self.bacteria_translocate_bronchi(BACTERIA_FAST)))
+                       lambda f: self.translocate_bronchi_bacterium(BACTERIA_FAST)))
         events.append((self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW] * self.totals[TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE],
-                       lambda f: self.bacteria_translocate_bronchi(BACTERIA_SLOW)))
+                       lambda f: self.translocate_bronchi_bacterium(BACTERIA_SLOW)))
 
         # Bacteria translocate along lymphatic vessel
         events.append((self.parameters[P_TRANSLOCATE_LYMPH_BACTERIA_FAST] * self.totals[TOTAL_BACTERIA_FAST_BY_LYMPH_DEGREE],
-                       lambda f: self.bacteria_translocate_lymph(BACTERIA_FAST)))
+                       lambda f: self.translocate_lymph_bacterium(BACTERIA_FAST)))
         events.append((self.parameters[P_TRANSLOCATE_LYMPH_BACTERIA_SLOW] * self.totals[TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE],
-                       lambda f: self.bacteria_translocate_lymph(BACTERIA_SLOW)))
+                       lambda f: self.translocate_lymph_bacterium(BACTERIA_SLOW)))
 
         # Macrophage recruited into BPS
         events.append((self.parameters[P_RECRUITMENT_BPS_MACROPHAGE] * len(self.node_list_bps),
-                       lambda f: self.macrophage_recruited_bps()))
+                       lambda f: self.recruit_bps_macrophage()))
+        # Macrophage recruited into BPS
+        events.append((self.parameters[P_RECRUITMENT_LYMPH_MACROPHAGE] * len(self.node_list_ln),
+                       lambda f: self.recruit_lymph_macrophage()))
 
         return events
 
-    def bacteria_replication(self, metabolism):
+    def replicate_bacterium(self, metabolism):
         """
         A bacterium replicates, creating an identical member of the same metabolism
         :param metabolism: Fast, slow or intracellular bacterium
@@ -168,7 +171,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                 node.update(metabolism, 1)
                 return
 
-    def bacteria_change_metabolism(self, old_metabolism):
+    def change_metabolism_bacterium(self, old_metabolism):
         """
         A bacterium changes metabolism, changing from Fast to Slow (or vice versa), based on oxygen availability
         :param old_metabolism: The old metabolism to change from
@@ -198,7 +201,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                 node.update(old_metabolism, -1)
                 return
 
-    def bacteria_translocate_bronchi(self, metabolism):
+    def translocate_bronchi_bacterium(self, metabolism):
         """
         A bacterium moves from on BPS node to another bronchial-adjacent node
         :param metabolism: State of bacteria that is moving
@@ -231,7 +234,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                         node.update(metabolism, -1)
                         return
 
-    def bacteria_translocate_lymph(self, metabolism):
+    def translocate_lymph_bacterium(self, metabolism):
         """
         A bacterium moves from one node to another, along a lymphatic vessel
         :param metabolism:
@@ -260,7 +263,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                 node.update(metabolism, -1)
                 return
 
-    def macrophage_recruited_bps(self):
+    def recruit_bps_macrophage(self):
         """
         A macrophage is recruited into the bronchopulmonary segment
         :return:
@@ -270,3 +273,12 @@ class TBMetapopulationModel(LungLymphNetwork):
         node.update(MACROPHAGE_REGULAR, 1)
         return
 
+    def recruit_lymph_macrophage(self):
+        """
+        A macrophage is recruited into a lymph node
+        :return:
+        """
+        r = np.random.randint(0, len(self.node_list_ln))
+        node = self.node_list_ln[r]
+        node.update(MACROPHAGE_REGULAR, 1)
+        return
