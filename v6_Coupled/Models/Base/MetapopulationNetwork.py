@@ -105,9 +105,9 @@ class MetapopulationNetwork(nx.Graph):
         :return:
         """
         print "RUNNING"
+        self.timestep_output()
         while self.time < time_limit:
 
-            self.timestep_output()
             # Get the events and their rates
             events = self.events()
             # Pick an event and a time (dt) for it to occur
@@ -115,6 +115,7 @@ class MetapopulationNetwork(nx.Graph):
             for (r, _) in events:
                 total = total + r
             if total == 0.0:
+                self.timestep_output()
                 print "0% chance of any event - ending simulation"
                 break
             # Calculate the timestep delta based on the total rates
@@ -134,7 +135,7 @@ class MetapopulationNetwork(nx.Graph):
             # Increment current time and record
             self.time += dt
             self.record_data()
-        self.timestep_output()
+            self.timestep_output()
 
     def timestep_output(self):
         print "t=", self.time
