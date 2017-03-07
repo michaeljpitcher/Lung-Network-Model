@@ -28,6 +28,8 @@ P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST = 'p_translocate_bronchus_B_f'
 P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW = 'p_translocate_bronchus_B_s'
 P_TRANSLOCATE_LYMPH_BACTERIA_FAST = 'p_translocate_bronchus_B_f'
 P_TRANSLOCATE_LYMPH_BACTERIA_SLOW = 'p_translocate_bronchus_B_s'
+P_RECRUITMENT_BPS_MACROPHAGE = 'p_recruit_bps_M_r'
+P_RECRUITMENT_LYMPH_MACROPHAGE = 'p_recruit_lymph_M_r'
 
 
 class TBMetapopulationModel(LungLymphNetwork):
@@ -43,7 +45,8 @@ class TBMetapopulationModel(LungLymphNetwork):
                                P_REPLICATION_BACTERIA_INTRACELLULAR, P_CHANGE_BACTERIA_FAST_TO_SLOW,
                                P_CHANGE_BACTERIA_SLOW_TO_FAST, P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST,
                                P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW, P_TRANSLOCATE_LYMPH_BACTERIA_FAST,
-                               P_TRANSLOCATE_LYMPH_BACTERIA_SLOW]
+                               P_TRANSLOCATE_LYMPH_BACTERIA_SLOW, P_RECRUITMENT_BPS_MACROPHAGE,
+                               P_RECRUITMENT_LYMPH_MACROPHAGE]
 
         for expected_parameter in expected_parameters:
             assert expected_parameter in parameters, "Parameter {0} missing".format(expected_parameter)
@@ -132,6 +135,10 @@ class TBMetapopulationModel(LungLymphNetwork):
                        lambda f: self.bacteria_translocate_lymph(BACTERIA_FAST)))
         events.append((self.parameters[P_TRANSLOCATE_LYMPH_BACTERIA_SLOW] * self.totals[TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE],
                        lambda f: self.bacteria_translocate_lymph(BACTERIA_SLOW)))
+
+        # Macrophage recruited into BPS
+        events.append((self.parameters[P_RECRUITMENT_BPS_MACROPHAGE] * len(self.node_list_bps),
+                       lambda f: self.macrophage_recruited_bps()))
 
         return events
 
@@ -252,3 +259,14 @@ class TBMetapopulationModel(LungLymphNetwork):
                 neighbour.update(metabolism, 1)
                 node.update(metabolism, -1)
                 return
+
+    def macrophage_recruited_bps(self):
+        """
+        A macrophage is recruited into the bronchopulmonary segment
+        :return:
+        """
+        r = np.random.randint(0, len(self.node_list_bps))
+        node = self.node_list_bps[r]
+        node.update(MACROPHAGE_REGULAR, 1)
+        return
+
