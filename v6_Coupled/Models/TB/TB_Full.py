@@ -18,6 +18,10 @@ TOTAL_BACTERIA_FAST_BY_BRONCHUS_DEGREE = 'total_B_f_by_bronchus_degree'
 TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE = 'total_B_s_by_bronchus_degree'
 TOTAL_BACTERIA_FAST_BY_LYMPH_DEGREE = 'total_B_f_by_lymph_degree'
 TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE = 'total_B_s_by_lymph_degree'
+TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST = 'total_M_r_B_f'
+TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW = 'total_M_r_B_s'
+TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST = 'total_M_i_B_f'
+TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW = 'total_M_i_B_s'
 
 P_REPLICATION_BACTERIA_FAST = 'p_replication_B_f'
 P_REPLICATION_BACTERIA_SLOW = 'p_replication_B_s'
@@ -26,11 +30,18 @@ P_CHANGE_BACTERIA_FAST_TO_SLOW = 'p_change_B_f_to_B_s'
 P_CHANGE_BACTERIA_SLOW_TO_FAST = 'p_change_B_s_to_B_f'
 P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST = 'p_translocate_bronchus_B_f'
 P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW = 'p_translocate_bronchus_B_s'
-P_TRANSLOCATE_LYMPH_BACTERIA_FAST = 'p_translocate_bronchus_B_f'
-P_TRANSLOCATE_LYMPH_BACTERIA_SLOW = 'p_translocate_bronchus_B_s'
+P_TRANSLOCATE_LYMPH_BACTERIA_FAST = 'p_translocate_lymph_B_f'
+P_TRANSLOCATE_LYMPH_BACTERIA_SLOW = 'p_translocate_lymph_B_s'
 P_RECRUITMENT_BPS_MACROPHAGE = 'p_recruit_bps_M_r'
 P_RECRUITMENT_LYMPH_MACROPHAGE = 'p_recruit_lymph_M_r'
-
+P_INGEST_AND_DESTROY_REGULAR_FAST = 'p_ingest_destroy_M_r_B_f'
+P_INGEST_AND_RETAIN_REGULAR_FAST = 'p_ingest_retain_M_r_B_f'
+P_INGEST_AND_DESTROY_REGULAR_SLOW = 'p_ingest_destroy_M_r_B_s'
+P_INGEST_AND_RETAIN_REGULAR_SLOW = 'p_ingest_retain_M_r_B_s'
+P_INGEST_AND_DESTROY_INFECTED_FAST = 'p_ingest_destroy_M_i_B_f'
+P_INGEST_AND_RETAIN_INFECTED_FAST = 'p_ingest_retain_M_i_B_f'
+P_INGEST_AND_DESTROY_INFECTED_SLOW = 'p_ingest_destroy_M_i_B_s'
+P_INGEST_AND_RETAIN_INFECTED_SLOW = 'p_ingest_retain_M_i_B_s'
 
 class TBMetapopulationModel(LungLymphNetwork):
 
@@ -79,8 +90,8 @@ class TBMetapopulationModel(LungLymphNetwork):
         self.reset_totals()
         # Loop through all BPS nodes
         for node in self.node_list_bps:
-            lymph_degree = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
-            bronchus_degree = self.get_neighbouring_edges(node, BRONCHUS)
+            lymph_degree = len(self.get_neighbouring_edges(node, LYMPHATIC_VESSEL))
+            bronchus_degree = len(self.get_neighbouring_edges(node, BRONCHUS))
 
             self.totals[TOTAL_BACTERIA_FAST] += node.subpopulations[BACTERIA_FAST]
             self.totals[TOTAL_BACTERIA_SLOW] += node.subpopulations[BACTERIA_SLOW]
@@ -91,16 +102,32 @@ class TBMetapopulationModel(LungLymphNetwork):
             self.totals[TOTAL_BACTERIA_SLOW_BY_BRONCHUS_DEGREE] += node.subpopulations[BACTERIA_SLOW] * bronchus_degree
             self.totals[TOTAL_BACTERIA_FAST_BY_LYMPH_DEGREE] += node.subpopulations[BACTERIA_FAST] * lymph_degree
             self.totals[TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE] += node.subpopulations[BACTERIA_SLOW] * lymph_degree
+            self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST] += node.subpopulations[MACROPHAGE_REGULAR] * \
+                                                                   node.subpopulations[BACTERIA_FAST]
+            self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW] += node.subpopulations[MACROPHAGE_REGULAR] * \
+                                                                   node.subpopulations[BACTERIA_SLOW]
+            self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST] += node.subpopulations[MACROPHAGE_INFECTED] * \
+                                                                   node.subpopulations[BACTERIA_FAST]
+            self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW] += node.subpopulations[MACROPHAGE_INFECTED] * \
+                                                                   node.subpopulations[BACTERIA_SLOW]
 
         # Loop through all lymph nodes
         for node in self.node_list_ln:
-            lymph_degree = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
+            lymph_degree = len(self.get_neighbouring_edges(node, LYMPHATIC_VESSEL))
 
             self.totals[TOTAL_BACTERIA_FAST] += node.subpopulations[BACTERIA_FAST]
             self.totals[TOTAL_BACTERIA_SLOW] += node.subpopulations[BACTERIA_SLOW]
             self.totals[TOTAL_BACTERIA_INTRACELLULAR] += node.subpopulations[BACTERIA_INTRACELLULAR]
             self.totals[TOTAL_BACTERIA_FAST_BY_LYMPH_DEGREE] += node.subpopulations[BACTERIA_FAST] * lymph_degree
             self.totals[TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE] += node.subpopulations[BACTERIA_SLOW] * lymph_degree
+            self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST] += node.subpopulations[MACROPHAGE_REGULAR] * \
+                                                                   node.subpopulations[BACTERIA_FAST]
+            self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW] += node.subpopulations[MACROPHAGE_REGULAR] * \
+                                                                   node.subpopulations[BACTERIA_SLOW]
+            self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST] += node.subpopulations[MACROPHAGE_INFECTED] * \
+                                                                    node.subpopulations[BACTERIA_FAST]
+            self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW] += node.subpopulations[MACROPHAGE_INFECTED] * \
+                                                                    node.subpopulations[BACTERIA_SLOW]
 
     def events(self):
         """
@@ -109,6 +136,7 @@ class TBMetapopulationModel(LungLymphNetwork):
         :return:
         """
         events = []
+        self.update_totals()
 
         # Replication events
         events.append((self.parameters[P_REPLICATION_BACTERIA_FAST] * self.totals[TOTAL_BACTERIA_FAST],
@@ -142,6 +170,34 @@ class TBMetapopulationModel(LungLymphNetwork):
         # Macrophage recruited into BPS
         events.append((self.parameters[P_RECRUITMENT_LYMPH_MACROPHAGE] * len(self.node_list_ln),
                        lambda f: self.recruit_lymph_macrophage()))
+
+        # Macrophage ingests bacteria and destroys it
+        events.append((self.parameters[P_INGEST_AND_DESTROY_REGULAR_FAST] *
+                       self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_REGULAR, BACTERIA_FAST, True)))
+        events.append((self.parameters[P_INGEST_AND_DESTROY_REGULAR_SLOW] *
+                       self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_REGULAR, BACTERIA_SLOW, True)))
+        events.append((self.parameters[P_INGEST_AND_DESTROY_INFECTED_FAST] *
+                       self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_INFECTED, BACTERIA_FAST, True)))
+        events.append((self.parameters[P_INGEST_AND_DESTROY_INFECTED_SLOW] *
+                       self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_INFECTED, BACTERIA_SLOW, True)))
+
+        # Macrophage ingests bacteria but cannot destroy it
+        events.append((self.parameters[P_INGEST_AND_RETAIN_REGULAR_FAST] *
+                       self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_REGULAR, BACTERIA_FAST, False)))
+        events.append((self.parameters[P_INGEST_AND_RETAIN_REGULAR_SLOW] *
+                       self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_REGULAR, BACTERIA_SLOW, False)))
+        events.append((self.parameters[P_INGEST_AND_RETAIN_INFECTED_FAST] *
+                       self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_INFECTED, BACTERIA_FAST, False)))
+        events.append((self.parameters[P_INGEST_AND_RETAIN_INFECTED_SLOW] *
+                       self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW],
+                       lambda f: self.ingest_macrophage_bacterium(MACROPHAGE_INFECTED, BACTERIA_SLOW, False)))
 
         return events
 
@@ -223,7 +279,7 @@ class TBMetapopulationModel(LungLymphNetwork):
             # Node has been chosen to lose a bacterium
             if running_total > r:
                 # Pick a neighbour based on edge weight
-                total_weight = [sum(data[WEIGHT] for _,data in bronchial_neighbours)]
+                total_weight = sum([data[WEIGHT] for _,data in bronchial_neighbours])
                 r2 = np.random.random() * total_weight
                 running_total_weight = 0
                 for (neighbour, data) in bronchial_neighbours:
@@ -282,3 +338,41 @@ class TBMetapopulationModel(LungLymphNetwork):
         node = self.node_list_ln[r]
         node.update(MACROPHAGE_REGULAR, 1)
         return
+
+    def ingest_macrophage_bacterium(self, macrophage_state, bacteria_metabolism, bacterium_destroyed):
+        """
+        A macrophage of given state ingests a bacterium of given metabolism, and may destroy the bacteria. If regular
+         macrophage does not destroy bacterium, it becomes infected.
+        :param macrophage_state: State of macrophage
+        :param bacteria_metabolism: State of bacterium
+        :param bacterium_destroyed: Is the bacteria destroyed?
+        :return:
+        """
+        if macrophage_state == MACROPHAGE_REGULAR and bacteria_metabolism == BACTERIA_FAST:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST]
+        elif macrophage_state == MACROPHAGE_REGULAR and bacteria_metabolism == BACTERIA_SLOW:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW]
+        elif macrophage_state == MACROPHAGE_INFECTED and bacteria_metabolism == BACTERIA_FAST:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST]
+        elif macrophage_state == MACROPHAGE_INFECTED and bacteria_metabolism == BACTERIA_SLOW:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW]
+        else:
+            raise Exception("Invalid macrophage-bacteria combination: {0} - {1}"
+                            .format(macrophage_state, bacteria_metabolism))
+
+        running_total = 0
+        for node in self.node_list.values():
+            running_total += node.subpopulations[macrophage_state] * node.subpopulations[bacteria_metabolism]
+            # Node found
+            if running_total > r:
+                # Drop bacterium count by 1
+                node.update(bacteria_metabolism, -1)
+                # If the bacterium avoids destruction
+                if not bacterium_destroyed:
+                    # Bacterium becomes intracellular
+                    node.update(BACTERIA_INTRACELLULAR, 1)
+                    # Turns regular macrophage infected
+                    if macrophage_state == MACROPHAGE_REGULAR:
+                        node.update(MACROPHAGE_REGULAR, -1)
+                        node.update(MACROPHAGE_INFECTED, 1)
+                return
