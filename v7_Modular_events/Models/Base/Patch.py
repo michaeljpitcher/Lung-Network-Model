@@ -4,7 +4,7 @@ __author__ = "Michael J. Pitcher"
 class Patch:
     """ A node within a metapopulation network, containing various subpopulations of defined species """
 
-    def __init__(self, patch_id, subpopulation_keys, loads, position=(0, 0)):
+    def __init__(self, patch_id, subpopulation_keys, position=(0, 0)):
         """
 
         :param patch_id: Unique identifier of the patch within the network
@@ -16,10 +16,7 @@ class Patch:
         self.subpopulations = dict()
         # TODO - don't call species
         for species in subpopulation_keys:
-            if species in loads:
-                self.subpopulations[species] = loads[species]
-            else:
-                self.subpopulations[species] = 0
+            self.subpopulations[species] = 0
 
     def __str__(self):
         """ String identifier of patch"""
