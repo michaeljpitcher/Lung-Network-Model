@@ -8,6 +8,7 @@ BACTERIA_SLOW = 'B_s'
 BACTERIA_INTRACELLULAR = 'B_i'
 MACROPHAGE_REGULAR = 'M_r'
 MACROPHAGE_INFECTED = 'M_i'
+MACROPHAGE_ACTIVATED = 'M_a'
 T_CELL = 'T'
 
 # Keys for totals needed to calculate event rates
@@ -28,8 +29,13 @@ TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE = 'total_M_r_by_lymph_degree'
 TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE = 'total_M_i_by_lymph_degree'
 TOTAL_MACROPHAGE_REGULAR = 'total_M_r'
 TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR = 'total_M_r_B_i'
+TOTAL_MACROPHAGE_ACTIVATED = 'total_M_a'
 TOTAL_PERFUSION = 'total_perfusion'
-TOTAL_T_CELL_RECRUITMENT = 'total_recruit_t_cell'
+TOTAL_T_CELL_RECRUITMENT = 'total_recruit_T'
+TOTAL_T_CELL_BY_LYMPH_DEGREE = 'total_T_by_lymph_degree'
+TOTAL_T_CELL_MACROPHAGE_RESTING = 'total_T_M_r'
+TOTAL_T_CELL_MACROPHAGE_INFECTED = 'total_T_M_i'
+TOTAL_T_CELL = 'total_T'
 
 # Keys for probabilities needed to calculate event rates
 P_REPLICATION_BACTERIA_FAST = 'p_replication_B_f'
@@ -55,7 +61,12 @@ P_TRANSLOCATE_LYMPH_MACROPHAGE_REGULAR = 'p_translocate_lymph_M_r'
 P_TRANSLOCATE_LYMPH_MACROPHAGE_INFECTED = 'p_translocate_lymph_M_i'
 P_DEATH_MACROPHAGE_REGULAR = 'p_death_M_r'
 P_DEATH_MACROPHAGE_INFECTED = 'p_death_M_i'
+P_DEATH_MACROPHAGE_ACTIVATED = 'p_death_M_a'
 P_RECRUIT_T_CELL = 'p_recruit_T'
+P_TRANSLOCATE_LYMPH_T_CELL = 'p_translocate_lymph_T'
+P_ACTIVATION_MACROPHAGE_BY_T_CELL = 'p_activation_M_r_by_T'
+P_DEATH_T_CELL = 'p_death_T'
+P_DESTROY_MACROPHAGE_INFECTED_BY_T_CELL = 'p_destroy_M_i_by_T'
 
 
 class TBMetapopulationModel(LungLymphNetwork):
@@ -64,7 +75,7 @@ class TBMetapopulationModel(LungLymphNetwork):
 
         # TODO - shouldn't be called species, find a better name which doesn't have connotations RE bacteria
         species = [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR,
-                   MACROPHAGE_REGULAR, MACROPHAGE_INFECTED,
+                   MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED,
                    T_CELL]
 
         expected_parameters = [P_REPLICATION_BACTERIA_FAST, P_REPLICATION_BACTERIA_SLOW,
@@ -72,7 +83,10 @@ class TBMetapopulationModel(LungLymphNetwork):
                                P_CHANGE_BACTERIA_SLOW_TO_FAST, P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST,
                                P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW, P_TRANSLOCATE_LYMPH_BACTERIA_FAST,
                                P_TRANSLOCATE_LYMPH_BACTERIA_SLOW, P_RECRUITMENT_BPS_MACROPHAGE,
-                               P_RECRUITMENT_LYMPH_MACROPHAGE, P_DEATH_MACROPHAGE_REGULAR, P_RECRUIT_T_CELL]
+                               P_RECRUITMENT_LYMPH_MACROPHAGE, P_DEATH_MACROPHAGE_REGULAR, P_DEATH_MACROPHAGE_INFECTED,
+                               P_DEATH_MACROPHAGE_ACTIVATED, P_RECRUIT_T_CELL, P_TRANSLOCATE_LYMPH_T_CELL,
+                               P_ACTIVATION_MACROPHAGE_BY_T_CELL, P_DESTROY_MACROPHAGE_INFECTED_BY_T_CELL,
+                               P_DEATH_T_CELL]
 
         for expected_parameter in expected_parameters:
             assert expected_parameter in parameters, "Parameter {0} missing".format(expected_parameter)
@@ -95,8 +109,10 @@ class TBMetapopulationModel(LungLymphNetwork):
                          TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST,
                          TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW, TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST,
                          TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW, TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE,
-                         TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR, TOTAL_PERFUSION,
-                         TOTAL_T_CELL_RECRUITMENT]
+                         TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR,
+                         TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR, TOTAL_MACROPHAGE_ACTIVATED, TOTAL_PERFUSION,
+                         TOTAL_T_CELL_RECRUITMENT, TOTAL_T_CELL_BY_LYMPH_DEGREE, TOTAL_T_CELL_MACROPHAGE_RESTING,
+                         TOTAL_T_CELL_MACROPHAGE_INFECTED, TOTAL_T_CELL]
         for t in totals_needed:
             self.totals[t] = 0.0
 
@@ -135,9 +151,15 @@ class TBMetapopulationModel(LungLymphNetwork):
                                                                       lymph_degree
             self.totals[TOTAL_MACROPHAGE_REGULAR] += node.subpopulations[MACROPHAGE_REGULAR]
             self.totals[TOTAL_PERFUSION] += node.perfusion
+            self.totals[TOTAL_T_CELL_MACROPHAGE_RESTING] += node.subpopulations[T_CELL] * \
+                                                            node.subpopulations[MACROPHAGE_REGULAR]
+            self.totals[TOTAL_T_CELL_MACROPHAGE_INFECTED] += node.subpopulations[T_CELL] * \
+                                                            node.subpopulations[MACROPHAGE_INFECTED]
+            self.totals[TOTAL_T_CELL] += node.subpopulations[T_CELL]
 
         # Loop through all lymph nodes
         for node in self.node_list_ln:
+            # TODO - This is just going to be 1 for all LN though
             lymph_degree = len(self.get_neighbouring_edges(node, LYMPHATIC_VESSEL))
 
             self.totals[TOTAL_BACTERIA_FAST] += node.subpopulations[BACTERIA_FAST]
@@ -159,6 +181,12 @@ class TBMetapopulationModel(LungLymphNetwork):
                                                                       lymph_degree
             self.totals[TOTAL_MACROPHAGE_REGULAR] += node.subpopulations[MACROPHAGE_REGULAR]
             self.totals[TOTAL_T_CELL_RECRUITMENT] += node.subpopulations[MACROPHAGE_INFECTED]
+            self.totals[TOTAL_T_CELL_BY_LYMPH_DEGREE] += node.subpopulations[T_CELL] * lymph_degree
+            self.totals[TOTAL_T_CELL_MACROPHAGE_RESTING] += node.subpopulations[T_CELL] * \
+                                                            node.subpopulations[MACROPHAGE_REGULAR]
+            self.totals[TOTAL_T_CELL_MACROPHAGE_INFECTED] += node.subpopulations[T_CELL] * \
+                                                             node.subpopulations[MACROPHAGE_INFECTED]
+            self.totals[TOTAL_T_CELL] += node.subpopulations[T_CELL]
 
     def events(self):
         """
@@ -233,12 +261,33 @@ class TBMetapopulationModel(LungLymphNetwork):
         # Macrophage death (regular)
         events.append((self.parameters[P_DEATH_MACROPHAGE_REGULAR] * self.totals[TOTAL_MACROPHAGE_REGULAR],
                        lambda f: self.death_macrophage(MACROPHAGE_REGULAR)))
+        # Macrophage death (infected)
         events.append((self.parameters[P_DEATH_MACROPHAGE_INFECTED] *
                        self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR],
                        lambda f: self.death_macrophage(MACROPHAGE_REGULAR)))
+        # Macrophage death (activated)
+        events.append((self.parameters[P_DEATH_MACROPHAGE_ACTIVATED] * self.totals[TOTAL_MACROPHAGE_ACTIVATED],
+                       lambda f: self.death_macrophage(MACROPHAGE_ACTIVATED)))
 
         # T Cell Recruitment at LN
-        events.append((self.parameters[P_RECRUIT_T_CELL] * self.totals[P_RECRUIT_T_CELL], lambda f: self.recruit_t_cell()))
+        events.append((self.parameters[P_RECRUIT_T_CELL] * self.totals[TOTAL_T_CELL_RECRUITMENT],
+                       lambda f: self.recruit_t_cell()))
+
+        # T Cell movement through lymphatic vessels (only between lymph nodes)
+        events.append((self.parameters[P_TRANSLOCATE_LYMPH_T_CELL] * self.totals[TOTAL_T_CELL_BY_LYMPH_DEGREE],
+                       lambda f: self.translocate_lymph_t_cell()))
+
+        # Activation of macrophages by T Cells
+        events.append((self.parameters[P_ACTIVATION_MACROPHAGE_BY_T_CELL] * self.totals[TOTAL_T_CELL_MACROPHAGE_RESTING]
+                       , lambda f: self.activation_macrophage_by_t_cell()))
+
+        # T Cell destroys an infected macrophage
+        events.append((self.parameters[P_DESTROY_MACROPHAGE_INFECTED_BY_T_CELL] *
+                       self.totals[TOTAL_T_CELL_MACROPHAGE_INFECTED]
+                       , lambda f: self.destroy_infected_mac_by_t_cell()))
+
+        # T Cell Death
+        events.append((self.parameters[P_DEATH_T_CELL] * self.totals[TOTAL_T_CELL], lambda f: self.death_t_cell()))
 
         return events
 
@@ -461,20 +510,21 @@ class TBMetapopulationModel(LungLymphNetwork):
 
         if mac_state == MACROPHAGE_REGULAR:
             r = np.random.random() * self.totals[TOTAL_MACROPHAGE_REGULAR]
-
         elif mac_state == MACROPHAGE_INFECTED:
             r = np.random.random() * self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR]
+        elif mac_state == MACROPHAGE_ACTIVATED:
+            r = np.random.random() * self.totals[TOTAL_MACROPHAGE_ACTIVATED]
         else:
             raise Exception("Invalid macrophage: {0}".format(mac_state))
 
         running_total = 0
         for node in self.node_list.values():
-            if mac_state == MACROPHAGE_REGULAR:
-                running_total += node.subpopulations[MACROPHAGE_REGULAR]
+            if mac_state == MACROPHAGE_REGULAR or MACROPHAGE_ACTIVATED:
+                running_total += node.subpopulations[mac_state]
                 if running_total > r:
-                    node.update(MACROPHAGE_REGULAR, -1)
+                    node.update(mac_state, -1)
                     return
-            elif mac_state == MACROPHAGE_INFECTED:
+            else:
                 running_total += node.subpopulations[MACROPHAGE_INFECTED] * node.subpopulations[BACTERIA_INTRACELLULAR]
                 if running_total > r:
                     bacteria_to_redistribute = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
@@ -492,4 +542,53 @@ class TBMetapopulationModel(LungLymphNetwork):
             running_total += node.subpopulations[MACROPHAGE_INFECTED]
             if running_total > r:
                 node.update(T_CELL, 1)
+                return
+
+    def translocate_lymph_t_cell(self):
+
+        r = np.random.random() * self.totals[TOTAL_T_CELL_BY_LYMPH_DEGREE]
+
+        running_total = 0
+        for node in self.node_list_ln:
+            neighbours = self.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
+            running_total += node.subpopulations[T_CELL] * len(neighbours)
+            if running_total > r:
+                r2 = np.random.randint(0, len(neighbours))
+                (neighbour, edge_data) = neighbours[r2]
+                node.update(T_CELL, -1)
+                neighbour.update(T_CELL, 1)
+                return
+
+    def activation_macrophage_by_t_cell(self):
+
+        r = np.random.random() * self.totals[TOTAL_T_CELL_MACROPHAGE_RESTING]
+
+        running_total = 0
+        for node in self.node_list.values():
+            running_total += node.subpopulations[T_CELL] * node.subpopulations[MACROPHAGE_REGULAR]
+            if running_total > r:
+                node.update(MACROPHAGE_ACTIVATED, 1)
+                node.update(MACROPHAGE_REGULAR, -1)
+                return
+
+    def destroy_infected_mac_by_t_cell(self):
+
+        r = np.random.random() * self.totals[TOTAL_T_CELL_MACROPHAGE_INFECTED]
+
+        running_total = 0
+        for node in self.node_list.values():
+            running_total += node.subpopulations[T_CELL] * node.subpopulations[MACROPHAGE_INFECTED]
+            if running_total > r:
+                node.update(MACROPHAGE_INFECTED, -1)
+                return
+
+    def death_t_cell(self):
+
+        r = np.random.random() * self.totals[TOTAL_T_CELL]
+
+        running_total = 0
+        for node in self.node_list.values():
+            running_total += node.subpopulations[T_CELL]
+            if running_total > r:
+                node.update(T_CELL, -1)
                 return
