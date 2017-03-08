@@ -2,6 +2,8 @@ __author__ = "Michael J. Pitcher"
 
 import numpy as np
 import networkx as nx
+import math
+
 from Patch import *
 
 EDGE_TYPE = 'edge_type'
@@ -54,7 +56,7 @@ class MetapopulationNetwork(nx.Graph):
 
             for node in self.node_list:
                 for event in self.events:
-                    event.increment_total(node)
+                    event.total += event.increment_total_from_node(node)
 
             total_rate = sum([event.get_rate() for event in self.events])
             if total_rate == 0.0:
@@ -62,6 +64,21 @@ class MetapopulationNetwork(nx.Graph):
                 print "0% chance of any event - ending simulation"
                 break
 
+            # Calculate the timestep delta based on the total rates
+            r = np.random.random()
+            dt = (1.0 / total_rate) * math.log(1.0 / r)
+
+            # Calculate which event happens based on their individual rates
+            r2 = np.random.random() * total_rate
+            running_total = 0
+            for event in self.events:
+                running_total += event.get_rate()
+                if running_total > r2:
+                    event.perform(network=self)
+                    break
+
+            self.time += dt
+            self.timestep_output()
 
     def timestep_output(self):
         print "t = ", self.time
