@@ -1,4 +1,4 @@
-from Models.TB.TB_FSIcRIn import *
+from Models.TB.TB_Full import *
 import ConfigParser
 
 BPS_POSITIONS = 'BronchopulmonarySegmentPositions'
@@ -18,30 +18,34 @@ for i in node_pos_config.options(LN_POSITIONS):
     node_positions[int(i)] = tuple([float(a) for a in node_pos_config.get(LN_POSITIONS, i).split(",")])
 
 parameters = dict()
-parameters[FAST_BACTERIA_TO_LOAD] = 10
-parameters[SLOW_BACTERIA_TO_LOAD] = 0
-parameters[MACROPHAGES_PER_BPS] = 50
-parameters[MACROPHAGES_PER_LYMPH] = 10
+parameters[P_REPLICATION_BACTERIA_FAST] = 0.0
+parameters[P_REPLICATION_BACTERIA_SLOW] = 0.0
+parameters[P_REPLICATION_BACTERIA_INTRACELLULAR] = 0.0
+parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW] = 0.0
+parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST] = 0.0
+parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST] = 0.0
+parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW] = 0.0
+parameters[P_TRANSLOCATE_LYMPH_BACTERIA_FAST] = 0.0
+parameters[P_TRANSLOCATE_LYMPH_BACTERIA_SLOW] = 0.0
+parameters[P_RECRUITMENT_BPS_MACROPHAGE] = 0.0
+parameters[P_RECRUITMENT_LYMPH_MACROPHAGE] = 0.0
+parameters[P_DEATH_MACROPHAGE_REGULAR] = 0.0
+parameters[P_DEATH_MACROPHAGE_INFECTED] = 0.0
+parameters[P_INGEST_AND_RETAIN_REGULAR_FAST] = 0.0
+parameters[P_INGEST_AND_RETAIN_REGULAR_SLOW] = 0.0
+parameters[P_INGEST_AND_RETAIN_INFECTED_FAST] = 0.0
+parameters[P_INGEST_AND_RETAIN_INFECTED_SLOW] = 0.0
+parameters[P_INGEST_AND_DESTROY_REGULAR_FAST] = 0.0
+parameters[P_INGEST_AND_DESTROY_REGULAR_SLOW] = 0.0
+parameters[P_INGEST_AND_DESTROY_INFECTED_FAST] = 0.0
+parameters[P_INGEST_AND_DESTROY_INFECTED_SLOW] = 0.0
 
-parameters[P_REPLICATE_FAST] = 0.1
-parameters[P_REPLICATE_SLOW] = 0.01
-parameters[P_REPLICATE_INTRACELLULAR] = 0.1
-parameters[P_MIGRATE_FAST] = 0.0
-parameters[P_MIGRATE_SLOW] = 0.0
-parameters[P_CHANGE_FAST_TO_SLOW] = 0.0
-parameters[P_CHANGE_SLOW_TO_FAST] = 0.0
-parameters[P_BPS_RECRUIT_MACROPHAGE] = 0.01*50
-parameters[P_LYMPH_RECRUIT_MACROPHAGE] = 0.01*10
-parameters[P_DEATH_REGULAR_MACROPHAGE] = 0.01
-parameters[P_DEATH_INFECTED_MACROPHAGE] = 0.1
-parameters[P_REGULAR_MACROPHAGE_INGEST_FAST] = 0.01
-parameters[P_REGULAR_MACROPHAGE_INGEST_SLOW] = 0.01
-parameters[P_INFECTED_MACROPHAGE_INGEST_FAST] = 0.01
-parameters[P_INFECTED_MACROPHAGE_INGEST_SLOW] = 0.01
-parameters[P_MIGRATE_REGULAR_MACROPHAGE] = 0.00
-parameters[P_MIGRATE_INFECTED_MACROPHAGE] = 0.9
+loads = dict()
+for i in range(36):
+    loads[i] = dict()
+    loads[i][MACROPHAGE_REGULAR] = 100
 
-a = TB_FSIcRIn(positions=node_positions, parameters=parameters)
+a = TBMetapopulationModel(positions=node_positions, loads=loads, parameters=parameters)
 
 a.run(50)
-a.display([MACROPHAGE_INFECTED])
+a.display([MACROPHAGE_REGULAR])

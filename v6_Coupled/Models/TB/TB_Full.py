@@ -28,6 +28,8 @@ TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE = 'total_M_r_by_lymph_degree'
 TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE = 'total_M_i_by_lymph_degree'
 TOTAL_MACROPHAGE_REGULAR = 'total_M_r'
 TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR = 'total_M_r_B_i'
+TOTAL_PERFUSION = 'total_perfusion'
+TOTAL_T_CELL_RECRUITMENT = 'total_recruit_t_cell'
 
 # Keys for probabilities needed to calculate event rates
 P_REPLICATION_BACTERIA_FAST = 'p_replication_B_f'
@@ -53,6 +55,7 @@ P_TRANSLOCATE_LYMPH_MACROPHAGE_REGULAR = 'p_translocate_lymph_M_r'
 P_TRANSLOCATE_LYMPH_MACROPHAGE_INFECTED = 'p_translocate_lymph_M_i'
 P_DEATH_MACROPHAGE_REGULAR = 'p_death_M_r'
 P_DEATH_MACROPHAGE_INFECTED = 'p_death_M_i'
+P_RECRUIT_T_CELL = 'p_recruit_T'
 
 
 class TBMetapopulationModel(LungLymphNetwork):
@@ -69,7 +72,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                                P_CHANGE_BACTERIA_SLOW_TO_FAST, P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST,
                                P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW, P_TRANSLOCATE_LYMPH_BACTERIA_FAST,
                                P_TRANSLOCATE_LYMPH_BACTERIA_SLOW, P_RECRUITMENT_BPS_MACROPHAGE,
-                               P_RECRUITMENT_LYMPH_MACROPHAGE, P_DEATH_MACROPHAGE_REGULAR]
+                               P_RECRUITMENT_LYMPH_MACROPHAGE, P_DEATH_MACROPHAGE_REGULAR, P_RECRUIT_T_CELL]
 
         for expected_parameter in expected_parameters:
             assert expected_parameter in parameters, "Parameter {0} missing".format(expected_parameter)
@@ -92,7 +95,8 @@ class TBMetapopulationModel(LungLymphNetwork):
                          TOTAL_BACTERIA_SLOW_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR_BACTERIA_FAST,
                          TOTAL_MACROPHAGE_REGULAR_BACTERIA_SLOW, TOTAL_MACROPHAGE_INFECTED_BACTERIA_FAST,
                          TOTAL_MACROPHAGE_INFECTED_BACTERIA_SLOW, TOTAL_MACROPHAGE_REGULAR_BY_LYMPH_DEGREE,
-                         TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR]
+                         TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE, TOTAL_MACROPHAGE_REGULAR, TOTAL_PERFUSION,
+                         TOTAL_T_CELL_RECRUITMENT]
         for t in totals_needed:
             self.totals[t] = 0.0
 
@@ -130,6 +134,7 @@ class TBMetapopulationModel(LungLymphNetwork):
             self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_INFECTED] * \
                                                                       lymph_degree
             self.totals[TOTAL_MACROPHAGE_REGULAR] += node.subpopulations[MACROPHAGE_REGULAR]
+            self.totals[TOTAL_PERFUSION] += node.perfusion
 
         # Loop through all lymph nodes
         for node in self.node_list_ln:
@@ -153,6 +158,7 @@ class TBMetapopulationModel(LungLymphNetwork):
             self.totals[TOTAL_MACROPHAGE_INFECTED_BY_LYMPH_DEGREE] += node.subpopulations[MACROPHAGE_INFECTED] * \
                                                                       lymph_degree
             self.totals[TOTAL_MACROPHAGE_REGULAR] += node.subpopulations[MACROPHAGE_REGULAR]
+            self.totals[TOTAL_T_CELL_RECRUITMENT] += node.subpopulations[MACROPHAGE_INFECTED]
 
     def events(self):
         """
@@ -190,7 +196,7 @@ class TBMetapopulationModel(LungLymphNetwork):
                        lambda f: self.translocate_lymph_bacterium(BACTERIA_SLOW)))
 
         # Macrophage recruited into BPS
-        events.append((self.parameters[P_RECRUITMENT_BPS_MACROPHAGE] * len(self.node_list_bps),
+        events.append((self.parameters[P_RECRUITMENT_BPS_MACROPHAGE] * self.totals[TOTAL_PERFUSION],
                        lambda f: self.recruit_bps_macrophage()))
         # Macrophage recruited into BPS
         events.append((self.parameters[P_RECRUITMENT_LYMPH_MACROPHAGE] * len(self.node_list_ln),
@@ -227,6 +233,12 @@ class TBMetapopulationModel(LungLymphNetwork):
         # Macrophage death (regular)
         events.append((self.parameters[P_DEATH_MACROPHAGE_REGULAR] * self.totals[TOTAL_MACROPHAGE_REGULAR],
                        lambda f: self.death_macrophage(MACROPHAGE_REGULAR)))
+        events.append((self.parameters[P_DEATH_MACROPHAGE_INFECTED] *
+                       self.totals[TOTAL_MACROPHAGE_INFECTED_BACTERIA_INTRACELLULAR],
+                       lambda f: self.death_macrophage(MACROPHAGE_REGULAR)))
+
+        # T Cell Recruitment at LN
+        events.append((self.parameters[P_RECRUIT_T_CELL] * self.totals[P_RECRUIT_T_CELL], lambda f: self.recruit_t_cell()))
 
         return events
 
@@ -350,13 +362,19 @@ class TBMetapopulationModel(LungLymphNetwork):
 
     def recruit_bps_macrophage(self):
         """
-        A macrophage is recruited into the bronchopulmonary segment
+        A macrophage is recruited into the bronchopulmonary segment, based on perfusion
         :return:
         """
-        r = np.random.randint(0, len(self.node_list_bps))
-        node = self.node_list_bps[r]
-        node.update(MACROPHAGE_REGULAR, 1)
-        return
+        # TODO - is this the best way to use perfusion? Is also included in the events function.
+
+        r = np.random.random() * self.totals[TOTAL_PERFUSION]
+
+        running_total = 0
+        for node in self.node_list_bps:
+            running_total += node.perfusion
+            if running_total > r:
+                node.update(MACROPHAGE_REGULAR, 1)
+                return
 
     def recruit_lymph_macrophage(self):
         """
@@ -439,7 +457,6 @@ class TBMetapopulationModel(LungLymphNetwork):
                 neighbour.update(macrophage_state, 1)
                 return
 
-
     def death_macrophage(self, mac_state):
 
         if mac_state == MACROPHAGE_REGULAR:
@@ -465,3 +482,14 @@ class TBMetapopulationModel(LungLymphNetwork):
                     node.update(MACROPHAGE_INFECTED, -1)
                     node.update(BACTERIA_SLOW, bacteria_to_redistribute)
                     return
+
+    def recruit_t_cell(self):
+
+        r = np.random.random() * self.totals[TOTAL_T_CELL_RECRUITMENT]
+
+        running_total = 0
+        for node in self.node_list_ln:
+            running_total += node.subpopulations[MACROPHAGE_INFECTED]
+            if running_total > r:
+                node.update(T_CELL, 1)
+                return
