@@ -20,7 +20,7 @@ class Event:
 
         running_total = 0
         for node in network.node_list:
-            running_total += self.increment_from_node(node)
+            running_total += self.increment_from_node(node, network)
             if running_total > r:
                 self.update_network(node, network)
                 return

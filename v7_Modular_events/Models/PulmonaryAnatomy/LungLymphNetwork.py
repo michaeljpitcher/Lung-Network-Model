@@ -150,6 +150,19 @@ class LungLymphNetwork(MetapopulationNetwork):
         if save_name is not None:
             fig.savefig(save_name + ".png")  # save as png
 
+    def get_neighbouring_edges(self, node, edge_type=None):
+        # TODO - may be slow to calculate this all the time, better to do it once and save
+        if edge_type is None:
+            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
+        elif edge_type == BRONCHUS:
+            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
+                                  if data[EDGE_TYPE] == BRONCHUS]
+        elif edge_type == LYMPHATIC_VESSEL:
+            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
+                                  if data[EDGE_TYPE] == LYMPHATIC_VESSEL and data[DIRECTION] != node]
+        else:
+            raise Exception("Incorrect edge type: {0}".format(edge_type))
+        return neighbouring_edges
 
 # STATIC METHODS FOR DEFAULT POSITIONS ETC.
 def get_default_bps_positions():

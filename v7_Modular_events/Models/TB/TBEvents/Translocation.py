@@ -27,6 +27,7 @@ class Translocation(Event):
                 running_total += edge_data[WEIGHT]
                 if running_total > r:
                     chosen_neighbour = neighbour
+                    break
         elif self.edge_type == LYMPHATIC_VESSEL:
             r = np.random.randint(0, len(neighbours))
             (neighbour, edge_data) = neighbours[r]
