@@ -11,7 +11,7 @@ class Event:
     def get_rate(self):
         return self.probability * self.total
 
-    def increment_total_from_node(self, node):
+    def increment_from_node(self, node, network):
         raise NotImplementedError
 
     def perform(self, network):
@@ -20,7 +20,7 @@ class Event:
 
         running_total = 0
         for node in network.node_list:
-            running_total += self.increment_total_from_node(node)
+            running_total += self.increment_from_node(node)
             if running_total > r:
                 self.update_network(node, network)
                 return

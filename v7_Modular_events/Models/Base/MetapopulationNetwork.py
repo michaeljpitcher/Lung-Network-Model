@@ -56,7 +56,7 @@ class MetapopulationNetwork(nx.Graph):
 
             for node in self.node_list:
                 for event in self.events:
-                    event.total += event.increment_total_from_node(node)
+                    event.total += event.increment_from_node(node, network=self)
 
             total_rate = sum([event.get_rate() for event in self.events])
             if total_rate == 0.0:

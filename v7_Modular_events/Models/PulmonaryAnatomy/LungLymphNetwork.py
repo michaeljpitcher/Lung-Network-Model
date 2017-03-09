@@ -3,16 +3,9 @@ __author__ = "Michael J. Pitcher"
 from ..Base.MetapopulationNetwork import *
 from BronchopulmonarySegment import *
 from LymphNode import *
+from PulmonaryAnatomyClasses import *
 
 import matplotlib.pyplot as plt
-
-BRONCHUS = 'edge_bronchus'
-LYMPHATIC_VESSEL = 'edge_lymphatic_vessel'
-WEIGHT = 'weight'
-DIRECTION = 'direction'
-
-HORSFIELD = 'horsfield'
-STAHLER = 'stahler'
 
 
 class LungLymphNetwork(MetapopulationNetwork):
