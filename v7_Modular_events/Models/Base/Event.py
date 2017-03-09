@@ -2,6 +2,7 @@ __author__ = "Michael J. Pitcher"
 
 import numpy as np
 
+
 class Event:
 
     def __init__(self, probability):
