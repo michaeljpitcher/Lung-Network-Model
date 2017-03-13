@@ -3,7 +3,7 @@ __author__ = "Michael J. Pitcher"
 from ...Base.Event import *
 
 
-class Replication(Event):
+class Replicate(Event):
 
     def __init__(self, bacteria_metabolism, probability):
         self.metabolism = bacteria_metabolism
