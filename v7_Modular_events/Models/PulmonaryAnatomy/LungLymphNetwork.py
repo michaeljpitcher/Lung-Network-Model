@@ -130,7 +130,7 @@ class LungLymphNetwork(MetapopulationNetwork):
                     node_labels[n] += str(n.subpopulations[species]) + ":"
 
         # Nodes
-        nx.draw_networkx_nodes(self, nodelist=self.node_list_bps, pos=pos, node_size=500, node_color="red")
+        nx.draw_networkx_nodes(self, nodelist=self.node_list_bps, pos=pos, node_size=500, node_color="green")
         nx.draw_networkx_nodes(self, nodelist=self.node_list_ln, pos=pos, node_size=200, node_color="grey",
                                node_shape='p')
 
@@ -141,7 +141,7 @@ class LungLymphNetwork(MetapopulationNetwork):
         bronchi_edges = [(e1, e2) for (e1, e2, data) in self.edges(data=True) if data[EDGE_TYPE] == BRONCHUS]
         edge_widths = [data[WEIGHT] * 2 for (_, _, data) in self.edges(data=True) if
                        data[EDGE_TYPE] == BRONCHUS]
-        nx.draw_networkx_edges(self, pos, edgelist=bronchi_edges, edge_color='red', width=edge_widths)
+        nx.draw_networkx_edges(self, pos, edgelist=bronchi_edges, edge_color='green', width=edge_widths)
         lymphatic_vessels = [(e1, e2) for (e1, e2, data) in self.edges(data=True) if data[EDGE_TYPE] ==
                              LYMPHATIC_VESSEL]
         nx.draw_networkx_edges(self, pos, edgelist=lymphatic_vessels, edge_color='grey', width=5)
@@ -153,16 +153,11 @@ class LungLymphNetwork(MetapopulationNetwork):
     def get_neighbouring_edges(self, node, edge_type=None):
         # TODO - may be slow to calculate this all the time, better to do it once and save
         if edge_type is None:
-            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
-        elif edge_type == BRONCHUS:
-            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
-                                  if data[EDGE_TYPE] == BRONCHUS]
-        elif edge_type == LYMPHATIC_VESSEL:
-            neighbouring_edges = [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
-                                  if data[EDGE_TYPE] == LYMPHATIC_VESSEL and data[DIRECTION] != node]
+            return [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
         else:
-            raise Exception("Incorrect edge type: {0}".format(edge_type))
-        return neighbouring_edges
+            return [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
+                                  if data[EDGE_TYPE] == edge_type]
+
 
 # STATIC METHODS FOR DEFAULT POSITIONS ETC.
 def get_default_bps_positions():
