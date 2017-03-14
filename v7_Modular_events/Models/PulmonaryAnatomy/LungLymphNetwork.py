@@ -9,10 +9,20 @@ import matplotlib.pyplot as plt
 
 
 class LungLymphNetwork(MetapopulationNetwork):
+    """ Metapopulation network to simulate the human bronchopulmonary system and adjacent lymphatics.
+
+    Nodes are either bronchopulmonary segments or lymph nodes. Edges have type either Bronchus or Lymphatic Vessel.
+    Specific topology is applied that (roughly) corresponds to the average human bronchial tree structure. Bronchus
+    edges are supplied a weight based on their order (using either Horsfield ordering or Stahler ordering). Lymphatic
+    Vessels are given a direction, with lymph flow always upwards.
+
+    Positions of nodes can be specified, if not defaults are used.
+    """
 
     def __init__(self, population_keys, events, bps_positions=None, ln_positions=None, bronchi=None,
                  lymphatic_vessels=None, weight_method=HORSFIELD):
 
+        # Use defaults if no positions are specified
         if bps_positions is None:
             bps_positions = get_default_bps_positions()
         if ln_positions is None:
@@ -22,6 +32,7 @@ class LungLymphNetwork(MetapopulationNetwork):
         if lymphatic_vessels is None:
             lymphatic_vessels = get_default_lymphatic_vessels()
 
+        # Lists for quicker processing
         self.node_list_bps = []
         self.node_list_ln = []
         bps_ids = range(0, 36)
@@ -36,11 +47,13 @@ class LungLymphNetwork(MetapopulationNetwork):
             bps_node = BronchopulmonarySegment(id, population_keys, bps_positions[id])
             nodes.append(bps_node)
             self.node_list_bps.append(bps_node)
+            # If it's an end node add to list
             if id in terminal_bps_ids:
                 self.terminal_bps_nodes.append(bps_node)
 
         # Lymph nodes
         for id in ln_ids:
+            # If it's a terminal node, set value on the Node
             if id == 44 or id == 41:
                 ln_node = LymphNode(id, population_keys, ln_positions[id], terminal=True)
             else:
