@@ -33,6 +33,6 @@ class Patch:
         :return:
         """
         # Check valid species and valid adjustment
-        assert class_type in self.subpopulations.keys(), "update_node: Invalid species {0}".format(class_type)
+        assert class_type in self.subpopulations.keys(), "update_node: Invalid class {0}".format(class_type)
         assert self.subpopulations[class_type] + adjustment >= 0, "update_node: Count cannot drop below zero"
         self.subpopulations[class_type] += adjustment
