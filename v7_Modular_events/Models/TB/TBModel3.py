@@ -3,11 +3,11 @@ __author__ = "Michael J. Pitcher"
 from TBClasses import *
 from TBEventProbabilityKeys import *
 from ..PulmonaryAnatomy.LungLymphNetwork import *
-from TBEvents.Replicate import *
-from TBEvents.Translocate import *
+from TBEvents.Replication import *
+from TBEvents.Translocation import *
 from TBEvents.ChangeMetabolism import *
 from TBEvents.Recruitment import *
-from TBEvents.Ingest import *
+from TBEvents.Ingestion import *
 from TBEvents.Death import *
 
 
