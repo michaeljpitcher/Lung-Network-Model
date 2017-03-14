@@ -24,10 +24,11 @@ class Activate(Event):
         chosen_node.update(MACROPHAGE_ACTIVATED, 1)
 
 
-class ActivateByTCell(Activate):
+class ActivateByOtherClass(Activate):
 
-    def __init__(self, macrophage_state, probability):
+    def __init__(self, macrophage_state, class_causing_activation, probability):
+        self.class_causing_activation = class_causing_activation
         Activate.__init__(self, macrophage_state, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.macrophage_state] * node.subpopulations[T_CELL]
+        return node.subpopulations[self.macrophage_state] * node.subpopulations[self.class_causing_activation]
