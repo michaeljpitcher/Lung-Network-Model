@@ -19,9 +19,9 @@ class Translocate(Event):
 
         (neighbour, edge_data) = self.pick_an_edge(chosen_node, network)
 
-        if self.class_type == MACROPHAGE_INFECTED:
+        if self.class_type in CLASSES_WITH_INTRACELLULAR:
             bacteria_to_move = int(round(chosen_node.subpopulations[BACTERIA_INTRACELLULAR]) /
-                                   chosen_node.subpopulations[MACROPHAGE_INFECTED])
+                                   chosen_node.subpopulations[self.class_type])
             chosen_node.update(BACTERIA_INTRACELLULAR, -1 * bacteria_to_move)
             neighbour.update(BACTERIA_INTRACELLULAR, bacteria_to_move)
 

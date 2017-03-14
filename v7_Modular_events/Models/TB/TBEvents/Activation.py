@@ -16,9 +16,9 @@ class Activate(Event):
 
     def update_network(self, chosen_node, network):
         # If infected, destroys any bacteria inside
-        if self.macrophage_state == MACROPHAGE_INFECTED:
+        if self.macrophage_state in CLASSES_WITH_INTRACELLULAR:
             bacteria_to_destroy = int(round(chosen_node.subpopulations[BACTERIA_INTRACELLULAR] /
-                                            chosen_node.subpopulations[MACROPHAGE_INFECTED]))
+                                            chosen_node.subpopulations[self.macrophage_state]))
             chosen_node.update(BACTERIA_INTRACELLULAR, -1 * bacteria_to_destroy)
         chosen_node.update(self.macrophage_state, -1)
         chosen_node.update(MACROPHAGE_ACTIVATED, 1)
