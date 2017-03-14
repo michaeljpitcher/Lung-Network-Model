@@ -5,7 +5,8 @@ from ..Base.Patch import Patch
 
 class LymphNode(Patch):
 
-    def __init__(self, patch_id, species, position):
+    def __init__(self, patch_id, species, position, terminal=False):
+        self.terminal = terminal
         Patch.__init__(self, patch_id, species, position)
 
     def __str__(self):

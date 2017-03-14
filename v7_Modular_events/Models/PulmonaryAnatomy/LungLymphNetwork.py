@@ -26,6 +26,8 @@ class LungLymphNetwork(MetapopulationNetwork):
         self.node_list_ln = []
         bps_ids = range(0, 36)
         ln_ids = range(36, 45)
+        terminal_bps_ids = range(18, 36)
+        self.terminal_bps_nodes = []
 
         nodes = []
 
@@ -34,10 +36,15 @@ class LungLymphNetwork(MetapopulationNetwork):
             bps_node = BronchopulmonarySegment(id, population_keys, bps_positions[id])
             nodes.append(bps_node)
             self.node_list_bps.append(bps_node)
+            if id in terminal_bps_ids:
+                self.terminal_bps_nodes.append(bps_node)
 
         # Lymph nodes
         for id in ln_ids:
-            ln_node = LymphNode(id, population_keys, ln_positions[id])
+            if id == 44 or id == 41:
+                ln_node = LymphNode(id, population_keys, ln_positions[id], terminal=True)
+            else:
+                ln_node = LymphNode(id, population_keys, ln_positions[id])
             nodes.append(ln_node)
             self.node_list_ln.append(ln_node)
 
