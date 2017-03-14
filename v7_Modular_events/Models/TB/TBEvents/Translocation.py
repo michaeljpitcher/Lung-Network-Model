@@ -56,7 +56,8 @@ class TranslocateBronchusWeight(Translocate):
 
 class TranslocateLymphDownstream(Translocate):
 
-    def __init__(self, class_type, probability):
+    def __init__(self, class_type, probability, redistribute=True):
+        self.redistribute = redistribute
         Translocate.__init__(self, class_type, LYMPHATIC_VESSEL, probability)
 
     def increment_from_node(self, node, network):
@@ -71,15 +72,28 @@ class TranslocateLymphDownstream(Translocate):
 
         # Should only be one TODO - this might change
         assert len(edges) == 1, "Incorrect number of lymph edges = {0}".format(len(edges))
-        return edges[0]
+
+        if self.redistribute and edges[0][0].terminal:
+            # Redistribution is active and Node is terminal, so haematogenous spread
+            possible_nodes = network.terminal_bps_nodes
+            total_perfusion = sum(n.perfusion for n in possible_nodes)
+            r = np.random.random() * total_perfusion
+            running_total = 0
+            for n in possible_nodes:
+                running_total += n.perfusion
+                if running_total > r:
+                    return n, None
+        else:
+            return edges[0]
 
 
 class TranslocateLymphToBPS(Translocate):
     """
-    Transfer from a lymph node to a BPS
+    Transfer from a lymph node to a BPS (with option to base redistribution by infection level)
     """
 
-    def __init__(self, class_type, probability):
+    def __init__(self, class_type, probability, based_on_infection=False):
+        self.based_on_infection = based_on_infection
         Translocate.__init__(self, class_type, LYMPHATIC_VESSEL, probability)
 
     def increment_from_node(self, node, network):
@@ -91,27 +105,17 @@ class TranslocateLymphToBPS(Translocate):
             return 0
 
     def pick_an_edge(self, chosen_node, network):
+
         edges = [(neighbour, data) for (neighbour, data) in network.get_neighbouring_edges(chosen_node,
                     LYMPHATIC_VESSEL) if isinstance(neighbour, BronchopulmonarySegment)]
-        index = np.random.randint(0, len(edges))
-        return edges[index]
-
-
-class TranslocateLymphToBPSBasedOnInfection(TranslocateLymphToBPS):
-    """
-    Transfer from a lymph node to a BPS, based on infection levels
-    """
-
-    def __init__(self, class_type, probability):
-        TranslocateLymphToBPS.__init__(self, class_type, probability)
-
-    def pick_an_edge(self, chosen_node, network):
-        edges = [(n, d) for (n, d) in network.get_neighbouring_edges(chosen_node, LYMPHATIC_VESSEL)
-                 if d[DIRECTION] == chosen_node and isinstance(n, BronchopulmonarySegment)]
-        total_infection = sum([n.subpopulations[MACROPHAGE_INFECTED] for (n,d) in edges])
-        r = np.random.random() * total_infection
-        running_total = 0
-        for (neighbour, data) in edges:
-            running_total += neighbour.subpopulations[MACROPHAGE_INFECTED]
-            if running_total > r:
-                return neighbour, data
+        if self.based_on_infection:
+            total_infection = sum([n.subpopulations[MACROPHAGE_INFECTED] for (n, d) in edges])
+            r = np.random.random() * total_infection
+            running_total = 0
+            for (neighbour, data) in edges:
+                running_total += neighbour.subpopulations[MACROPHAGE_INFECTED]
+                if running_total > r:
+                    return neighbour, data
+        else:
+            index = np.random.randint(0, len(edges))
+            return edges[index]
