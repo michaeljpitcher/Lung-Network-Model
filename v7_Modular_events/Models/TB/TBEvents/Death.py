@@ -22,7 +22,7 @@ class Die(Event):
         chosen_node.update(self.class_type, -1)
 
 
-class DieIntracellularLoad(Die):
+class DieByIntracellularLoad(Die):
 
     def __init__(self, class_type, probability):
         Die.__init__(self, class_type, probability)
@@ -31,10 +31,11 @@ class DieIntracellularLoad(Die):
         return node.subpopulations[self.class_type] * node.subpopulations[BACTERIA_INTRACELLULAR]
 
 
-class DieTCell(Die):
+class DieByOtherClass(Die):
 
-    def __init__(self, class_type, probability):
-        Die.__init__(self, class_type, probability)
+    def __init__(self, class_type_to_die, killer_class_type, probability):
+        self.killer_class_type = killer_class_type
+        Die.__init__(self, class_type_to_die, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.class_type] * node.subpopulations[T_CELL]
+        return node.subpopulations[self.class_type] * node.subpopulations[self.killer_class_type]
