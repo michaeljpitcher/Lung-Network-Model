@@ -15,7 +15,10 @@ class Translocate(Event):
         Event.__init__(self, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.class_type] * len(network.get_neighbouring_edges(node, self.edge_type))
+        if self.edge_type in node.degrees:
+            return node.subpopulations[self.class_type] * node.degrees[self.edge_type]
+        else:
+            return 0
 
     def update_network(self, chosen_node, network):
 
