@@ -66,6 +66,11 @@ class MetapopulationNetwork(nx.Graph):
         # Check the edge type has been specified - only edge key that is mandatory
         assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0}-{1}".format(u, v)
         nx.Graph.add_edge(self, u, v, attr_dict)
+        # Update the degree of this edge type for the nodes on this edge
+        u.degrees[attr_dict[EDGE_TYPE]] = len([(neighbour, data) for (_, neighbour, data) in self.edges(u, data=True)
+                                  if data[EDGE_TYPE] == attr_dict[EDGE_TYPE]])
+        v.degrees[attr_dict[EDGE_TYPE]] = len([(neighbour, data) for (_, neighbour, data) in self.edges(v, data=True)
+                                               if data[EDGE_TYPE] == attr_dict[EDGE_TYPE]])
 
     def sort_node_list(self):
         # TODO - Not sure how necessary this is
