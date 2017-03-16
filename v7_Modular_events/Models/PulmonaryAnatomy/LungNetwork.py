@@ -82,7 +82,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
             # Find the parent edge (should only be one) as edge where weight hasn't already been set
             # (only check bronchi)
             parent_nodes = [parent_nodes for _, parent_nodes, edge_data in self.edges(node, data=True) if
-                            edge_data[EDGE_TYPE] == BRONCHUS and edge_data[WEIGHT] == 0.0]
+                            edge_data[WEIGHT] == 0.0]
 
             assert len(parent_nodes) == 1
             # Get the data from parent edge to update
@@ -93,7 +93,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
             else:
                 # Get the child edges (those with weights already set) (only get bronchi)
                 child_edges_weights = [edge_data[WEIGHT] for _, _, edge_data in self.edges(node, data=True) if
-                                       edge_data[EDGE_TYPE] == BRONCHUS and edge_data[WEIGHT] > 0.0]
+                                       edge_data[WEIGHT] > 0.0]
 
                 # Determine new weight based on method chosen
                 if weight_method == HORSFIELD:
@@ -112,10 +112,8 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
 
     def display_network(self, class_types_to_display, title="", save_name=None):
 
-        node_colours = {}
-        node_colours[BronchopulmonarySegment] = 'green'
-        edge_colours = {}
-        edge_colours[BRONCHUS] = 'green'
+        node_colours = {BronchopulmonarySegment: 'green'}
+        edge_colours = {BRONCHUS: 'green'}
 
         MetapopulationNetwork.display(self, class_types_to_display, node_colours, edge_colours, title, save_name)
 
