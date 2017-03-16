@@ -4,6 +4,7 @@ import numpy as np
 import networkx as nx
 import math
 import csv
+import matplotlib.pyplot as plt
 
 from Patch import *
 from Event import *
@@ -27,10 +28,6 @@ class MetapopulationNetwork(nx.Graph):
         # Population keys
         self.population_keys = population_keys
 
-        for node in nodes:
-            # Type check as user defined
-            assert isinstance(node, Patch), "Nodes specified must be of instances of Patch class"
-
         # Sort nodes by ID
         nodes.sort(key=lambda x: x.id, reverse=False)
 
@@ -39,9 +36,6 @@ class MetapopulationNetwork(nx.Graph):
 
         # Add nodes to graph
         for node in nodes:
-            # Check all classes have been defined within the node
-            for class_type in self.population_keys:
-                assert class_type in node.subpopulations.keys(), "Node {0} missing key {1}".format(node, class_type)
             # Add node to the graph
             self.add_node(node)
             # Add node to the node list
@@ -65,6 +59,14 @@ class MetapopulationNetwork(nx.Graph):
 
         # Time
         self.time = 0.0
+        # self.add_node()
+
+    def add_node(self, n, attr_dict=None, **attr):
+        assert isinstance(n, Patch), "Nodes specified must be of instances of Patch class"
+        for class_type in self.population_keys:
+            assert class_type in n.subpopulations.keys(), "Node {0} missing key {1}".format(n, class_type)
+        nx.Graph.add_node(self, n)
+
 
     def run(self, time_limit, run_id=None):
         """ Runs a simulation of the metapopulation network
@@ -133,3 +135,41 @@ class MetapopulationNetwork(nx.Graph):
                 row.append(node.subpopulations[class_type])
             csv_writer.writerow(row)
 
+    def get_neighbouring_edges(self, node, edge_type=None):
+        # TODO - may be slow to calculate this all the time, better to do it once and save
+        if not edge_type:
+            return [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
+        else:
+            return [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
+                                  if data[EDGE_TYPE] == edge_type]
+
+    def display(self, class_types_to_display, node_colours, edge_colours, title="", save_name=None):
+        fig = plt.figure(figsize=(10, 10))
+        plt.axis('off')
+        plt.title(title)
+
+        pos = {}
+        node_labels = {}
+        for n in self.nodes():
+            pos[n] = n.position
+            node_labels[n] = ""
+            if class_types_to_display is not None:
+                for species in class_types_to_display:
+                    node_labels[n] += str(n.subpopulations[species]) + ":"
+
+        # Nodes
+        for node_type in node_colours:
+            nodelist = [node for node in self.nodes() if isinstance(node, node_type)]
+            nx.draw_networkx_nodes(self, nodelist=nodelist, pos=pos, node_size=500, node_color=node_colours[node_type])
+
+        # Node labels
+        nx.draw_networkx_labels(self, pos, labels=node_labels, font_family='sans-serif')
+
+        # Edges
+        for edge_type in edge_colours:
+            edgelist = [(n1, n2) for (n1, n2, data) in self.edges(data=True) if data[EDGE_TYPE] == edge_type]
+            nx.draw_networkx_edges(self, pos, edgelist=edgelist, edge_color=edge_colours[edge_type])
+
+        plt.show()
+        if save_name is not None:
+            fig.savefig(save_name + ".png")  # save as png
