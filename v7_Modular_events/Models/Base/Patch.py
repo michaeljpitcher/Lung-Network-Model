@@ -20,6 +20,7 @@ class Patch:
         self.subpopulations = dict()
         for class_type in subpopulation_keys:
             self.subpopulations[class_type] = 0
+        self.degrees = dict()
 
     def __str__(self):
         """ String identifier of patch"""
