@@ -171,7 +171,7 @@ class MetapopulationNetwork(nx.Graph):
         # Edges
         for edge_type in edge_colours:
             edgelist = [(n1, n2) for (n1, n2, data) in self.edges(data=True) if data[EDGE_TYPE] == edge_type]
-            nx.draw_networkx_edges(self, pos, edgelist=edgelist, edge_color=edge_colours[edge_type])
+            nx.draw_networkx_edges(self, pos, edgelist=edgelist, edge_color=edge_colours[edge_type], width=4)
 
         plt.show()
         if save_name is not None:
