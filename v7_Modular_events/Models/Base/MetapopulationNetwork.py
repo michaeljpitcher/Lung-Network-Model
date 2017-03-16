@@ -110,11 +110,8 @@ class MetapopulationNetwork(nx.Graph):
             r2 = np.random.random() * total_rate
             running_total = 0
             # Pick an event
-            print "r2", r2
-            print "total_rate", total_rate
             for event in self.events:
                 running_total += event.get_rate()
-                print running_total
                 if running_total > r2:
                     event.perform(network=self)
                     break
@@ -127,7 +124,6 @@ class MetapopulationNetwork(nx.Graph):
             csv_file.close()
 
     def timestep_output(self):
-        print "-----------------------"
         print "t = ", self.time
 
     def record_data(self, csv_writer):
