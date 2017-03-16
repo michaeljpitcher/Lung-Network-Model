@@ -14,31 +14,26 @@ class LungLymphNetwork(MetapopulationNetwork):
     Nodes are either bronchopulmonary segments or lymph nodes. Edges have type either Bronchus or Lymphatic Vessel.
     Specific topology is applied that (roughly) corresponds to the average human bronchial tree structure. Bronchus
     edges are supplied a weight based on their order (using either Horsfield ordering or Stahler ordering). Lymphatic
-    Vessels are given a direction, with lymph flow always upwards.
+    Vessels are given a direction, with lymph flow always upwards. Lymphatic system can be switched off if required.
 
     Positions of nodes can be specified, if not defaults are used.
     """
 
-    def __init__(self, population_keys, events, bps_positions=None, ln_positions=None, bronchi=None,
+    def __init__(self, population_keys, events, include_lymph=True, bps_positions=None, ln_positions=None, bronchi=None,
                  lymphatic_vessels=None, weight_method=HORSFIELD):
 
         # Use defaults if no positions are specified
         if bps_positions is None:
             bps_positions = get_default_bps_positions()
-        if ln_positions is None:
-            ln_positions = get_default_ln_positions()
         if bronchi is None:
             bronchi = get_default_bronchi()
-        if lymphatic_vessels is None:
-            lymphatic_vessels = get_default_lymphatic_vessels()
 
-        # Lists for quicker processing
+        # List for quicker processing
         self.node_list_bps = []
-        self.node_list_ln = []
-        bps_ids = range(0, 36)
-        ln_ids = range(36, 45)
-        terminal_bps_ids = range(18, 36)
         self.terminal_bps_nodes = []
+
+        bps_ids = range(0, 36)
+        terminal_bps_ids = range(18, 36)
 
         nodes = []
 
@@ -51,16 +46,6 @@ class LungLymphNetwork(MetapopulationNetwork):
             if id in terminal_bps_ids:
                 self.terminal_bps_nodes.append(bps_node)
 
-        # Lymph nodes
-        for id in ln_ids:
-            # If it's a terminal node, set value on the Node
-            if id == 44 or id == 41:
-                ln_node = LymphNode(id, population_keys, ln_positions[id], terminal=True)
-            else:
-                ln_node = LymphNode(id, population_keys, ln_positions[id])
-            nodes.append(ln_node)
-            self.node_list_ln.append(ln_node)
-
         edges = []
 
         # Bronchus edges
@@ -71,13 +56,35 @@ class LungLymphNetwork(MetapopulationNetwork):
             bronchus_edge = (node1, node2, edge_data)
             edges.append(bronchus_edge)
 
-        # Lymphatic edges
-        for (node1_id, node2_id) in lymphatic_vessels:
-            node1 = [n for n in nodes if n.id == node1_id][0]
-            node2 = [n for n in nodes if n.id == node2_id][0]
-            edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: node2}
-            lymphatic_edge = (node1, node2, edge_data)
-            edges.append(lymphatic_edge)
+        # Optional lymphatics
+        if include_lymph:
+            # Positions
+            if ln_positions is None:
+                ln_positions = get_default_ln_positions()
+            # Edges
+            if lymphatic_vessels is None:
+                lymphatic_vessels = get_default_lymphatic_vessels()
+            # ID list
+            ln_ids = range(36, 45)
+            # Node list
+            self.node_list_ln = []
+            # Add Lymph Nodes
+            for id in ln_ids:
+                # If it's a terminal node, set value on the Node
+                if id == 44 or id == 41:
+                    ln_node = LymphNode(id, population_keys, ln_positions[id], terminal=True)
+                else:
+                    ln_node = LymphNode(id, population_keys, ln_positions[id])
+                nodes.append(ln_node)
+                self.node_list_ln.append(ln_node)
+            pass
+            # Lymphatic edges
+            for (node1_id, node2_id) in lymphatic_vessels:
+                node1 = [n for n in nodes if n.id == node1_id][0]
+                node2 = [n for n in nodes if n.id == node2_id][0]
+                edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: node2}
+                lymphatic_edge = (node1, node2, edge_data)
+                edges.append(lymphatic_edge)
 
         MetapopulationNetwork.__init__(self, population_keys, nodes, edges, events)
 
