@@ -7,8 +7,7 @@ from PulmonaryAnatomyClasses import *
 
 class LungMetapopulationNetwork(MetapopulationNetwork):
 
-    def __init__(self, population_keys, events, bps_positions=None, bronchi_definitions=None, nodes=None, edges=None,
-                 weight_method=HORSFIELD):
+    def __init__(self, population_keys, events, bps_positions=None, bronchi_definitions=None, weight_method=HORSFIELD):
         """
 
         :param population_keys:
@@ -34,8 +33,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
         terminal_bps_ids = range(18, 36)
 
         # If no additional nodes supplied, start as empty list
-        if not nodes:
-            nodes = []
+        nodes = []
 
         # BPS nodes
         for id in bps_ids:
@@ -46,8 +44,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
             if id in terminal_bps_ids:
                 self.terminal_bps_nodes.append(bps_node)
 
-        if not edges:
-            edges = []
+        edges = []
 
         # Bronchus edges
         for (node1_id, node2_id) in bronchi_definitions:
@@ -57,7 +54,7 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
             bronchus_edge = (node1, node2, edge_data)
             edges.append(bronchus_edge)
 
-        MetapopulationNetwork.__init__(self, population_keys, nodes, edges, events)
+        MetapopulationNetwork.__init__(self, population_keys, events, nodes=nodes, edges=edges)
 
         # -------------EDGE WEIGHTS ---------------------------
         self.origin = 0

@@ -7,7 +7,7 @@ from LymphNode import *
 class LungLymphMetapopulationNetwork(LungMetapopulationNetwork):
 
     def __init__(self, population_keys, events, bps_positions=None, bronchi_definitions=None, ln_positions=None,
-                 lymphatic_vessels_definitions=None, nodes=None, edges=None, weight_method=HORSFIELD):
+                 lymphatic_vessels_definitions=None, weight_method=HORSFIELD):
         """
 
         :param population_keys:
@@ -19,8 +19,8 @@ class LungLymphMetapopulationNetwork(LungMetapopulationNetwork):
         :param weight_method:
         """
 
-        if not nodes:
-            nodes = []
+        LungMetapopulationNetwork.__init__(self, population_keys, events, bps_positions, bronchi_definitions,
+                                           weight_method=weight_method)
 
         # Positions
         if not ln_positions:
@@ -41,22 +41,15 @@ class LungLymphMetapopulationNetwork(LungMetapopulationNetwork):
                 ln_node = LymphNode(id, population_keys, ln_positions[id], terminal=True)
             else:
                 ln_node = LymphNode(id, population_keys, ln_positions[id])
-            nodes.append(ln_node)
+            self.add_node(ln_node)
             self.node_list_ln.append(ln_node)
 
-        if not edges:
-            edges = []
-
-        # Lymphatic edges
+        # Add Lymphatic edges
         for (node1_id, node2_id) in lymphatic_vessels_definitions:
-            node1 = [n for n in nodes if n.id == node1_id][0]
-            node2 = [n for n in nodes if n.id == node2_id][0]
+            node1 = [n for n in self.nodes() if n.id == node1_id][0]
+            node2 = [n for n in self.nodes() if n.id == node2_id][0]
             edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: node2}
-            lymphatic_edge = (node1, node2, edge_data)
-            edges.append(lymphatic_edge)
-
-        LungMetapopulationNetwork.__init__(self, population_keys, events, bps_positions, bronchi_definitions, nodes,
-                                           edges, weight_method)
+            self.add_edge(node1, node2, edge_data)
 
     def display_network(self, class_types_to_display, title="", save_name=None):
 
