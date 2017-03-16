@@ -1,6 +1,6 @@
 import unittest
 
-from ..Models.Base.Event import *
+from v7_Modular_events.Models.Base.Events.Event import *
 from ..Models.Base.Patch import *
 
 

@@ -1,6 +1,6 @@
 __author__ = "Michael J. Pitcher"
 
-from ...Base.Event import *
+from v7_Modular_events.Models.Base.Events.Event import *
 from ..TBClasses import *
 from ...PulmonaryAnatomy.BronchopulmonarySegment import *
 

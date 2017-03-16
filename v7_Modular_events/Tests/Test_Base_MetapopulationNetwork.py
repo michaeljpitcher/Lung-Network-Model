@@ -1,9 +1,9 @@
+import os
 import unittest
 
-import os
+from v7_Modular_events.Models.Base.Events.Event import *
 from ..Models.Base.MetapopulationNetwork import *
 from ..Models.Base.Patch import *
-from ..Models.Base.Event import *
 
 class MetapopulationNetworkTestCase(unittest.TestCase):
     def setUp(self):

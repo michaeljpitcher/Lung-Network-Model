@@ -1,10 +1,13 @@
 __author__ = "Michael J. Pitcher"
 
-from ...Base.Event import *
+from v7_Modular_events.Models.Base.Events.Event import *
 from ..TBClasses import *
 
 
 class Activate(Event):
+    """ A macrophage changes state by becoming a MACROPHAGE_ACTIVATED
+
+    """
 
     def __init__(self, macrophage_state, probability):
         self.macrophage_state = macrophage_state

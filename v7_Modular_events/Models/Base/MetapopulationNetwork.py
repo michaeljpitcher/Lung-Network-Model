@@ -1,13 +1,13 @@
 __author__ = "Michael J. Pitcher"
 
-import numpy as np
-import networkx as nx
-import math
 import csv
+import math
+
 import matplotlib.pyplot as plt
+import networkx as nx
 
 from Patch import *
-from Event import *
+from v7_Modular_events.Models.Base.Events.Event import *
 
 EDGE_TYPE = 'edge_type'
 

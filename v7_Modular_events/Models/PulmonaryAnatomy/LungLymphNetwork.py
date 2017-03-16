@@ -14,11 +14,12 @@ class LungLymphMetapopulationNetwork(LungMetapopulationNetwork):
         :param events:
         :param bps_positions:
         :param bronchi_definitions:
-        :param nodes: Additional nodes
-        :param edges: Additional edges
+        :param ln_positions:
+        :param lymphatic_vessels_definitions:
         :param weight_method:
         """
 
+        # Call Lung network to create network, then add lymph nodes, edges on top
         LungMetapopulationNetwork.__init__(self, population_keys, events, bps_positions, bronchi_definitions,
                                            weight_method=weight_method)
 
@@ -52,10 +53,16 @@ class LungLymphMetapopulationNetwork(LungMetapopulationNetwork):
             self.add_edge(node1, node2, edge_data)
 
     def display_network(self, class_types_to_display, title="", save_name=None):
+        """
+        Output the network
+        :param class_types_to_display:
+        :param title:
+        :param save_name:
+        :return:
+        """
 
         node_colours = {BronchopulmonarySegment: 'green', LymphNode: 'grey'}
         edge_colours = {BRONCHUS: 'green', LYMPHATIC_VESSEL: 'grey'}
-
         MetapopulationNetwork.display(self, class_types_to_display, node_colours, edge_colours, title, save_name)
 
 
@@ -84,7 +91,6 @@ def get_default_lymphatic_vessels():
         lymphatic_vessels.append((drainage_id, 37))
     for drainage_id in range(18, 23):
         lymphatic_vessels.append((drainage_id, 39))
-
     return lymphatic_vessels
 
 

@@ -14,8 +14,6 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
         :param events:
         :param bps_positions:
         :param bronchi_definitions:
-        :param nodes: Additional nodes
-        :param edges: Additional edges
         :param weight_method:
         """
 
@@ -111,10 +109,15 @@ class LungMetapopulationNetwork(MetapopulationNetwork):
                 self.edge[node][parent_node][WEIGHT] = new_order
 
     def display_network(self, class_types_to_display, title="", save_name=None):
+        """
 
+        :param class_types_to_display:
+        :param title:
+        :param save_name:
+        :return:
+        """
         node_colours = {BronchopulmonarySegment: 'green'}
         edge_colours = {BRONCHUS: 'green'}
-
         MetapopulationNetwork.display(self, class_types_to_display, node_colours, edge_colours, title, save_name)
 
 
