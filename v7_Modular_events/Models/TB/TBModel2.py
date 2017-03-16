@@ -8,7 +8,7 @@ from TBEvents.Translocation import *
 from TBEvents.ChangeMetabolism import *
 
 
-class TBModel2(LungLymphNetwork):
+class TBModel2(LungLymphMetapopulationNetwork):
 
     def __init__(self, parameters):
 
@@ -24,7 +24,7 @@ class TBModel2(LungLymphNetwork):
         events.append(ChangeMetabolism(BACTERIA_FAST, BACTERIA_SLOW, self.parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW]))
         events.append(ChangeMetabolism(BACTERIA_SLOW, BACTERIA_FAST, self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST]))
 
-        LungLymphNetwork.__init__(self, population_keys, events)
+        LungLymphMetapopulationNetwork.__init__(self, population_keys, events)
 
     def load(self, fast_bacteria_to_load, slow_bacteria_to_load):
         for id in fast_bacteria_to_load:

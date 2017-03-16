@@ -7,7 +7,7 @@ from TBEvents.Replication import *
 from TBEvents.Translocation import *
 
 
-class TBModel1(LungLymphNetwork):
+class TBModel1(LungLymphMetapopulationNetwork):
 
     def __init__(self, parameters):
 
@@ -19,7 +19,7 @@ class TBModel1(LungLymphNetwork):
         events.append(Replicate(BACTERIA, self.parameters[P_REPLICATION_BACTERIA]))
         events.append(Translocate(BACTERIA, BRONCHUS, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA]))
 
-        LungLymphNetwork.__init__(self, population_keys, events)
+        LungLymphMetapopulationNetwork.__init__(self, population_keys, events)
 
     def load(self, bacteria_to_load):
         for id in bacteria_to_load:

@@ -11,7 +11,7 @@ from TBEvents.Ingestion import *
 from TBEvents.Death import *
 
 
-class TBModel3(LungLymphNetwork):
+class TBModel3(LungLymphMetapopulationNetwork):
 
     def __init__(self, parameters):
 
@@ -32,7 +32,7 @@ class TBModel3(LungLymphNetwork):
         events.append(Ingest(MACROPHAGE, BACTERIA_SLOW, False, False, self.parameters[P_INGEST_AND_DESTROY_MACROPHAGE_SLOW]))
         events.append(Die(MACROPHAGE, self.parameters[P_DEATH_MACROPHAGE]))
 
-        LungLymphNetwork.__init__(self, population_keys, events)
+        LungLymphMetapopulationNetwork.__init__(self, population_keys, events)
 
     def load(self, fast_bacteria_to_load, slow_bacteria_to_load, macrophages_to_load):
         for id in fast_bacteria_to_load:
