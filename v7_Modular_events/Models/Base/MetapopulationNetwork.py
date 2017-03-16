@@ -21,7 +21,7 @@ class MetapopulationNetwork(nx.Graph):
 
     """
 
-    def __init__(self, population_keys, nodes, edges, events):
+    def __init__(self, population_keys, events, nodes=None, edges=None):
 
         # Set up the NetworkX Graph
         nx.Graph.__init__(self)
@@ -32,14 +32,16 @@ class MetapopulationNetwork(nx.Graph):
         self.node_list = []
 
         # Add nodes to graph
-        for node in nodes:
-            self.add_node(node)
+        if nodes:
+            for node in nodes:
+                self.add_node(node)
 
-        self.node_list.sort(key=lambda x: x.id, reverse=False)
+        self.sort_node_list()
 
         # Add edges to graph
-        for (node1, node2, edge_data) in edges:
-            self.add_edge(node1, node2, edge_data)
+        if edges:
+            for (node1, node2, edge_data) in edges:
+                self.add_edge(node1, node2, edge_data)
 
         # Events
         # Check events are of correct type
@@ -64,6 +66,10 @@ class MetapopulationNetwork(nx.Graph):
         # Check the edge type has been specified - only edge key that is mandatory
         assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0}-{1}".format(u, v)
         nx.Graph.add_edge(self, u, v, attr_dict)
+
+    def sort_node_list(self):
+        # TODO - Not sure how necessary this is
+        self.node_list.sort(key=lambda x: x.id, reverse=False)
 
     def run(self, time_limit, run_id=None):
         """ Runs a simulation of the metapopulation network
