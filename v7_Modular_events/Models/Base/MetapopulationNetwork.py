@@ -33,16 +33,12 @@ class MetapopulationNetwork(nx.Graph):
 
         # Add nodes to graph
         for node in nodes:
-            # Add node to the graph
             self.add_node(node)
-            # Add node to the node list
-            self.node_list.append(node)
 
         self.node_list.sort(key=lambda x: x.id, reverse=False)
 
         # Add edges to graph
         for (node1, node2, edge_data) in edges:
-            # Add the edge to the graph
             self.add_edge(node1, node2, edge_data)
 
         # Events
@@ -59,6 +55,8 @@ class MetapopulationNetwork(nx.Graph):
         for class_type in self.population_keys:
             assert class_type in n.subpopulations.keys(), "Node {0} missing key {1}".format(n, class_type)
         nx.Graph.add_node(self, n)
+        # Add node to the node list
+        self.node_list.append(n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
         assert u in self.nodes(), "Edge node {0} not specified in network".format(u)
