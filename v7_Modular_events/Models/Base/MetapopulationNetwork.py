@@ -28,9 +28,6 @@ class MetapopulationNetwork(nx.Graph):
         # Population keys
         self.population_keys = population_keys
 
-        # Sort nodes by ID
-        nodes.sort(key=lambda x: x.id, reverse=False)
-
         # Store nodes as a list for quicker processing
         self.node_list = []
 
@@ -40,6 +37,8 @@ class MetapopulationNetwork(nx.Graph):
             self.add_node(node)
             # Add node to the node list
             self.node_list.append(node)
+
+        self.node_list.sort(key=lambda x: x.id, reverse=False)
 
         # Add edges to graph
         for (node1, node2, edge_data) in edges:
