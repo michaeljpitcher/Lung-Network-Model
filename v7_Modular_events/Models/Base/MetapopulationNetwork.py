@@ -42,11 +42,6 @@ class MetapopulationNetwork(nx.Graph):
 
         # Add edges to graph
         for (node1, node2, edge_data) in edges:
-            # Check the nodes are actually on the graph
-            assert node1 in nodes, "Edge node {0} not specified in network".format(node1)
-            assert node2 in nodes, "Edge node {0} not specified in network".format(node2)
-            # Check the edge type has been specified - only edge key that is mandatory
-            assert EDGE_TYPE in edge_data.keys(), "Edge type not specified for edge {0}-{1}".format(node1, node2)
             # Add the edge to the graph
             self.add_edge(node1, node2, edge_data)
 
@@ -58,7 +53,6 @@ class MetapopulationNetwork(nx.Graph):
 
         # Time
         self.time = 0.0
-        # self.add_node()
 
     def add_node(self, n, attr_dict=None, **attr):
         assert isinstance(n, Patch), "Nodes specified must be of instances of Patch class"
@@ -66,6 +60,12 @@ class MetapopulationNetwork(nx.Graph):
             assert class_type in n.subpopulations.keys(), "Node {0} missing key {1}".format(n, class_type)
         nx.Graph.add_node(self, n)
 
+    def add_edge(self, u, v, attr_dict=None, **attr):
+        assert u in self.nodes(), "Edge node {0} not specified in network".format(u)
+        assert v in self.nodes(), "Edge node {0} not specified in network".format(v)
+        # Check the edge type has been specified - only edge key that is mandatory
+        assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0}-{1}".format(u, v)
+        nx.Graph.add_edge(self, u, v, attr_dict)
 
     def run(self, time_limit, run_id=None):
         """ Runs a simulation of the metapopulation network
