@@ -14,15 +14,20 @@ class Translocate(Event):
         return node.subpopulations[self.class_translocating]
 
     def update_network(self, chosen_node, network):
-        (neighbour, edge_data) = self.pick_an_edge(chosen_node, network)
-        chosen_node.update(self.class_translocating, -1)
-        neighbour.update(self.class_translocating, 1)
-
-    def pick_an_edge(self, chosen_node, network):
-        # Pick edge at random from those available
         edges = network.get_neighbouring_edges(chosen_node, self.edge_type)
-        index = np.random.randint(0, len(edges))
-        return edges[index]
+        neighbour = self.pick_a_neighbour(edges)
+        amounts_to_move = self.amounts_to_move(chosen_node, neighbour)
+        for key in amounts_to_move:
+            chosen_node.update(key, -1 * amounts_to_move[key])
+            neighbour.update(key, amounts_to_move[key])
+
+    def pick_a_neighbour(self, edges):
+        # Pick edge at random from those available
+        neighbour, data = edges[np.random.randint(0, len(edges))]
+        return neighbour
+
+    def amounts_to_move(self, node, neighbour):
+        return {self.class_translocating: 1}
 
 
 class TranslocateByDegree(Translocate):
