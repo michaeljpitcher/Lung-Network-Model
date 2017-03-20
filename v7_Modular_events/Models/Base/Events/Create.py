@@ -17,6 +17,19 @@ class Create(Event):
         chosen_node.update(self.class_to_create, 1)
 
 
+class CreateAtNodeType(Create):
+
+    def __init__(self, class_to_create, node_type, probability):
+        self.node_type = node_type
+        Create.__init__(self, class_to_create, probability)
+
+    def increment_from_node(self, node, network):
+        if isinstance(node, self.class_to_create):
+            return Create.increment_from_node(self, node, network)
+        else:
+            return 0
+
+
 class Replication(Create):
     """ An individual is create by a member of it's class replicating (splitting in two)
     """
