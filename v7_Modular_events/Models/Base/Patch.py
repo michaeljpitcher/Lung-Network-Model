@@ -37,3 +37,6 @@ class Patch:
         assert class_type in self.subpopulations.keys(), "update_node: Invalid class {0}".format(class_type)
         assert self.subpopulations[class_type] + adjustment >= 0, "update_node: Count cannot drop below zero"
         self.subpopulations[class_type] += adjustment
+
+    def type_per_type(self, type1, type2):
+        return int(round(self.subpopulations[type1] / self.subpopulations[type2]))

@@ -8,9 +8,7 @@ from ..TBClasses import *
 def calculate_bacteria_moving(class_translocating, node):
     amounts_to_move = {class_translocating: 1}
     if class_translocating in CLASSES_WITH_INTRACELLULAR:
-        bacteria_to_move = int(round(node.subpopulations[BACTERIA_INTRACELLULAR] /
-                                     node.subpopulations[class_translocating]))
-        amounts_to_move[BACTERIA_INTRACELLULAR] = bacteria_to_move
+        amounts_to_move[BACTERIA_INTRACELLULAR] = node.type_per_type(BACTERIA_INTRACELLULAR, class_translocating)
     return amounts_to_move
 
 
