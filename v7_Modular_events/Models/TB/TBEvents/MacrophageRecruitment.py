@@ -4,13 +4,13 @@ from ...PulmonaryAnatomy.PulmonaryEvents.PulmonaryRecruitment import *
 from ..TBClasses import *
 
 
-class MacrophageRecruitmentRegular(RecruitmentThroughBloodBPS):
+class MacrophageRecruitmentRegularBPS(RecruitmentThroughBloodBPS):
 
     def __init__(self, probability):
         RecruitmentThroughBloodBPS.__init__(self, MACROPHAGE_REGULAR, probability)
 
 
-class MacrophageRecruitmentThroughInfection(RecruitmentThroughBloodBPS):
+class MacrophageRecruitmentThroughInfectionBPS(RecruitmentThroughBloodBPS):
 
     def __init__(self, probability):
         RecruitmentThroughBloodBPS.__init__(self, MACROPHAGE_REGULAR, probability)
