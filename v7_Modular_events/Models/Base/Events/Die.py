@@ -21,3 +21,6 @@ class DieByOtherClass(Die):
     def __init__(self, class_to_die, class_which_kills, probability):
         self.class_which_kills = class_which_kills
         Die.__init__(self, class_to_die, probability)
+
+    def increment_from_node(self, node, network):
+        return node.subpopulations[self.class_to_die] * node.subpopulations[self.class_which_kills]
