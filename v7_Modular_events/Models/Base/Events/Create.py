@@ -24,14 +24,14 @@ class CreateAtNodeType(Create):
         Create.__init__(self, class_to_create, probability)
 
     def increment_from_node(self, node, network):
-        if isinstance(node, self.class_to_create):
+        if isinstance(node, self.node_type):
             return Create.increment_from_node(self, node, network)
         else:
             return 0
 
 
 class Replication(Create):
-    """ An individual is create by a member of it's class replicating (splitting in two)
+    """ An individual is created by a member of its class replicating (splitting in two)
     """
 
     def __init__(self, class_to_create, probability):
