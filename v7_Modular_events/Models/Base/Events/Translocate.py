@@ -16,7 +16,7 @@ class Translocate(Event):
     def update_network(self, chosen_node, network):
         edges = network.get_neighbouring_edges(chosen_node, self.edge_type)
         neighbour = self.pick_a_neighbour(edges)
-        amounts_to_move = self.amounts_to_move(chosen_node, neighbour)
+        amounts_to_move = self.amounts_to_move(chosen_node)
         for key in amounts_to_move:
             chosen_node.update(key, -1 * amounts_to_move[key])
             neighbour.update(key, amounts_to_move[key])
@@ -26,7 +26,7 @@ class Translocate(Event):
         neighbour, data = edges[np.random.randint(0, len(edges))]
         return neighbour
 
-    def amounts_to_move(self, node, neighbour):
+    def amounts_to_move(self, node):
         return {self.class_translocating: 1}
 
 

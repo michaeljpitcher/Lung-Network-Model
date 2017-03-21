@@ -17,7 +17,7 @@ class MacrophageTranslocateBronchus(TranslocateBronchus):
     def __init__(self, macrophage_type, probability, move_by_edge_weight=True):
         TranslocateBronchus.__init__(self, macrophage_type, probability, move_by_edge_weight)
 
-    def amounts_to_move(self, node, neighbour):
+    def amounts_to_move(self, node):
         return calculate_bacteria_moving(self.class_translocating, node)
 
 
@@ -25,6 +25,6 @@ class MacrophageTranslocateLymphatic(TranslocateLymphatic):
     def __init__(self, macrophage_to_translocate, probability):
         TranslocateLymphatic.__init__(self, macrophage_to_translocate, probability)
 
-    def amounts_to_move(self, node, neighbour):
+    def amounts_to_move(self, node):
         return calculate_bacteria_moving(self.class_translocating, node)
 
