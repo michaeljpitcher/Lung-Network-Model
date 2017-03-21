@@ -1,7 +1,7 @@
 import unittest
 
 from v7_Modular_events.Models.Base.Events.Event import *
-from ..Models.Base.Patch import *
+from v7_Modular_events.Models.Base.Patch import *
 
 
 class EventTestCase(unittest.TestCase):

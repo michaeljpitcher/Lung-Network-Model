@@ -41,7 +41,7 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
         self.events.append(NAEvent(0.1, 'a'))
         self.events.append(NAEvent(0.2, 'b'))
 
-        self.network = MetapopulationNetwork(self.keys, self.nodes, self.edges, self.events)
+        self.network = MetapopulationNetwork(self.keys, nodes=self.nodes, edges=self.edges, events=self.events)
 
     def test_initialise(self):
         self.assertItemsEqual(self.network.population_keys, self.keys)
@@ -63,13 +63,13 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
     def test_fail_initialise_not_a_patch(self):
         node_list = [1,2,3]
         with self.assertRaises(AssertionError) as context:
-            network = MetapopulationNetwork(self.keys, node_list, self.edges, self.events)
+            network = MetapopulationNetwork(self.keys, nodes=node_list, edges=self.edges, events=self.events)
         self.assertTrue("Nodes specified must be of instances of Patch class" in context.exception)
 
     def test_fail_initialise_missing_population_key(self):
         keys = ['a','b','c']
         with self.assertRaises(AssertionError) as context:
-            network = MetapopulationNetwork(keys, self.nodes, self.edges, self.events)
+            network = MetapopulationNetwork(keys, nodes=self.nodes, edges=self.edges, events=self.events)
         self.assertTrue("Node " + str(self.nodes[0]) + " missing key c" in context.exception)
 
     def test_fail_edge_nodes_not_in_graph(self):

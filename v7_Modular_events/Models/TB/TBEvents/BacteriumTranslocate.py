@@ -4,7 +4,6 @@ from ...PulmonaryAnatomy.PulmonaryEvents.PulmonaryTranslocate import *
 
 
 class BacteriumTranslocateBronchus(TranslocateBronchus):
-
     def __init__(self, bacterium_to_translocate, probability, move_by_edge_weight=True):
         TranslocateBronchus.__init__(self, bacterium_to_translocate,probability, move_by_edge_weight)
 

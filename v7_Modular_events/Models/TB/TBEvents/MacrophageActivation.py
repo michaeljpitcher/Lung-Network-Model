@@ -8,7 +8,6 @@ class MacrophageActivation(Change):
     """
     Spontaneous activation
     """
-
     def __init__(self, probability):
         Change.__init__(self, MACROPHAGE_REGULAR, MACROPHAGE_ACTIVATED, probability)
 
@@ -35,7 +34,6 @@ class MacrophageDeactivation(Change):
     """
     Spontaneous deactivation
     """
-
     def __init__(self, probability):
         Change.__init__(self, MACROPHAGE_ACTIVATED, MACROPHAGE_REGULAR, probability)
 
