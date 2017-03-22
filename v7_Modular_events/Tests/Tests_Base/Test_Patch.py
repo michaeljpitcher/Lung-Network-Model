@@ -1,10 +1,8 @@
-__author__ = "Michael J. Pitcher"
-
-from unittest import TestCase
+import unittest
 from ...Models.Base.Patch import *
 
 
-class PatchTestCase(TestCase):
+class PatchTestCase(unittest.TestCase):
 
     def setUp(self):
         self._id = 1
@@ -43,3 +41,6 @@ class PatchTestCase(TestCase):
         self.assertEqual(self.patch.type_per_type(self.keys[0], self.keys[1]), 2)
         self.assertEqual(self.patch.type_per_type(self.keys[0], self.keys[2]), 3)
         self.assertEqual(self.patch.type_per_type(self.keys[1], self.keys[2]), 1)
+
+if __name__ == '__main__':
+    unittest.main()
