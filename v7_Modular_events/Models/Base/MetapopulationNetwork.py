@@ -9,7 +9,7 @@ import networkx as nx
 from Patch import *
 from v7_Modular_events.Models.Base.Events.Event import *
 
-EDGE_TYPE = 'edge_type'
+from BaseClasses import *
 
 
 class MetapopulationNetwork(nx.Graph):
