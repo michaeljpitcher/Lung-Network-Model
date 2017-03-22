@@ -168,3 +168,5 @@ class MetapopulationNetworkTestCase(TestCase):
         self.network.run(101)
         filenames_after = os.listdir(os.curdir)
         self.assertItemsEqual(filenames_before, filenames_after)
+
+    # TODO - more tests for run
