@@ -33,10 +33,9 @@ class MetapopulationNetwork(nx.Graph):
 
         # Add nodes to graph
         if nodes:
-            for node in nodes:
-                self.add_node(node)
-
-        self.sort_node_list()
+            for n in nodes:
+                self.add_node(n)
+            self.sort_node_list()
 
         # Add edges to graph
         if edges:
@@ -61,8 +60,6 @@ class MetapopulationNetwork(nx.Graph):
         self.node_list.append(n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
-        assert u in self.nodes(), "Edge node {0} not specified in network".format(u)
-        assert v in self.nodes(), "Edge node {0} not specified in network".format(v)
         # Check the edge type has been specified - only edge key that is mandatory
         assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0}-{1}".format(u, v)
         nx.Graph.add_edge(self, u, v, attr_dict)
@@ -75,6 +72,16 @@ class MetapopulationNetwork(nx.Graph):
     def sort_node_list(self):
         # TODO - Not sure how necessary this is
         self.node_list.sort(key=lambda x: x.id, reverse=False)
+
+    def timestep_output(self):
+        print "t = ", self.time
+
+    def record_data(self, csv_writer):
+        for node in self.node_list:
+            row = [self.time, node.id]
+            for class_type in self.population_keys:
+                row.append(node.subpopulations[class_type])
+            csv_writer.writerow(row)
 
     def run(self, time_limit, run_id=None):
         """ Runs a simulation of the metapopulation network
@@ -132,16 +139,6 @@ class MetapopulationNetwork(nx.Graph):
                 self.record_data(csv_writer)
         if run_id is not None:
             csv_file.close()
-
-    def timestep_output(self):
-        print "t = ", self.time
-
-    def record_data(self, csv_writer):
-        for node in self.node_list:
-            row = [self.time, node.id]
-            for class_type in self.population_keys:
-                row.append(node.subpopulations[class_type])
-            csv_writer.writerow(row)
 
     def get_neighbouring_edges(self, node, edge_type=None):
         # TODO - may be slow to calculate this all the time, better to do it once and save
