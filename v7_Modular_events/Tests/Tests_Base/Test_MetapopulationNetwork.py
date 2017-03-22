@@ -24,6 +24,7 @@ class MetapopulationNetworkTestCase(TestCase):
         edges = [(0, 1), (1, 2), (2, 3), (3, 4), (0, 3), (0, 4)]
         for n1,n2 in edges:
             self.edges.append((self.nodes[n1], self.nodes[n2], {EDGE_TYPE: self.edge_types[0]}))
+        self.edges.append((self.nodes[0], self.nodes[9], {EDGE_TYPE: self.edge_types[1]}))
 
         self.network = MetapopulationNetwork(self.keys, self.events, self.nodes, self.edges)
 
@@ -170,3 +171,23 @@ class MetapopulationNetworkTestCase(TestCase):
         self.assertItemsEqual(filenames_before, filenames_after)
 
     # TODO - more tests for run
+
+    def test_get_neighbouring_edges(self):
+
+        # No edge type specified
+        all_edges_at_node0 = self.network.get_neighbouring_edges(self.nodes[0])
+        expected_edges = [(self.nodes[1], {EDGE_TYPE:self.edge_types[0]}),
+                          (self.nodes[3], {EDGE_TYPE:self.edge_types[0]}),
+                          (self.nodes[4], {EDGE_TYPE:self.edge_types[0]}),
+                          (self.nodes[9], {EDGE_TYPE:self.edge_types[1]})]
+        self.assertItemsEqual(all_edges_at_node0, expected_edges)
+        # edge type 1
+        e1_edges_at_node0 = self.network.get_neighbouring_edges(self.nodes[0], self.edge_types[0])
+        expected_edges = [(self.nodes[1], {EDGE_TYPE: self.edge_types[0]}),
+                          (self.nodes[3], {EDGE_TYPE: self.edge_types[0]}),
+                          (self.nodes[4], {EDGE_TYPE: self.edge_types[0]})]
+        self.assertItemsEqual(e1_edges_at_node0, expected_edges)
+        # Edge type 2
+        e2_edges_at_node0 = self.network.get_neighbouring_edges(self.nodes[0], self.edge_types[1])
+        expected_edges = [(self.nodes[9], {EDGE_TYPE: self.edge_types[1]})]
+        self.assertItemsEqual(e2_edges_at_node0, expected_edges)
