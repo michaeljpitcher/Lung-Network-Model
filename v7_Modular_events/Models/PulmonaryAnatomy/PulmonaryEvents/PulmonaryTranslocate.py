@@ -22,12 +22,17 @@ class TranslocateBronchus(TranslocateByDegree):
                     return neighbour
         else:
             # Defer to super class
-            TranslocateByDegree.pick_a_neighbour(self, edges)
+            return TranslocateByDegree.pick_a_neighbour(self, edges)
 
 
 class TranslocateLymphatic(TranslocateByDegree):
     def __init__(self, type_to_translocate, probability):
         TranslocateByDegree.__init__(self, type_to_translocate, LYMPHATIC_VESSEL, probability)
+
+    def increment_from_node(self, node, network):
+        viable_edges = [(neighbour, data) for (neighbour, data) in
+                        network.get_neighbouring_edges(node, LYMPHATIC_VESSEL) if data[DIRECTION] == neighbour]
+        return node.subpopulations[self.class_translocating] * len(viable_edges)
 
     def pick_a_neighbour(self, edges):
         # Reduce the edges to only those in the direction of lymph flow
