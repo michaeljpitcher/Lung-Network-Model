@@ -2,6 +2,8 @@ __author__ = "Michael J. Pitcher"
 
 from ..Base.Patch import Patch
 
+# TODO - Do lymph nodes have perfusion?
+
 
 class LymphNode(Patch):
     """ A lymph node within the human lymphatic system

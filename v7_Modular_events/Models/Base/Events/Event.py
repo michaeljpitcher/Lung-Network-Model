@@ -2,6 +2,7 @@ __author__ = "Michael J. Pitcher"
 
 import numpy as np
 
+# TODO - maybe put node type in here somehow
 
 class Event:
     """ Abstract class to perform an event over a metapopulation network.
