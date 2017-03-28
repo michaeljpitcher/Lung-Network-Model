@@ -1,5 +1,5 @@
 import unittest
-from ...Models.Base.Patch import *
+from v7_Modular_events.Models.Base.Patch import *
 
 
 class PatchTestCase(unittest.TestCase):

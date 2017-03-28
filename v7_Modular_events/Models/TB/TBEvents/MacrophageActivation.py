@@ -23,7 +23,7 @@ class MacrophageActivationThroughInfection(ChangeThroughOtherClass):
 
 class MacrophageActivationThroughTCell(ChangeThroughOtherClass):
     """
-    Activation through infection levels (chemokine)
+    Activation through T Cells
     """
     def __init__(self, probability):
         ChangeThroughOtherClass.__init__(self, class_from=MACROPHAGE_REGULAR, class_to=MACROPHAGE_ACTIVATED,

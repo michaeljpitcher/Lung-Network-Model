@@ -20,12 +20,12 @@ class MacrophageRecruitmentThroughInfectionBPS(RecruitmentThroughBloodBPS):
 
 
 # TODO - macrophage in lymph. No perfusion in lymph
-class TCellRecruitedRegular(CreateAtNodeType):
+class MacrophageRecruitmentRegularLymph(CreateAtNodeType):
     def __init__(self, probability, macrophage_type=MACROPHAGE_REGULAR):
         CreateAtNodeType.__init__(self, macrophage_type, LymphNode, probability)
 
 
-class TCellRecruitedThroughInfection(CreateAtNodeType):
+class MacrophageRecruitmentThroughInfectionLymph(CreateAtNodeType):
     def __init__(self, probability, macrophage_type=MACROPHAGE_REGULAR):
         CreateAtNodeType.__init__(self, macrophage_type, LymphNode, probability)
 

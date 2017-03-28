@@ -3,9 +3,9 @@ __author__ = "Michael J. Pitcher"
 from TBClasses import *
 from TBEventProbabilityKeys import *
 from ..PulmonaryAnatomy.LungLymphNetwork import *
-from TBEvents.Replication import *
-from TBEvents.Translocation import *
-from TBEvents.ChangeMetabolism import *
+from TBEvents.BacteriaReplicate import *
+from TBEvents.BacteriumTranslocate import *
+from TBEvents.BacteriumChangeMetabolism import *
 
 
 class TBModel2(LungLymphMetapopulationNetwork):
@@ -17,12 +17,12 @@ class TBModel2(LungLymphMetapopulationNetwork):
         self.parameters = parameters
 
         events = []
-        events.append(Replicate(BACTERIA_FAST, self.parameters[P_REPLICATION_BACTERIA_FAST]))
-        events.append(Replicate(BACTERIA_SLOW, self.parameters[P_REPLICATION_BACTERIA_SLOW]))
-        events.append(Translocate(BACTERIA_FAST, BRONCHUS, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST]))
-        events.append(Translocate(BACTERIA_SLOW, BRONCHUS, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW]))
-        events.append(ChangeMetabolism(BACTERIA_FAST, BACTERIA_SLOW, self.parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW]))
-        events.append(ChangeMetabolism(BACTERIA_SLOW, BACTERIA_FAST, self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST]))
+        events.append(BacteriaReplication(BACTERIA_FAST, self.parameters[P_REPLICATION_BACTERIA_FAST]))
+        events.append(BacteriaReplication(BACTERIA_SLOW, self.parameters[P_REPLICATION_BACTERIA_SLOW]))
+        events.append(BacteriumTranslocateBronchus(BACTERIA_FAST, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST]))
+        events.append(BacteriumTranslocateBronchus(BACTERIA_SLOW, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW]))
+        events.append(BacteriumChangeMetabolism(BACTERIA_FAST, BACTERIA_SLOW, self.parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW]))
+        events.append(BacteriumChangeMetabolism(BACTERIA_SLOW, BACTERIA_FAST, self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST]))
 
         LungLymphMetapopulationNetwork.__init__(self, population_keys, events)
 

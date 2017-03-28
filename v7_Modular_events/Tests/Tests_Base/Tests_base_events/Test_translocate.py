@@ -1,7 +1,7 @@
 import unittest
 
-from ....Models.Base.Events.Translocate import *
-from ....Models.Base.MetapopulationNetwork import *
+from v7_Modular_events.Models.Base.Events.Translocate import *
+from v7_Modular_events.Models.Base.MetapopulationNetwork import *
 
 
 class TranslocateTestCase(unittest.TestCase):

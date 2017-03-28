@@ -1,8 +1,8 @@
 import unittest
 
-from ....Models.PulmonaryAnatomy.PulmonaryEvents.PulmonaryChange import *
-from ....Models.PulmonaryAnatomy.BronchopulmonarySegment import *
-from ....Models.PulmonaryAnatomy.LymphNode import *
+from v7_Modular_events.Models.PulmonaryAnatomy.PulmonaryEvents.PulmonaryChange import *
+from v7_Modular_events.Models.PulmonaryAnatomy.BronchopulmonarySegment import *
+from v7_Modular_events.Models.PulmonaryAnatomy.LymphNode import *
 
 
 class ChangeByOxygenTestCase(unittest.TestCase):

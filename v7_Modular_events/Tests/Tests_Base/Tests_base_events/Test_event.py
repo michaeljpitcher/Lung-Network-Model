@@ -1,9 +1,9 @@
 __author__ = "Michael J. Pitcher"
 
 from unittest import TestCase
-from ....Models.Base.Events.Event import *
-from ....Models.Base.Patch import *
-from ....Models.Base.MetapopulationNetwork import *
+from v7_Modular_events.Models.Base.Events.Event import *
+from v7_Modular_events.Models.Base.Patch import *
+from v7_Modular_events.Models.Base.MetapopulationNetwork import *
 
 
 class EventTestCase(TestCase):

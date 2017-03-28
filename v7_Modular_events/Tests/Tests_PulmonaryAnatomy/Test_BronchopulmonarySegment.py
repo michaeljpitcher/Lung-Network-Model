@@ -1,5 +1,5 @@
 import unittest
-from ...Models.PulmonaryAnatomy.BronchopulmonarySegment import *
+from v7_Modular_events.Models.PulmonaryAnatomy.BronchopulmonarySegment import *
 
 
 class BronchopulmonarySegmentTestCase(unittest.TestCase):

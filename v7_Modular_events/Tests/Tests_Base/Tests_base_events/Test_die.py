@@ -1,7 +1,7 @@
 import unittest
 
-from ....Models.Base.Events.Die import *
-from ....Models.Base.Patch import *
+from v7_Modular_events.Models.Base.Events.Die import *
+from v7_Modular_events.Models.Base.Patch import *
 
 
 class DieTestCase(unittest.TestCase):

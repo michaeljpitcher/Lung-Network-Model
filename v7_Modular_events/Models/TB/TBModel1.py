@@ -3,8 +3,8 @@ __author__ = "Michael J. Pitcher"
 from TBClasses import *
 from TBEventProbabilityKeys import *
 from ..PulmonaryAnatomy.LungLymphNetwork import *
-from TBEvents.Replication import *
-from TBEvents.Translocation import *
+from TBEvents.BacteriaReplicate import *
+from TBEvents.BacteriumTranslocate import *
 
 
 class TBModel1(LungLymphMetapopulationNetwork):
@@ -16,8 +16,8 @@ class TBModel1(LungLymphMetapopulationNetwork):
         self.parameters = parameters
 
         events = []
-        events.append(Replicate(BACTERIA, self.parameters[P_REPLICATION_BACTERIA]))
-        events.append(Translocate(BACTERIA, BRONCHUS, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA]))
+        events.append(BacteriaReplication(BACTERIA, self.parameters[P_REPLICATION_BACTERIA]))
+        events.append(BacteriumTranslocateBronchus(BACTERIA, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA]))
 
         LungLymphMetapopulationNetwork.__init__(self, population_keys, events)
 

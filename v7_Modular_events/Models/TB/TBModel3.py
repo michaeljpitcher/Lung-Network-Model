@@ -3,12 +3,12 @@ __author__ = "Michael J. Pitcher"
 from TBClasses import *
 from TBEventProbabilityKeys import *
 from ..PulmonaryAnatomy.LungLymphNetwork import *
-from TBEvents.Replication import *
-from TBEvents.Translocation import *
-from TBEvents.ChangeMetabolism import *
-from TBEvents.Recruitment import *
-from TBEvents.Ingestion import *
-from TBEvents.Death import *
+from TBEvents.BacteriaReplicate import *
+from TBEvents.BacteriumChangeMetabolism import *
+from TBEvents.BacteriumTranslocate import *
+from TBEvents.MacrophageRecruitment import *
+from TBEvents.MacrophageIngestBacterium import *
+from TBEvents.MacrophageDeath import *
 
 
 class TBModel3(LungLymphMetapopulationNetwork):
@@ -20,17 +20,17 @@ class TBModel3(LungLymphMetapopulationNetwork):
         self.parameters = parameters
 
         events = []
-        events.append(Replicate(BACTERIA_FAST, self.parameters[P_REPLICATION_BACTERIA_FAST]))
-        events.append(Replicate(BACTERIA_SLOW, self.parameters[P_REPLICATION_BACTERIA_SLOW]))
-        events.append(Translocate(BACTERIA_FAST, BRONCHUS, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST]))
-        events.append(Translocate(BACTERIA_SLOW, BRONCHUS, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW]))
-        events.append(ChangeMetabolism(BACTERIA_FAST, BACTERIA_SLOW, self.parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW]))
-        events.append(ChangeMetabolism(BACTERIA_SLOW, BACTERIA_FAST, self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST]))
-        events.append(Recruit(MACROPHAGE, BronchopulmonarySegment, self.parameters[P_RECRUITMENT_BPS_MACROPHAGE]))
-        events.append(Recruit(MACROPHAGE, LymphNode, self.parameters[P_RECRUITMENT_LYMPH_MACROPHAGE]))
-        events.append(Ingest(MACROPHAGE, BACTERIA_FAST, False, False, self.parameters[P_INGEST_AND_DESTROY_MACROPHAGE_FAST]))
-        events.append(Ingest(MACROPHAGE, BACTERIA_SLOW, False, False, self.parameters[P_INGEST_AND_DESTROY_MACROPHAGE_SLOW]))
-        events.append(Die(MACROPHAGE, self.parameters[P_DEATH_MACROPHAGE]))
+        events.append(BacteriaReplication(BACTERIA_FAST, self.parameters[P_REPLICATION_BACTERIA_FAST]))
+        events.append(BacteriaReplication(BACTERIA_SLOW, self.parameters[P_REPLICATION_BACTERIA_SLOW]))
+        events.append(BacteriumTranslocateBronchus(BACTERIA_FAST, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_FAST]))
+        events.append(BacteriumTranslocateBronchus(BACTERIA_SLOW, self.parameters[P_TRANSLOCATE_BRONCHUS_BACTERIA_SLOW]))
+        events.append(BacteriumChangeMetabolism(BACTERIA_FAST, BACTERIA_SLOW, self.parameters[P_CHANGE_BACTERIA_FAST_TO_SLOW]))
+        events.append(BacteriumChangeMetabolism(BACTERIA_SLOW, BACTERIA_FAST, self.parameters[P_CHANGE_BACTERIA_SLOW_TO_FAST]))
+        events.append(MacrophageRecruitmentRegularBPS(MACROPHAGE, self.parameters[P_RECRUITMENT_BPS_MACROPHAGE]))
+        events.append(MacrophageRecruitmentRegularLymph(MACROPHAGE, self.parameters[P_RECRUITMENT_LYMPH_MACROPHAGE]))
+        events.append(MacrophageIngestBacterium(BACTERIA_FAST, MACROPHAGE, self.parameters[P_INGEST_AND_DESTROY_MACROPHAGE_FAST], True))
+        events.append(MacrophageIngestBacterium(BACTERIA_SLOW, MACROPHAGE, self.parameters[P_INGEST_AND_DESTROY_MACROPHAGE_SLOW], True))
+        events.append(MacrophageDeath(MACROPHAGE, self.parameters[P_DEATH_MACROPHAGE]))
 
         LungLymphMetapopulationNetwork.__init__(self, population_keys, events)
 

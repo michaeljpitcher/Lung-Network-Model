@@ -1,10 +1,10 @@
 import unittest
 
-from ....Models.PulmonaryAnatomy.PulmonaryEvents.PulmonaryTranslocate import *
-from ....Models.PulmonaryAnatomy.BronchopulmonarySegment import *
-from ....Models.PulmonaryAnatomy.LymphNode import *
-from ....Models.Base.BaseClasses import *
-from ....Models.PulmonaryAnatomy.PulmonaryAnatomyClasses import *
+from v7_Modular_events.Models.PulmonaryAnatomy.PulmonaryEvents.PulmonaryTranslocate import *
+from v7_Modular_events.Models.PulmonaryAnatomy.BronchopulmonarySegment import *
+from v7_Modular_events.Models.PulmonaryAnatomy.LymphNode import *
+from v7_Modular_events.Models.Base.BaseClasses import *
+from v7_Modular_events.Models.PulmonaryAnatomy.PulmonaryAnatomyClasses import *
 
 
 class TranslocateBronchusTestCase(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 
-from ....Models.Base.Events.Create import *
-from ....Models.Base.Patch import *
+from v7_Modular_events.Models.Base.Events.Create import *
+from v7_Modular_events.Models.Base.Patch import *
 
 
 class NodeType1(Patch):
