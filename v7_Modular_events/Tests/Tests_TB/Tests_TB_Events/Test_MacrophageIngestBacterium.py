@@ -75,5 +75,28 @@ class MacrophageIngestBacteriumTestCase(unittest.TestCase):
         self.assertEqual(node.subpopulations[BACTERIA_INTRACELLULAR], 1)
 
 
+class MacrophageDestroysLoadTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.event = MacrophageDestroysLoad(0.1, MACROPHAGE_REGULAR)
+        self.assertEqual(self.event.mac_type_return_to, MACROPHAGE_REGULAR)
+
+    def test_update_network(self):
+        node = Patch(0, [BACTERIA_INTRACELLULAR, MACROPHAGE_REGULAR, MACROPHAGE_INFECTED])
+        node.update(BACTERIA_INTRACELLULAR, 100)
+        node.update(MACROPHAGE_INFECTED, 10)
+        self.event.update_network(node, None)
+        self.assertEqual(node.subpopulations[BACTERIA_INTRACELLULAR], 99)
+        self.assertEqual(node.subpopulations[MACROPHAGE_INFECTED], 10)
+
+        node = Patch(0, [BACTERIA_INTRACELLULAR, MACROPHAGE_REGULAR, MACROPHAGE_INFECTED])
+        node.update(BACTERIA_INTRACELLULAR, 10)
+        node.update(MACROPHAGE_INFECTED, 10)
+        self.event.update_network(node, None)
+        self.assertEqual(node.subpopulations[BACTERIA_INTRACELLULAR], 9)
+        self.assertEqual(node.subpopulations[MACROPHAGE_REGULAR], 1)
+        self.assertEqual(node.subpopulations[MACROPHAGE_INFECTED], 9)
+
+
 if __name__ == '__main__':
     unittest.main()
