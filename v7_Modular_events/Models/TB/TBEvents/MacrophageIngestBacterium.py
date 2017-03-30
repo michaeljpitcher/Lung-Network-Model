@@ -36,11 +36,13 @@ class MacrophageDestroysLoad(DieByOtherClass):
     """
     An infected macrophage destroys one intracellular bacteria
     """
-    def __init__(self, probability):
+    def __init__(self, probability, mac_type_return_to = MACROPHAGE_REGULAR):
+        self.mac_type_return_to = mac_type_return_to
         DieByOtherClass.__init__(self, BACTERIA_INTRACELLULAR, MACROPHAGE_INFECTED, probability)
 
     def update_network(self, chosen_node, network):
         DieByOtherClass.update_network(self, chosen_node, network)
+        # If average number of bacteria per inf mac drops below 1, a mac must have cleared its infection
         if chosen_node.subpopulations[BACTERIA_INTRACELLULAR] < chosen_node.subpopulations[MACROPHAGE_INFECTED]:
             chosen_node.update(MACROPHAGE_INFECTED, -1)
-            chosen_node.update(MACROPHAGE_REGULAR, 1)
+            chosen_node.update(self.mac_type_return_to, 1)
