@@ -32,4 +32,4 @@ class MacrophageRecruitmentThroughInfectionLymph(CreateAtNodeType):
         CreateAtNodeType.__init__(self, macrophage_type, LymphNode, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[MACROPHAGE_INFECTED]
+        return node.subpopulations[MACROPHAGE_INFECTED] * CreateAtNodeType.increment_from_node(self, node, network)
