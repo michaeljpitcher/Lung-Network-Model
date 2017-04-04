@@ -4,6 +4,8 @@ from ...PulmonaryAnatomy.PulmonaryEvents.PulmonaryRecruitment import *
 from ..TBClasses import *
 from ...PulmonaryAnatomy.LymphNode import *
 
+# TODO - better methods of recruitment, involving less individual classes
+
 
 class MacrophageRecruitmentRegularBPS(RecruitmentThroughBloodBPS):
     def __init__(self, probability, macrophage_type=MACROPHAGE_REGULAR):
@@ -31,4 +33,3 @@ class MacrophageRecruitmentThroughInfectionLymph(CreateAtNodeType):
 
     def increment_from_node(self, node, network):
         return node.subpopulations[MACROPHAGE_INFECTED]
-
