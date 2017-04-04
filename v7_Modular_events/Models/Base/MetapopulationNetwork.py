@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from Patch import *
-from v7_Modular_events.Models.Base.Events.Event import *
+from Events.Event import *
 
 from BaseClasses import *
 
