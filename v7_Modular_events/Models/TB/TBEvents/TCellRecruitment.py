@@ -17,7 +17,7 @@ class TCellRecruitedThroughInfectionLymph(CreateAtNodeType):
         CreateAtNodeType.__init__(self, t_cell_type, LymphNode, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[MACROPHAGE_INFECTED]
+        return node.subpopulations[MACROPHAGE_INFECTED] * CreateAtNodeType.increment_from_node(self, node, network)
 
 
 class TCellRecruitedRegularBPS(CreateAtNodeType):
@@ -30,4 +30,4 @@ class TCellRecruitedThroughInfectionBPS(CreateAtNodeType):
         CreateAtNodeType.__init__(self, t_cell_type, BronchopulmonarySegment, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[MACROPHAGE_INFECTED]
+        return node.subpopulations[MACROPHAGE_INFECTED] * CreateAtNodeType.increment_from_node(self, node, network)
