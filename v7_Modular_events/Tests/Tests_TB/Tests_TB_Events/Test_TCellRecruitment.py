@@ -27,10 +27,14 @@ class TCellRecruitedThroughInfectionLymphTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.event_not_defined, CreateAtNodeType))
 
     def test_increment_from_node(self):
-        node = Patch(0, [MACROPHAGE_INFECTED, T_CELL])
+        node = LymphNode(0, [MACROPHAGE_INFECTED, T_CELL], (5,5))
         self.assertEqual(self.event_not_defined.increment_from_node(node, None), 0)
         node.update(MACROPHAGE_INFECTED, 10)
         self.assertEqual(self.event_not_defined.increment_from_node(node, None), 10)
+
+        node = BronchopulmonarySegment(0, [MACROPHAGE_INFECTED, T_CELL], (5,5))
+        node.update(MACROPHAGE_INFECTED, 10)
+        self.assertEqual(self.event_not_defined.increment_from_node(node, None), 0)
 
 
 

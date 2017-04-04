@@ -29,8 +29,10 @@ class MacrophageRecruitmentThroughInfectionBPSTestCase(unittest.TestCase):
     def test_increment_from_node(self):
         node = BronchopulmonarySegment(0, [MACROPHAGE_INFECTED], (5,5))
         node.update(MACROPHAGE_INFECTED, 12)
-
         self.assertEqual(self.event_mac_not_defined.increment_from_node(node, None), 12*node.perfusion)
+        node = LymphNode(0, [MACROPHAGE_INFECTED], (5, 5))
+        node.update(MACROPHAGE_INFECTED, 12)
+        self.assertEqual(self.event_mac_not_defined.increment_from_node(node, None), 0)
 
 
 class MacrophageRecruitmentRegularLymphTestCase(unittest.TestCase):
@@ -55,7 +57,7 @@ class MacrophageRecruitmentThroughInfectionLymphTestCase(unittest.TestCase):
         self.assertEqual(self.event_mac_defined.class_to_create, MACROPHAGE)
 
     def test_increment_from_node(self):
-        node = BronchopulmonarySegment(0, [MACROPHAGE_INFECTED], (5,5))
+        node = LymphNode(0, [MACROPHAGE_INFECTED], (5,5))
         node.update(MACROPHAGE_INFECTED, 12)
 
         self.assertEqual(self.event_mac_not_defined.increment_from_node(node, None), 12)
