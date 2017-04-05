@@ -24,8 +24,11 @@ __status__ = "Development"
 
 class MetapopulationNetwork(nx.Graph):
 
-    def __init__(self, nodes, edges, events_and_node_types):
+    def __init__(self, compartments, nodes, edges, events_and_node_types):
         nx.Graph.__init__(self)
+
+        self.compartments = compartments
+
         # Nodes
         for n in nodes:
             self.add_node(n)
@@ -39,9 +42,9 @@ class MetapopulationNetwork(nx.Graph):
         for event in events_and_node_types:
             assert isinstance(event, Event), "{0} is not an instance of Event class".format(event)
             for node_type in events_and_node_types[event]:
-                nodes = [n for n in nodes if isinstance(n, node_type)]
-                assert len(nodes) > 0, "Node type {0} does not exist in network"
-                event.attach_nodes(nodes)
+                viable_nodes = [n for n in nodes if isinstance(n, node_type)]
+                assert len(viable_nodes) > 0, "Node type {0} does not exist in network".format(node_type)
+                event.attach_nodes(viable_nodes)
 
         self.events = events_and_node_types.keys()
 
@@ -52,6 +55,7 @@ class MetapopulationNetwork(nx.Graph):
         nx.Graph.add_node(self, n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
+        # TODO - better error messages
         assert self.has_node(u), "Node {0} not present in network".format(u)
         assert self.has_node(v), "Node {0} not present in network".format(v)
         assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0} - {1}".format(u, v)
@@ -60,6 +64,7 @@ class MetapopulationNetwork(nx.Graph):
     def run(self, time_limit=0):
 
         while self.time < time_limit:
+            self.timestep_print()
             for e in self.events:
                 e.update_rate(self)
             total_rate = sum([e.rate for e in self.events])
@@ -77,8 +82,13 @@ class MetapopulationNetwork(nx.Graph):
                 running_total += e.rate
                 if running_total > r:
                     e.update_network(self)
+                    break
 
             self.time += dt
+        self.timestep_print()
+
+    def timestep_print(self):
+        print "t=", self.time
 
     def get_neighbouring_edges(self, node, edge_type=None):
         # TODO - may be slow to calculate this all the time, better to do it once and save
