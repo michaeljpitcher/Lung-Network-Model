@@ -1,6 +1,6 @@
 import unittest
 
-from v8_Events_at_nodes.Models.Base.Patch import *
+from v8_Events_at_nodes.Models.Base.Node.Patch import *
 
 
 class PatchTestCase(unittest.TestCase):

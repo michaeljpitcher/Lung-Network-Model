@@ -6,12 +6,14 @@ Long Docstring
 
 """
 
-from BaseClasses import *
-from Patch import Patch
-from Events.Event import Event
+import math
+
 import networkx as nx
 import numpy as np
-import math
+
+from v8_Events_at_nodes.Models.Base.BaseClasses import *
+from v8_Events_at_nodes.Models.Base.Events.Event import Event
+from v8_Events_at_nodes.Models.Base.Node.Patch import Patch
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

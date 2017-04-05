@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from .BaseClasses import *
+from v8_Events_at_nodes.Models.Base.BaseClasses import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

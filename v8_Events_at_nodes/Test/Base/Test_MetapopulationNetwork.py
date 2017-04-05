@@ -1,6 +1,6 @@
 import unittest
 
-from v8_Events_at_nodes.Models.Base.MetapopulationNetwork import *
+from v8_Events_at_nodes.Models.Base.Network.MetapopulationNetwork import *
 
 
 class MetapopulationNetworkTestCase(unittest.TestCase):
