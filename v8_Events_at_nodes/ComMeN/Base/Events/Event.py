@@ -44,8 +44,8 @@ class Event:
         for n in self.nodes_impacted:
             running_total += self.increment_from_node(n, network)
             if running_total > r:
-                self.update_node(n)
+                self.update_node(n, network)
                 return
 
-    def update_node(self, node):
+    def update_node(self, node, network):
         raise NotImplementedError

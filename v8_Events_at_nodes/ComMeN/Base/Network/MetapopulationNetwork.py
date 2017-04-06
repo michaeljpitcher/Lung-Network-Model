@@ -11,9 +11,9 @@ import math
 import networkx as nx
 import numpy as np
 
-from v8_Events_at_nodes.Models.Base.BaseClasses import *
-from v8_Events_at_nodes.Models.Base.Events.Event import Event
-from v8_Events_at_nodes.Models.Base.Node.Patch import Patch
+from v8_Events_at_nodes.ComMeN.Base.BaseClasses import *
+from v8_Events_at_nodes.ComMeN.Base.Events.Event import Event
+from v8_Events_at_nodes.ComMeN.Base.Node.Patch import Patch
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
