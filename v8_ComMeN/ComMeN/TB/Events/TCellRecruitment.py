@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from ...Base.Events.Event import *
+from ...Pulmonary.Events.PulmonaryRecruitment import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,60 +17,30 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class TCellRecruitmentBronchial(Event):
+class TCellRecruitmentBronchial(RecruitmentBronchial):
     def __init__(self, probability, t_cell_compartment, based_on_perfusion=True):
-        self.compartment_recruited = t_cell_compartment
-        self.based_on_perfusion = based_on_perfusion
-        Event.__init__(self, probability)
-
-    def increment_from_node(self, node, network):
-        if self.based_on_perfusion:
-            return node.perfusion
-        else:
-            return 1
-
-    def update_node(self, node, network):
-        node.update_subpopulations(self.compartment_recruited, 1)
+        RecruitmentBronchial.__init__(self, probability, t_cell_compartment, based_on_perfusion)
 
 
-class TCellRecruitmentBronchialByInfection(Event):
-    def __init__(self, probability, t_cell_recruited_compartment, infection_compartments, based_on_perfusion=True, ):
-        self.compartment_recruited = t_cell_recruited_compartment
-        self.based_on_perfusion = based_on_perfusion
+class TCellRecruitmentBronchialByInfection(TCellRecruitmentBronchial):
+    def __init__(self, probability, t_cell_recruited_compartment, infection_compartments, based_on_perfusion=True):
         self.infection_compartments = infection_compartments
-        Event.__init__(self, probability)
+        TCellRecruitmentBronchial.__init__(self, probability, t_cell_recruited_compartment, based_on_perfusion)
 
     def increment_from_node(self, node, network):
-        if self.based_on_perfusion:
-            return node.perfusion * sum([node.subpopulations[c] for c in self.infection_compartments])
-        else:
-            return 1 * sum([node.subpopulations[c] for c in self.infection_compartments])
-
-    def update_node(self, node, network):
-        node.update_subpopulations(self.compartment_recruited, 1)
+        return TCellRecruitmentBronchial.increment_from_node(self, node, network) * \
+               sum([node.subpopulations[c] for c in self.infection_compartments])
 
 
-class TCellRecruitmentLymph(Event):
-    def __init__(self, probability, t_cell):
-        self.compartment_recruited = t_cell
-        Event.__init__(self, probability)
-
-    def increment_from_node(self, node, network):
-        return 1
-
-    def update_node(self, node, network):
-        node.update_subpopulations(self.compartment_recruited, 1)
+class TCellRecruitmentLymph(RecruitmentLymph):
+    def __init__(self, probability, t_cell_compartment):
+        RecruitmentLymph.__init__(self, probability, t_cell_compartment)
 
 
-class TCellRecruitmentLymphByInfection(Event):
-    def __init__(self, probability, t_cell, infection_compartments):
-        self.compartment_recruited = t_cell
+class TCellRecruitmentLymphByInfection(TCellRecruitmentLymph):
+    def __init__(self, probability, t_cell_compartment, infection_compartments):
         self.infection_compartments = infection_compartments,
-        Event.__init__(self, probability)
+        TCellRecruitmentLymph.__init__(self, probability, t_cell_compartment)
 
     def increment_from_node(self, node, network):
         return sum([node.subpopulations[c] for c in self.infection_compartments])
-
-    def update_node(self, node, network):
-        node.update_subpopulations(self.compartment_recruited, 1)
-

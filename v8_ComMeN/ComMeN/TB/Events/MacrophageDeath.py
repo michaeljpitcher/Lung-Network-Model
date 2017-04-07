@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from ...Base.Events.Event import *
+from ...Base.Events.Destruction import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,68 +17,53 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class MacrophageDeathRegular(Event):
+class MacrophageDeathRegular(Destroy):
 
-    def __init__(self, probability, macrophage_compartment, bacteria_release_compartment_from=None,
+    def __init__(self, probability, macrophage_compartment, internal_bacteria_compartment=None,
                  bacteria_release_compartment_to=None):
-        self.macrophage_compartment = macrophage_compartment
-        self.bacteria_release_compartment_from = bacteria_release_compartment_from
+        self.internal_bacteria_compartment = internal_bacteria_compartment
         self.bacteria_release_compartment_to = bacteria_release_compartment_to
-        Event.__init__(self, probability)
-
-    def increment_from_node(self, node, network):
-        return node.subpopulations[self.macrophage_compartment]
+        Destroy.__init__(self, probability, macrophage_compartment)
 
     def update_node(self, node, network):
-        if self.bacteria_release_compartment_from is not None:
-            bac_released = node.compartment_per_compartment(self.bacteria_release_compartment_from,
-                                                            self.macrophage_compartment)
-            change(node, self.bacteria_release_compartment_from, self.bacteria_release_compartment_to, bac_released)
-        node.update_subpopulations(self.macrophage_compartment, -1)
+        # Check if there is bacteria inside
+        if self.internal_bacteria_compartment is not None:
+            bac_inside = node.compartment_per_compartment(self.internal_bacteria_compartment,
+                                                          self.compartment_destroyed)
+            # Do bacteria change to a new type (i.e. extracellular)?
+            if self.bacteria_release_compartment_to is not None:
+                change(node, self.internal_bacteria_compartment, self.bacteria_release_compartment_to, bac_inside)
+            else: # Bacteria are destroyed
+                node.update_subpopulations(self.internal_bacteria_compartment, -1*bac_inside)
+        Destroy.update_node(self, node, network)
 
 
-class MacrophageDeathByTCell(Event):
+class MacrophageDeathByTCell(MacrophageDeathRegular):
 
     def __init__(self, probability, macrophage_compartment, t_cell_compartment, destroy_t_cell=True,
-                 bacteria_release_compartment_from=None, bacteria_release_compartment_to=None):
-        self.macrophage_compartment = macrophage_compartment
+                 internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
         self.t_cell_compartment = t_cell_compartment
         self.destroy_t_cell = destroy_t_cell
-        self.bacteria_release_compartment_from = bacteria_release_compartment_from
-        self.bacteria_release_compartment_to = bacteria_release_compartment_to
-        Event.__init__(self, probability)
+        MacrophageDeathRegular.__init__(self, probability, macrophage_compartment, internal_bacteria_compartment,
+                                        bacteria_release_compartment_to)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.macrophage_compartment] * node.subpopulations[self.t_cell_compartment]
+        return node.subpopulations[self.compartment_destroyed] * node.subpopulations[self.t_cell_compartment]
 
     def update_node(self, node, network):
-        if self.bacteria_release_compartment_from is not None:
-            bac_released = node.compartment_per_compartment(self.bacteria_release_compartment_from,
-                                                            self.macrophage_compartment)
-            change(node, self.bacteria_release_compartment_from, self.bacteria_release_compartment_to, bac_released)
-        node.update_subpopulations(self.macrophage_compartment, -1)
+        MacrophageDeathRegular.update_node(self, node, network)
         if self.destroy_t_cell:
             node.update_subpopulations(self.t_cell_compartment, -1)
 
 
-class MacrophageDeathByInfection(Event):
+class MacrophageDeathByInfection(MacrophageDeathRegular):
 
-    def __init__(self, probability, macrophage_compartment, infection_compartments, destroy_t_cell=True,
-                 bacteria_release_compartment_from=None, bacteria_release_compartment_to=None):
-        self.macrophage_compartment = macrophage_compartment
+    def __init__(self, probability, macrophage_compartment, infection_compartments,
+                 internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
         self.infection_compartments = infection_compartments
-        self.destroy_t_cell = destroy_t_cell
-        self.bacteria_release_compartment_from = bacteria_release_compartment_from
-        self.bacteria_release_compartment_to = bacteria_release_compartment_to
-        Event.__init__(self, probability)
+        MacrophageDeathRegular.__init__(self, probability, macrophage_compartment, internal_bacteria_compartment,
+                                        bacteria_release_compartment_to)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.macrophage_compartment] * sum([node.subpopulations[c] for c in
+        return node.subpopulations[self.compartment_destroyed] * sum([node.subpopulations[c] for c in
                                                                        self.infection_compartments])
-
-    def update_node(self, node, network):
-        if self.bacteria_release_compartment_from is not None:
-            bac_released = node.compartment_per_compartment(self.bacteria_release_compartment_from,
-                                                            self.macrophage_compartment)
-            change(node, self.bacteria_release_compartment_from, self.bacteria_release_compartment_to, bac_released)
-        node.update_subpopulations(self.macrophage_compartment, -1)
