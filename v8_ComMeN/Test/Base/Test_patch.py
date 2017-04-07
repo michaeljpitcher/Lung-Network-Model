@@ -5,15 +5,17 @@ from v8_ComMeN.ComMeN.Base.Node.Patch import *
 
 class PatchTestCase(unittest.TestCase):
     def setUp(self):
+        self.node_id = 90
         self.compartments = ['a','b','c']
         self.position = (6, 7)
-        self.patch = Patch(self.compartments, self.position)
+        self.patch = Patch(self.node_id, self.compartments, self.position)
 
     def test_initialise(self):
         self.assertItemsEqual(self.patch.subpopulations.keys(), self.compartments)
         for key in self.patch.subpopulations:
             self.assertEqual(self.patch.subpopulations[key], 0)
         self.assertSequenceEqual(self.patch.position, self.position)
+        self.assertEqual(self.patch.node_id, self.node_id)
 
     def test_update_subpopulation(self):
         self.patch.update_subpopulation(self.compartments[0], 1)

@@ -19,8 +19,9 @@ __status__ = "Development"
 
 class BronchialTreeNode(Patch):
 
-    def __init__(self, compartments, ventilation, perfusion, position):
-        Patch.__init__(compartments, position)
+    def __init__(self, node_id, compartments, ventilation, perfusion, position):
+        Patch.__init__(node_id, compartments, position)
         self.ventilation = ventilation
         self.perfusion = perfusion
         self.oxygen_tension = self.ventilation / self.perfusion
+        self.node_id = node_id

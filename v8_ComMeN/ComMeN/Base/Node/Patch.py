@@ -19,7 +19,8 @@ __status__ = "Development"
 
 class Patch:
 
-    def __init__(self, compartments, position=(0, 0)):
+    def __init__(self, node_id, compartments, position=(0, 0)):
+        self.node_id = node_id
         self.subpopulations = dict()
         for compartment in compartments:
             self.subpopulations[compartment] = 0
