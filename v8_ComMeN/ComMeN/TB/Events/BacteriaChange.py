@@ -32,5 +32,4 @@ class BacteriaChangeByOxygen(Event):
             return 1 / node.oxygen_tension
 
     def update_node(self, node, network):
-        node.update_subpopulation(self.compartment_from, -1)
-        node.update_subpopulation(self.compartment_to, 1)
+        change(node, self.compartment_from, self.compartment_to)

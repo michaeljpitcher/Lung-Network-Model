@@ -46,8 +46,7 @@ class TCellTranslocateBronchus(Event):
         else:
             chosen_neighbour = edges[np.random.randint(0, len(edges))]
 
-        node.update_subpopulation(self.t_cell_compartment, -1)
-        chosen_neighbour.update_subpopulation(self.t_cell_compartment, 1)
+        translocate(node, chosen_neighbour, self.t_cell_compartment)
 
 
 class TCellTranslocateLymph(Event):
@@ -75,5 +74,4 @@ class TCellTranslocateLymph(Event):
 
         chosen_neighbour = viable_edges[np.random.randint(0, len(viable_edges))]
 
-        node.update_subpopulation(self.t_cell_compartment, -1)
-        chosen_neighbour.update_subpopulation(self.t_cell_compartment, 1)
+        translocate(node, chosen_neighbour, self.t_cell_compartment)

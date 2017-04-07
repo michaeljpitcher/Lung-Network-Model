@@ -31,11 +31,10 @@ class MacrophageIngestBacteria(Event):
         return node.subpopulations[self.macrophage_compartment] * node.subpopulations[self.bacteria_compartment]
 
     def update_node(self, node, network):
-        node.update_subpopulations(self.bacteria_compartment, -1)
-
         if self.macrophage_change_compartment is not None:
-            node.update_subpopulations(self.macrophage_compartment, -1)
-            node.update_subpopulations(self.macrophage_change_compartment, 1)
+            change(node, self.macrophage_compartment, self.macrophage_change_compartment)
 
         if self.bacteria_change_compartment is not None:
-            node.update_subpopulations(self.bacteria_change_compartment, 1)
+            change(node, self.bacteria_compartment, self.bacteria_change_compartment)
+        else:
+            node.update_subpopulations(self.bacteria_compartment, -1)

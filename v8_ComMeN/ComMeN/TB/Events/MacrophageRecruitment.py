@@ -74,4 +74,3 @@ class MacrophageRecruitmentLymphByInfection(Event):
 
     def update_node(self, node, network):
         node.update_subpopulations(self.compartment_recruited, 1)
-

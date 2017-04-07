@@ -43,8 +43,8 @@ class PulmonaryAnatomyNetworkTestCase(unittest.TestCase):
         self.assertEqual(len(self.network_bronchial_lymphatic.nodes()), len(Data_BronchialTree.BRONCHIAL_TREE_IDS) +
                          len(Data_Lymphatic.LYMPH_NODE_IDS))
 
-        actual_bronch_edges = [(u.node_id, v.node_id) for (u, v, data) in self.network_bronchial_lymphatic.edges(data=True) if
-                        data[EDGE_TYPE] == BRONCHUS]
+        actual_bronch_edges = [(u.node_id, v.node_id) for (u, v, data) in
+                               self.network_bronchial_lymphatic.edges(data=True) if data[EDGE_TYPE] == BRONCHUS]
         self.assertEqual(len(actual_bronch_edges), len(Data_BronchialTree.BRONCHIAL_TREE_EDGES))
 
         for (u, v) in actual_bronch_edges:
@@ -55,8 +55,7 @@ class PulmonaryAnatomyNetworkTestCase(unittest.TestCase):
             self.assertTrue((u, v) in actual_bronch_edges or (v, u) in actual_bronch_edges)
 
         actual_lymph_edges = [(u.node_id, v.node_id) for (u, v, data) in
-                                   self.network_bronchial_lymphatic.edges(data=True) if
-                                   data[EDGE_TYPE] == LYMPHATIC_VESSEL]
+                              self.network_bronchial_lymphatic.edges(data=True) if data[EDGE_TYPE] == LYMPHATIC_VESSEL]
         self.assertEqual(len(actual_lymph_edges), len(Data_Lymphatic.LYMPH_EDGES))
 
         for (u, v) in actual_lymph_edges:

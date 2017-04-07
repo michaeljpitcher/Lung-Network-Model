@@ -17,6 +17,16 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
+def change(node, compartment_from, compartment_to, amount=1):
+    node.update_subpopulation(compartment_from, -1 * amount)
+    node.update_subpopulation(compartment_to, amount)
+
+
+def translocate(node_from, node_to, compartment, amount=1):
+    node_from.update_subpopulation(compartment, -1 * amount)
+    node_to.update_subpopulation(compartment, amount)
+
+
 class Event:
 
     def __init__(self, probability):
@@ -49,3 +59,7 @@ class Event:
 
     def update_node(self, node, network):
         raise NotImplementedError
+
+
+
+

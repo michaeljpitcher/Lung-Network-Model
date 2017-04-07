@@ -46,8 +46,7 @@ class BacteriaTranslocateBronchus(Event):
         else:
             chosen_neighbour = edges[np.random.randint(0, len(edges))]
 
-        node.update_subpopulation(self.bacteria_compartment, -1)
-        chosen_neighbour.update_subpopulation(self.bacteria_compartment, 1)
+        translocate(node, chosen_neighbour, self.bacteria_compartment)
 
 
 class BacteriaTranslocateLymph(Event):
@@ -75,5 +74,4 @@ class BacteriaTranslocateLymph(Event):
 
         chosen_neighbour = viable_edges[np.random.randint(0, len(viable_edges))]
 
-        node.update_subpopulation(self.bacteria_compartment, -1)
-        chosen_neighbour.update_subpopulation(self.bacteria_compartment, 1)
+        translocate(node, chosen_neighbour, self.bacteria_compartment)

@@ -20,7 +20,8 @@ __status__ = "Development"
 
 class MacrophageTranslocateBronchus(Event):
 
-    def __init__(self, probability, macrophage_compartment, edge_choice_based_on_weight=False, bacteria_compartment_to_translocate=None):
+    def __init__(self, probability, macrophage_compartment, edge_choice_based_on_weight=False,
+                 bacteria_compartment_to_translocate=None):
         self.macrophage_compartment = macrophage_compartment
         self.edge_choice_based_on_weight = edge_choice_based_on_weight
         self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
@@ -48,17 +49,17 @@ class MacrophageTranslocateBronchus(Event):
             chosen_neighbour = edges[np.random.randint(0, len(edges))]
 
         if self.bacteria_compartment_to_translocate is not None:
-            bac_number = node.compartment_per_compartment(self.bacteria_compartment_to_translocate, self.macrophage_compartment)
-            node.update_subpopulation(self.bacteria_compartment_to_translocate, -1*bac_number)
-            chosen_neighbour.update_subpopulation(self.bacteria_compartment_to_translocate, bac_number)
+            bac_number = node.compartment_per_compartment(self.bacteria_compartment_to_translocate,
+                                                          self.macrophage_compartment)
+            translocate(node, chosen_neighbour, self.bacteria_compartment_to_translocate, bac_number)
 
-        node.update_subpopulation(self.macrophage_compartment, -1)
-        chosen_neighbour.update_subpopulation(self.macrophage_compartment, 1)
+        translocate(node, chosen_neighbour, self.macrophage_compartment)
 
 
 class MacrophageTranslocateLymph(Event):
 
-    def __init__(self, macrophage_compartment, probability, direction_only=True, bacteria_compartment_to_translocate=None):
+    def __init__(self, macrophage_compartment, probability, direction_only=True,
+                 bacteria_compartment_to_translocate=None):
         self.macrophage_compartment = macrophage_compartment
         self.direction_only = direction_only
         self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
@@ -84,8 +85,6 @@ class MacrophageTranslocateLymph(Event):
 
         if self.bacteria_compartment_to_translocate is not None:
             bac_number = node.compartment_per_compartment(self.bacteria_compartment_to_translocate, self.macrophage_compartment)
-            node.update_subpopulation(self.bacteria_compartment_to_translocate, -1*bac_number)
-            chosen_neighbour.update_subpopulation(self.bacteria_compartment_to_translocate, bac_number)
+            translocate(node, chosen_neighbour, self.bacteria_compartment_to_translocate, bac_number)
 
-        node.update_subpopulation(self.macrophage_compartment, -1)
-        chosen_neighbour.update_subpopulation(self.macrophage_compartment, 1)
+        translocate(node, chosen_neighbour, self.macrophage_compartment)
