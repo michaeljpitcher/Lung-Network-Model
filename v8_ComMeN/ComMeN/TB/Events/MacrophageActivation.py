@@ -62,3 +62,18 @@ class MacrophageActivationByTCell(Event):
     def update_node(self, node, network):
         node.update_subpopulation(self.macrophage_compartment_from, -1)
         node.update_subpopulation(self.macrophage_compartment_to, 1)
+
+
+class MacrophageDeactivation(Event):
+
+    def __init__(self, probability, macrophage_compartment_from, macrophage_compartment_to):
+        self.macrophage_compartment_from = macrophage_compartment_from
+        self.macrophage_compartment_to = macrophage_compartment_to
+        Event.__init__(self, probability)
+
+    def increment_from_node(self, node, network):
+        return node.subpopulations[self.macrophage_compartment_from]
+
+    def update_node(self, node, network):
+        node.update_subpopulation(self.macrophage_compartment_from, -1)
+        node.update_subpopulation(self.macrophage_compartment_to, 1)
