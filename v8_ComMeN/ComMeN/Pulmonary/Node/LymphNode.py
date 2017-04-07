@@ -20,4 +20,4 @@ __status__ = "Development"
 class LymphNode(Patch):
 
     def __init__(self, node_id, compartments, position):
-        Patch.__init__(node_id, compartments, position)
+        Patch.__init__(self, node_id, compartments, position)
