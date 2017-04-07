@@ -17,7 +17,7 @@ class EventTestCase(unittest.TestCase):
             def increment_from_node(self, node, network):
                 return node.subpopulations[self.type]
 
-            def update_node(self, node):
+            def update_node(self, node, network):
                 node.update_subpopulation(self.type, 1)
 
         self.type = 'a'
@@ -30,12 +30,12 @@ class EventTestCase(unittest.TestCase):
         self.assertEqual(len(self.event.nodes_impacted), 0)
 
     def test_attach_nodes(self):
-        nodes = [Patch(['a']), Patch(['b'])]
+        nodes = [Patch(0, ['a']), Patch(1, ['b'])]
         self.event.attach_nodes(nodes)
         self.assertItemsEqual(self.event.nodes_impacted, nodes)
 
     def test_update_rate(self):
-        nodes = [Patch(['a']), Patch(['a'])]
+        nodes = [Patch(0, ['a']), Patch(1, ['a'])]
 
         nodes[0].update_subpopulation('a', 1)
         nodes[1].update_subpopulation('a', 2)
@@ -48,7 +48,7 @@ class EventTestCase(unittest.TestCase):
     def test_update_network(self):
         np.random.seed(101)
 
-        nodes = [Patch(['a']), Patch(['a'])]
+        nodes = [Patch(0, ['a']), Patch(1, ['a'])]
 
         nodes[0].update_subpopulation('a', 1)
         nodes[1].update_subpopulation('a', 2)
