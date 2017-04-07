@@ -24,4 +24,3 @@ class BronchialTreeNode(Patch):
         self.ventilation = ventilation
         self.perfusion = perfusion
         self.oxygen_tension = self.ventilation / self.perfusion
-        self.node_id = node_id
