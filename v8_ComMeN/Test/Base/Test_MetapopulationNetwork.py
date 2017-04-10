@@ -100,9 +100,11 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
         self.assertEqual(self.network.time, 0.0)
 
     def test_run(self):
+        np.random.seed(101)
         self.nodes[0].subpopulations['a'] = 10
         self.network.run(10)
         self.assertTrue(self.network.time > 10)
+        # TODO - further testing for run
 
 
 if __name__ == '__main__':
