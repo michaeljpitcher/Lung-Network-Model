@@ -30,7 +30,8 @@ class Translocate(Event):
 
     def update_node(self, node, network):
         chosen_neighbour = self.choose_neighbour(node, network)
-        translocate(node, chosen_neighbour, self.translocate_compartment)
+        node.update_subpopulation(self.translocate_compartment, -1)
+        chosen_neighbour.update_subpopulation(self.translocate_compartment, 1)
 
     def choose_neighbour(self, node, network):
         edges = network.get_neighbouring_edges(node, self.edge_type)
