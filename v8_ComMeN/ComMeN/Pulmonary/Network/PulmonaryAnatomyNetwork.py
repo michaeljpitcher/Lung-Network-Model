@@ -26,7 +26,7 @@ __status__ = "Development"
 class PulmonaryAnatomyNetwork(MetapopulationNetwork):
 
     def __init__(self, compartments, events_and_node_types, bronchial_tree_nodes=True,
-                 bronchial_tree_weight_method=STAHLER, lymphatic_nodes=True, haematogenous_reseeding=True):
+                 bronchial_tree_weight_method=HORSFIELD, lymphatic_nodes=True, haematogenous_reseeding=True):
 
         nodes = []
         edges = []

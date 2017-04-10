@@ -15,7 +15,7 @@ class WeightFunctionsTestCase(unittest.TestCase):
         expected_stahler = {(0,1):5, (1,2):3, (1,3):4, (2,4):2, (4,5):1, (2,6):2, (6,7):1, (2,8):1, (3,9):2, (3,10):3,
                             (9,11):1, (9,12):1, (10,13):1, (10,14):2, (14,15):1}
 
-        weights_stahler = tree_weight_calculations(0, edges, STAHLER)
+        weights_stahler = tree_weight_calculations(0, edges, STRAHLER)
         for (u,v) in weights_stahler:
             if (u,v) in expected_stahler:
                 self.assertEqual(weights_stahler[(u, v)], expected_stahler[(u, v)])
