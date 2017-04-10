@@ -25,10 +25,11 @@ class ChangeByOxygen(Event):
         Event.__init__(self, probability)
 
     def increment_from_node(self, node, network):
+        # TODO - check viability of this method
         if self.oxygen_high_to_change:
             return node.oxygen_tension
         else:
-            return 1 / node.oxygen_tension
+            return 1-node.oxygen_tension
 
     def update_node(self, node, network):
         change(node, self.compartment_from, self.compartment_to)
