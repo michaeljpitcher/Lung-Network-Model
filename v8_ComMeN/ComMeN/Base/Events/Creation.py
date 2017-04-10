@@ -27,7 +27,7 @@ class Create(Event):
         return 1
 
     def update_node(self, node, network):
-        node.update_subpopulations(self.compartment_created, 1)
+        node.update_subpopulation(self.compartment_created, 1)
 
 
 class Replication(Create):
