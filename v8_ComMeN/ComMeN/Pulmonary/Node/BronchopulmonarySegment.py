@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Base.Node.Patch import *
+from ...Base.Node.Patch import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,11 +17,10 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class BronchialTreeNode(Patch):
+class BronchopulmonarySegment(Patch):
 
     def __init__(self, node_id, compartments, ventilation, perfusion, position):
         Patch.__init__(self, node_id, compartments, position)
-        # TODO - may not be needed for BTN
         self.ventilation = ventilation
         self.perfusion = perfusion
         self.oxygen_tension = self.ventilation / self.perfusion

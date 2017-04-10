@@ -9,6 +9,7 @@ Long Docstring
 from ..Data import *
 from ..PulmonaryClasses import *
 from ..Node.BronchialTreeNode import *
+from ..Node.BronchopulmonarySegment import *
 from ..Node.LymphNode import *
 from ...Base.Network.MetapopulationNetwork import *
 from ...Base.Network.WeightFunctions import *
@@ -37,6 +38,13 @@ class PulmonaryAnatomyNetwork(MetapopulationNetwork):
                 ventilation = Data_BronchialTree.ventilation_from_position(position)
                 perfusion = Data_BronchialTree.perfusion_from_position(position)
                 node = BronchialTreeNode(id, compartments, ventilation, perfusion, position)
+                nodes.append(node)
+                
+            for id in Data_BronchialTree.BRONCHOPULMONARY_SEGMENT_IDS:
+                position = Data_BronchialTree.BRONCHOPULMONARY_SEGMENT_POSITIONS[id]
+                ventilation = Data_BronchialTree.ventilation_from_position(position)
+                perfusion = Data_BronchialTree.perfusion_from_position(position)
+                node = BronchopulmonarySegment(id, compartments, ventilation, perfusion, position)
                 nodes.append(node)
 
             edge_weights = tree_weight_calculations(0, Data_BronchialTree.BRONCHIAL_TREE_EDGES,
