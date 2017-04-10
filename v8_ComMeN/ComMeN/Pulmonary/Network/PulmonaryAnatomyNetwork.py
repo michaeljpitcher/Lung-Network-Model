@@ -71,8 +71,9 @@ class PulmonaryAnatomyNetwork(MetapopulationNetwork):
                 edges.append(edge)
 
         if haematogenous_reseeding:
-            # TODO - blood stuff
-            pass
+            for (u, v) in Data_HaematogenousReseed.HAEMATOGENOUS_EDGES:
+                edge_data = {EDGE_TYPE: HAEMATOGENOUS, DIRECTION: v}
+                edge = (nodes[u], nodes[v], edge_data)
+                edges.append(edge)
 
         MetapopulationNetwork.__init__(self, compartments, nodes, edges, events_and_node_types)
-
