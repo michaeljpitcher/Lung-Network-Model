@@ -25,7 +25,8 @@ class Translocate(Event):
         Event.__init__(self, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.translocate_compartment] * len(network.get_neighbouring_edges(node, self.edge_type))
+        return node.subpopulations[self.translocate_compartment] * \
+               len(network.get_neighbouring_edges(node, self.edge_type))
 
     def update_node(self, node, network):
         chosen_neighbour = self.choose_neighbour(node, network)
@@ -33,4 +34,4 @@ class Translocate(Event):
 
     def choose_neighbour(self, node, network):
         edges = network.get_neighbouring_edges(node, self.edge_type)
-        return edges[np.random.randint(0, len(edges))]
+        return edges[np.random.randint(0, len(edges))][0]
