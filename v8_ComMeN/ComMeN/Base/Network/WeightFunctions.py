@@ -16,7 +16,7 @@ __version__ = "1.0.8"
 __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
-STAHLER = 'stahler'
+STRAHLER = 'strahler'
 HORSFIELD = 'horsfield'
 
 def tree_weight_calculations(origin, edges, weight_type):
@@ -24,7 +24,7 @@ def tree_weight_calculations(origin, edges, weight_type):
     
     Given a set of nodes, an origin and a weighting method, calculates the appropriate weights based on the method. 
     Methods are:
-        STAHLER: terminal edges are given weight 1. Parent edges have weight +1 of max of child edge weights
+        STRAHLER: terminal edges are given weight 1. Parent edges have weight +1 of max of child edge weights
         HORSFIELD: terminal edges are given weight 1. Parent edges have weight +1 of max of child edge weights if all
                    edges have same weight, else max of child edge weights 
     
@@ -76,8 +76,8 @@ def tree_weight_calculations(origin, edges, weight_type):
         # No child weights -> terminal edges, so weight 1
         if not child_weights:
             new_weight = 1
-        # Stahler ordering - max of child weights + 1
-        elif weight_type == STAHLER:
+        # Strahler ordering - max of child weights + 1
+        elif weight_type == STRAHLER:
             new_weight = max(child_weights) + 1
         # Horsfield ordering - if all even, max of child weights +1, else max of child weights
         elif weight_type == HORSFIELD:
