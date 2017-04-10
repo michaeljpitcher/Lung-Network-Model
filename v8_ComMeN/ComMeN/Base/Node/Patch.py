@@ -6,8 +6,6 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Base.BaseClasses import *
-
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
 __credits__ = ["Michael Pitcher"]
@@ -25,6 +23,9 @@ class Patch:
         for compartment in compartments:
             self.subpopulations[compartment] = 0
         self.position = position
+
+    def __str__(self):
+        return "Patch {" + str(self.node_id) + "}"
 
     def update_subpopulation(self, compartment, alteration):
         assert compartment in self.subpopulations.keys(), "Invalid compartment {0} for update".format(compartment)
