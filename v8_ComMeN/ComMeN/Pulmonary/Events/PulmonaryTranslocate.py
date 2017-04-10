@@ -7,6 +7,7 @@ Long Docstring
 """
 
 from ...Base.Events.Event import *
+from ...Base.Events.Translocate import *
 from ..PulmonaryClasses import *
 
 __author__ = "Michael Pitcher"
@@ -18,15 +19,11 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class TranslocateBronchus(Event):
+class TranslocateBronchus(Translocate):
 
     def __init__(self, probability, translocate_compartment, edge_choice_based_on_weight=False):
-        self.translocate_compartment = translocate_compartment
         self.edge_choice_based_on_weight = edge_choice_based_on_weight
-        Event.__init__(self, probability)
-
-    def increment_from_node(self, node, network):
-        return node.subpopulations[self.translocate_compartment] * len(network.get_neighbouring_edges(node, BRONCHUS))
+        Translocate.__init__(self, probability, translocate_compartment, BRONCHUS)
 
     def choose_neighbour(self, node, network):
         edges = network.get_neighbouring_edges(node, BRONCHUS)
@@ -40,33 +37,51 @@ class TranslocateBronchus(Event):
                 if running_total > r:
                     return neighbour
         else:
-            return edges[np.random.randint(0, len(edges))]
-
-    def update_node(self, node, network):
-        chosen_neighbour = self.choose_neighbour(node, network)
-        translocate(node, chosen_neighbour, self.translocate_compartment)
+            return Translocate.choose_neighbour(self, node, network)
 
 
-class TranslocateLymph(Event):
+class TranslocateLymph(Translocate):
 
     def __init__(self, probability, translocate_compartment, direction_only=True):
-        self.translocate_compartment = translocate_compartment
         self.direction_only = direction_only
-        Event.__init__(self, probability)
+        Translocate.__init__(self, probability, translocate_compartment, LYMPHATIC_VESSEL)
 
     def increment_from_node(self, node, network):
-        viable_edges = network.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
         if self.direction_only:
-            viable_edges = [(n,data) for (n,data) in viable_edges if data[DIRECTION] == n]
-        return node.subpopulations[self.translocate_compartment] * len(viable_edges)
+            viable_edges = [(n, data) for (n, data) in network.get_neighbouring_edges(node, LYMPHATIC_VESSEL) if
+                            data[DIRECTION] == n]
+            return node.subpopulations[self.translocate_compartment] * len(viable_edges)
+        else:
+            return Translocate.increment_from_node(self, node, network)
 
     def choose_neighbour(self, node, network):
-        viable_edges = network.get_neighbouring_edges(node, LYMPHATIC_VESSEL)
-        # Choose an edge
         if self.direction_only:
-            viable_edges = [(n, data) for (n, data) in viable_edges if data[DIRECTION] == n]
-        return viable_edges[np.random.randint(0, len(viable_edges))]
+            viable_edges = [(neighbour, data) for (neighbour, data) in
+                            network.get_neighbouring_edges(node, LYMPHATIC_VESSEL) if data[DIRECTION] == neighbour]
+            return viable_edges[np.random.randint(0, len(viable_edges))]
+        else:
+            return Translocate.choose_neighbour(self, node, network)
 
-    def update_node(self, node, network):
-        chosen_neighbour = self.choose_neighbour(node, network)
-        translocate(node, chosen_neighbour, self.translocate_compartment)
+
+class TranslocateBlood(Translocate):
+
+    def __init__(self, probability, translocate_compartment, direction_only=True):
+        self.direction_only = direction_only
+        Translocate.__init__(self, probability, translocate_compartment, HAEMATOGENOUS)
+
+    def increment_from_node(self, node, network):
+        if self.direction_only:
+            viable_edges = [(n, data) for (n, data) in network.get_neighbouring_edges(node, HAEMATOGENOUS) if
+                            data[DIRECTION] == n]
+            return node.subpopulations[self.translocate_compartment] * len(viable_edges)
+        else:
+            return Translocate.increment_from_node(self, node, network)
+
+    def choose_neighbour(self, node, network):
+
+        if self.direction_only:
+            viable_edges = [(neighbour, data) for (neighbour, data) in
+                            network.get_neighbouring_edges(node, HAEMATOGENOUS) if data[DIRECTION] == neighbour]
+            return viable_edges[np.random.randint(0, len(viable_edges))]
+        else:
+            return Translocate.choose_neighbour(self, node, network)
