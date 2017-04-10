@@ -36,4 +36,4 @@ class Replication(Create):
         Create.__init__(self, probability, compartment_replicating)
 
     def increment_from_node(self, node, network):
-        return node.ubpopulations[self.compartment_created]
+        return node.subpopulations[self.compartment_created]
