@@ -27,4 +27,4 @@ class Destroy(Event):
         return node.subpopulations[self.compartment_destroyed]
 
     def update_node(self, node, network):
-        node.update_subpopulations(self.compartment_destroyed, -1)
+        node.update_subpopulation(self.compartment_destroyed, -1)
