@@ -10,7 +10,7 @@ class LymphNodeTestCase(unittest.TestCase):
         self.position = (5, 6)
         self.node = LymphNode(self.node_id, self.compartments, self.position)
 
-    def test_something(self):
+    def test_initialise(self):
         self.assertTrue(isinstance(self.node, Patch))
 
 
