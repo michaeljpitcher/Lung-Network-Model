@@ -23,7 +23,7 @@ class ChangeByOxygen(Change):
         Change.__init__(self, probability, compartment_from, compartment_to)
 
     def increment_from_node(self, node, network):
-        # TODO - check viability of this method
+        # TODO - check viability of this method - O2 TENSION IS NOT NECESSARILY BETWEEN 0 AND 1
         if self.oxygen_high_to_change:
             oxygen_factor = node.oxygen_tension
         else:

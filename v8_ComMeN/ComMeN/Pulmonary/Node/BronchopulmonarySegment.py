@@ -23,4 +23,9 @@ class BronchopulmonarySegment(Patch):
         Patch.__init__(self, node_id, compartments, position)
         self.ventilation = ventilation
         self.perfusion = perfusion
-        self.oxygen_tension = self.ventilation / self.perfusion
+
+        # TODO - how to calculate oxygen tension?
+        if self.ventilation - self.perfusion < 0:
+            self.oxygen_tension = 0.0000000001
+        else:
+            self.oxygen_tension = self.ventilation - self.perfusion

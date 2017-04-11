@@ -24,4 +24,8 @@ class BronchialTreeNode(Patch):
         # TODO - may not be needed for BTN
         self.ventilation = ventilation
         self.perfusion = perfusion
-        self.oxygen_tension = self.ventilation / self.perfusion
+        # TODO - how to calculate oxygen tension?
+        if self.ventilation - self.perfusion < 0:
+            self.oxygen_tension = 0.0000000001
+        else:
+            self.oxygen_tension = self.ventilation - self.perfusion
