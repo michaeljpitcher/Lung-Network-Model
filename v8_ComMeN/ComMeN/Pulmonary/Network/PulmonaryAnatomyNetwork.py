@@ -6,9 +6,10 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Data.Data_BronchialTree import *
-from v8_ComMeN.ComMeN.Pulmonary.Data.Data_Lymphatic import *
-from v8_ComMeN.ComMeN.Pulmonary.Data.Data_HaematogenousReseed import *
+
+from ..Data.Data_BronchialTree import *
+from ..Data.Data_Lymphatic import *
+from ..Data.Data_HaematogenousReseed import *
 from ..PulmonaryClasses import *
 from ..Node.BronchialTreeNode import *
 from ..Node.BronchopulmonarySegment import *
