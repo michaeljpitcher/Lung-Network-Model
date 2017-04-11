@@ -60,34 +60,6 @@ class EventTestCase(unittest.TestCase):
         self.assertEqual(nodes[0].subpopulations['a'], 1)
         self.assertEqual(nodes[1].subpopulations['a'], 3)
 
-    def test_change(self):
-        node = Patch(0, ['a', 'b'])
-        node.update_subpopulation('a', 10)
-        change(node, 'a', 'b')
-        self.assertEqual(node.subpopulations['a'], 9)
-        self.assertEqual(node.subpopulations['b'], 1)
-
-        node = Patch(0, ['a', 'b'])
-        node.update_subpopulation('a', 10)
-        change(node, 'a', 'b', 4)
-        self.assertEqual(node.subpopulations['a'], 6)
-        self.assertEqual(node.subpopulations['b'], 4)
-
-    def test_translocate(self):
-        node1 = Patch(0, ['a'])
-        node2 = Patch(1, ['a'])
-        node1.update_subpopulation('a', 10)
-        translocate(node1, node2, 'a')
-        self.assertEqual(node1.subpopulations['a'], 9)
-        self.assertEqual(node2.subpopulations['a'], 1)
-
-        node1 = Patch(0, ['a'])
-        node2 = Patch(1, ['a'])
-        node1.update_subpopulation('a', 10)
-        translocate(node1, node2, 'a', 4)
-        self.assertEqual(node1.subpopulations['a'], 6)
-        self.assertEqual(node2.subpopulations['a'], 4)
-
 
 if __name__ == '__main__':
     unittest.main()
