@@ -47,9 +47,17 @@ class TranslocateTestCase(unittest.TestCase):
         self.nodes[3].update_subpopulation(self.compartment, 8)
         self.assertEqual(self.event.increment_from_node(self.nodes[3], self.network), 0)
 
+    def test_viable_edges(self):
+        ids = [data['edgeid'] for (neighbour, data) in self.event.viable_edges(self.nodes[0], self.network)]
+        self.assertItemsEqual(ids, [1,2])
+
+        ids = [data['edgeid'] for (neighbour, data) in self.event.viable_edges(self.nodes[2], self.network)]
+        self.assertItemsEqual(ids, [2])
+
     def test_choose_neighbour(self):
         np.random.seed(101)
-        neighbour = self.event.choose_neighbour(self.nodes[0], self.network)
+        edges = self.event.viable_edges(self.nodes[0], self.network)
+        neighbour = self.event.choose_neighbour(edges)
         self.assertEqual(neighbour, self.nodes[1])
 
     def test_update_node(self):
@@ -57,7 +65,7 @@ class TranslocateTestCase(unittest.TestCase):
         self.nodes[0].update_subpopulation(self.compartment, 10)
         self.event.update_node(self.nodes[0], self.network)
         self.assertEqual(self.nodes[0].subpopulations[self.compartment], 9)
-        self.assertEqual(self.nodes[2].subpopulations[self.compartment], 1)
+        self.assertEqual(self.nodes[1].subpopulations[self.compartment], 1)
 
 
 if __name__ == '__main__':
