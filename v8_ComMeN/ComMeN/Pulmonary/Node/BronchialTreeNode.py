@@ -25,7 +25,7 @@ class BronchialTreeNode(Patch):
         self.ventilation = ventilation
         self.perfusion = perfusion
         # TODO - how to calculate oxygen tension?
-        if self.ventilation - self.perfusion < 0:
+        if self.ventilation - self.perfusion <= 0:
             self.oxygen_tension = 0.0000000001
         else:
             self.oxygen_tension = self.ventilation - self.perfusion
