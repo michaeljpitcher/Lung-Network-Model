@@ -57,11 +57,18 @@ class MetapopulationNetwork(nx.Graph):
         nx.Graph.add_node(self, n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
-        # TODO - better error messages
         assert self.has_node(u), "Node {0} not present in network".format(u)
         assert self.has_node(v), "Node {0} not present in network".format(v)
         assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0} - {1}".format(u, v)
         nx.Graph.add_edge(self, u, v, attr_dict)
+        # if attr_dict[EDGE_TYPE] in u.neighbours:
+        #     u.neighbours[EDGE_TYPE].append(v)
+        # else:
+        #     u.neighbours[EDGE_TYPE] = [v]
+        # if attr_dict[EDGE_TYPE] in v.neighbours:
+        #     v.neighbours[EDGE_TYPE].append(u)
+        # else:
+        #     v.neighbours[EDGE_TYPE] = [u]
 
     def run(self, time_limit=0):
 
@@ -75,6 +82,7 @@ class MetapopulationNetwork(nx.Graph):
                 return
 
             # Calculate the timestep delta based on the total rates
+            # TODO - check
             dt = (1.0 / total_rate) * math.log(1.0 / np.random.random())
 
             # Calculate which event happens based on their individual rates

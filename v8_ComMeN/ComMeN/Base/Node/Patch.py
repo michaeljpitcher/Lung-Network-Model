@@ -23,6 +23,7 @@ class Patch:
         for compartment in compartments:
             self.subpopulations[compartment] = 0
         self.position = position
+        # self.neighbours = dict()
 
     def __str__(self):
         return "Patch {" + str(self.node_id) + "}"
