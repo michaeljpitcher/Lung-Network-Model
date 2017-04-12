@@ -7,6 +7,7 @@ Long Docstring
 """
 
 from ...Base.Events.Destruction import *
+from ...Base.Events.Change import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -21,6 +22,9 @@ class MacrophageDeathRegular(Destroy):
 
     def __init__(self, probability, macrophage_compartment, internal_bacteria_compartment=None,
                  bacteria_release_compartment_to=None):
+        if bacteria_release_compartment_to is not None:
+            assert internal_bacteria_compartment is not None, \
+                "Cannot release bacteria without providing a compartment for them to be released from"
         self.internal_bacteria_compartment = internal_bacteria_compartment
         self.bacteria_release_compartment_to = bacteria_release_compartment_to
         Destroy.__init__(self, probability, macrophage_compartment)
@@ -28,13 +32,12 @@ class MacrophageDeathRegular(Destroy):
     def update_node(self, node, network):
         # Check if there is bacteria inside
         if self.internal_bacteria_compartment is not None:
-            bac_inside = node.compartment_per_compartment(self.internal_bacteria_compartment,
-                                                          self.compartment_destroyed)
-            # Do bacteria change to a new type (i.e. extracellular)?
-            if self.bacteria_release_compartment_to is not None:
-                change(node, self.internal_bacteria_compartment, self.bacteria_release_compartment_to, bac_inside)
-            else: # Bacteria are destroyed
-                node.update_subpopulations(self.internal_bacteria_compartment, -1*bac_inside)
+            bac_inside_mac = node.compartment_per_compartment(self.internal_bacteria_compartment,
+                                                              self.compartment_destroyed)
+            node.update_subpopulation(self.internal_bacteria_compartment, -1 * bac_inside_mac)
+            # Check if bacteria are released
+            if self.bacteria_release_compartment_to:
+                node.update_subpopulation(self.bacteria_release_compartment_to, bac_inside_mac)
         Destroy.update_node(self, node, network)
 
 
@@ -48,12 +51,13 @@ class MacrophageDeathByTCell(MacrophageDeathRegular):
                                         bacteria_release_compartment_to)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.compartment_destroyed] * node.subpopulations[self.t_cell_compartment]
+        return MacrophageDeathRegular.increment_from_node(self, node, network) * \
+               node.subpopulations[self.t_cell_compartment]
 
     def update_node(self, node, network):
         MacrophageDeathRegular.update_node(self, node, network)
         if self.destroy_t_cell:
-            node.update_subpopulations(self.t_cell_compartment, -1)
+            node.update_subpopulation(self.t_cell_compartment, -1)
 
 
 class MacrophageDeathByInfection(MacrophageDeathRegular):
