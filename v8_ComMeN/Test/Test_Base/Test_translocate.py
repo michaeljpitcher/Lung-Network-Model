@@ -57,6 +57,8 @@ class TranslocateTestCase(unittest.TestCase):
     def test_choose_neighbour(self):
         np.random.seed(101)
         edges = self.event.viable_edges(self.nodes[0], self.network)
+        # Need to sort to ensure same result for unit testing - this and numpy random seed should produce edge 2
+        edges = sorted(edges)
         neighbour = self.event.choose_neighbour(edges)
         self.assertEqual(neighbour, self.nodes[2])
 
