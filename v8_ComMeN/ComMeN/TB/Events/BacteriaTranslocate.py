@@ -29,7 +29,7 @@ class BacteriaTranslocateLymph(TranslocateLymph):
         TranslocateLymph.__init__(self, probability, bacteria_compartment, direction_only)
 
 
-class BacteriaTranslocateHaematogenous(TranslocateLymph):
+class BacteriaTranslocateHaematogenous(TranslocateBlood):
 
     def __init__(self, probability, bacteria_compartment, direction_only=True):
-        TranslocateLymph.__init__(self, probability, bacteria_compartment, direction_only)
+        TranslocateBlood.__init__(self, probability, bacteria_compartment, direction_only)
