@@ -123,3 +123,6 @@ class TranslocateBloodTestCase(unittest.TestCase):
         self.assertEqual(len(self.event_no_direction.viable_edges(nodes[3], network)), 1)
         self.assertItemsEqual([data['edgeid'] for (_, data) in self.event_no_direction.viable_edges(nodes[3], network)],
                               [2])
+
+if __name__ == '__main__':
+    unittest.main()
