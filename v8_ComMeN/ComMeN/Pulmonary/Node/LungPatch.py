@@ -21,6 +21,7 @@ class LungPatch(Patch):
 
     def __init__(self, node_id, compartments, position, drugs):
         self.chemotherapy = dict()
-        for drug in drugs:
-            self.chemotherapy[drug] = 0.0
+        if drugs:
+            for drug in drugs:
+                self.chemotherapy[drug] = 0.0
         Patch.__init__(self, node_id, compartments, position)
