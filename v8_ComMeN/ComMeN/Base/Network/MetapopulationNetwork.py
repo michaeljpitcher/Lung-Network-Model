@@ -101,7 +101,8 @@ class MetapopulationNetwork(nx.Graph):
         print "t=", self.time
 
     def get_neighbouring_edges(self, node, edge_type=None):
-        # TODO - may be slow to calculate this all the time, better to do it once and save
+        # TODO - may be slow to calculate this all the time, better to do it once and save,
+        # also hampers the unit tests because self.edges can change order
         if not edge_type:
             return [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
         else:

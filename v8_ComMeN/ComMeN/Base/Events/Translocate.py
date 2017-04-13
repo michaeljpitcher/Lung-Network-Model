@@ -31,11 +31,14 @@ class Translocate(Event):
     def update_node(self, node, network):
         edges = self.viable_edges(node, network)
         chosen_neighbour = self.choose_neighbour(edges)
-        node.update_subpopulation(self.translocate_compartment, -1)
-        chosen_neighbour.update_subpopulation(self.translocate_compartment, 1)
+        self.move(node, chosen_neighbour)
 
     def viable_edges(self, node, network):
         return network.get_neighbouring_edges(node, self.edge_type)
 
     def choose_neighbour(self, edges):
         return edges[np.random.randint(0, len(edges))][0]
+
+    def move(self, node, neighbour):
+        node.update_subpopulation(self.translocate_compartment, -1)
+        neighbour.update_subpopulation(self.translocate_compartment, 1)
