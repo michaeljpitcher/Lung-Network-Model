@@ -20,14 +20,15 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class TB_Model_Basic(PulmonaryAnatomyNetwork):
+class TBModelBasic(PulmonaryAnatomyNetwork):
 
-    def __init__(self, seeding):
+    def __init__(self, seeding, probabity_bac_rep, probability_mac_ingest):
 
         compartments = [BACTERIA, MACROPHAGE]
         events_and_node_types = dict()
-        bac_rep = BacteriaReplication(0.1, BACTERIA)
-        mac_ingest_bac = MacrophageIngestBacteria(0.1, MACROPHAGE, BACTERIA)
+
+        bac_rep = BacteriaReplication(probabity_bac_rep, BACTERIA)
+        mac_ingest_bac = MacrophageIngestBacteria(probability_mac_ingest, MACROPHAGE, BACTERIA)
 
         events_and_node_types[bac_rep] = [BronchopulmonarySegment, BronchialTreeNode]
         events_and_node_types[mac_ingest_bac] = [BronchopulmonarySegment, BronchialTreeNode]
