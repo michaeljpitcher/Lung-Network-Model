@@ -10,6 +10,7 @@ import math
 
 import networkx as nx
 import numpy as np
+import csv
 
 from ..BaseClasses import *
 from ..Events.Event import Event
@@ -81,7 +82,16 @@ class MetapopulationNetwork(nx.Graph):
         # else:
         #     v.neighbours[EDGE_TYPE] = [u]
 
-    def run(self, time_limit=0):
+    def run(self, time_limit=0, run_id=None):
+        csv_file = None
+        csv_writer = None
+
+        if run_id is not None:
+            csv_file = open(str(run_id) + '.csv', 'wb')
+            csv_writer = csv.writer(csv_file, delimiter=',')
+            header_row = ["timestep", "node_id"] + self.compartments
+            csv_writer.writerow(header_row)
+            self.record_data(csv_writer)
 
         while self.time < time_limit:
             self.timestep_print()
@@ -106,7 +116,18 @@ class MetapopulationNetwork(nx.Graph):
                     break
 
             self.time += dt
+            if run_id is not None:
+                self.record_data(csv_writer)
         self.timestep_print()
+        if run_id is not None:
+            csv_file.close()
+
+    def record_data(self, csv_writer):
+        for node in self.nodes():
+            row = [self.time, node.node_id]
+            for compartment in self.compartments:
+                row.append(node.subpopulations[compartment])
+            csv_writer.writerow(row)
 
     def timestep_print(self):
         print "t=", self.time
