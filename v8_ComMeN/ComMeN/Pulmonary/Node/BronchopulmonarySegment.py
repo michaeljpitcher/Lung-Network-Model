@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from ...Base.Node.Patch import *
+from LungPatch import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,10 +17,10 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class BronchopulmonarySegment(Patch):
+class BronchopulmonarySegment(LungPatch):
 
-    def __init__(self, node_id, compartments, ventilation, perfusion, position):
-        Patch.__init__(self, node_id, compartments, position)
+    def __init__(self, node_id, compartments, ventilation, perfusion, position, drugs=None):
+        LungPatch.__init__(self, node_id, compartments, position, drugs)
         self.ventilation = ventilation
         self.perfusion = perfusion
 

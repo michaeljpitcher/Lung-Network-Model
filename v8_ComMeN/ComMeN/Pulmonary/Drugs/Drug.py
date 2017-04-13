@@ -16,6 +16,7 @@ __status__ = "Development"
 
 # TODO - properties of drugs (effectiveness vs fast/slow, other)
 
+
 class Drug:
 
     def __init__(self, name):

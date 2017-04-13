@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Base.Node.Patch import *
+from LungPatch import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,10 +17,10 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class BronchialTreeNode(Patch):
+class BronchialTreeNode(LungPatch):
 
-    def __init__(self, node_id, compartments, ventilation, perfusion, position):
-        Patch.__init__(self, node_id, compartments, position)
+    def __init__(self, node_id, compartments, ventilation, perfusion, position, drugs=None):
+        LungPatch.__init__(self, node_id, compartments, position, drugs)
         # TODO - may not be needed for BTN
         self.ventilation = ventilation
         self.perfusion = perfusion
@@ -29,3 +29,4 @@ class BronchialTreeNode(Patch):
             self.oxygen_tension = 0.0000000001
         else:
             self.oxygen_tension = self.ventilation - self.perfusion
+        self.chemotherapy = dict()
