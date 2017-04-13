@@ -22,14 +22,9 @@ class TCellRecruitmentBronchial(RecruitmentBronchial):
         RecruitmentBronchial.__init__(self, probability, t_cell_compartment, based_on_perfusion)
 
 
-class TCellRecruitmentBronchialByInfection(TCellRecruitmentBronchial):
+class TCellRecruitmentBronchialByInfection(RecruitmentBronchialByInfection):
     def __init__(self, probability, t_cell_recruited_compartment, infection_compartments, based_on_perfusion=True):
-        self.infection_compartments = infection_compartments
-        TCellRecruitmentBronchial.__init__(self, probability, t_cell_recruited_compartment, based_on_perfusion)
-
-    def increment_from_node(self, node, network):
-        return TCellRecruitmentBronchial.increment_from_node(self, node, network) * \
-               sum([node.subpopulations[c] for c in self.infection_compartments])
+        RecruitmentBronchialByInfection.__init__(self, probability, t_cell_recruited_compartment, based_on_perfusion)
 
 
 class TCellRecruitmentLymph(RecruitmentLymph):
@@ -37,10 +32,6 @@ class TCellRecruitmentLymph(RecruitmentLymph):
         RecruitmentLymph.__init__(self, probability, t_cell_compartment)
 
 
-class TCellRecruitmentLymphByInfection(TCellRecruitmentLymph):
+class TCellRecruitmentLymphByInfection(RecruitmentLymphByInfection):
     def __init__(self, probability, t_cell_compartment, infection_compartments):
-        self.infection_compartments = infection_compartments,
-        TCellRecruitmentLymph.__init__(self, probability, t_cell_compartment)
-
-    def increment_from_node(self, node, network):
-        return sum([node.subpopulations[c] for c in self.infection_compartments])
+        RecruitmentLymphByInfection.__init__(self, probability, t_cell_compartment)
