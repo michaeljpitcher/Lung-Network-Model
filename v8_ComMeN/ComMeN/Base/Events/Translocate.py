@@ -34,7 +34,7 @@ class Translocate(Event):
         self.move(node, chosen_neighbour)
 
     def viable_edges(self, node, network):
-        return network.get_neighbouring_edges(node, self.edge_type)
+        return sorted(network.get_neighbouring_edges(node, self.edge_type))
 
     def choose_neighbour(self, edges):
         return edges[np.random.randint(0, len(edges))][0]
