@@ -22,14 +22,10 @@ class MacrophageRecruitmentBronchial(RecruitmentBronchial):
         RecruitmentBronchial.__init__(self, probability, macrophage_compartment, based_on_perfusion)
 
 
-class MacrophageRecruitmentBronchialByInfection(MacrophageRecruitmentBronchial):
+class MacrophageRecruitmentBronchialByInfection(RecruitmentBronchialByInfection):
     def __init__(self, probability, macrophage_recruited_compartment, infection_compartments, based_on_perfusion=True):
-        self.infection_compartments = infection_compartments
-        MacrophageRecruitmentBronchial.__init__(self, probability, macrophage_recruited_compartment, based_on_perfusion)
-
-    def increment_from_node(self, node, network):
-        return sum([node.subpopulations[c] for c in self.infection_compartments]) * \
-               MacrophageRecruitmentBronchial.increment_from_node(self, node, network)
+        RecruitmentBronchialByInfection.__init__(self, probability, macrophage_recruited_compartment,
+                                                 infection_compartments, based_on_perfusion)
 
 
 class MacrophageRecruitmentLymph(RecruitmentLymph):
@@ -37,10 +33,7 @@ class MacrophageRecruitmentLymph(RecruitmentLymph):
         RecruitmentLymph.__init__(self, probability, macrophage_compartment)
 
 
-class MacrophageRecruitmentLymphByInfection(MacrophageRecruitmentLymph):
+class MacrophageRecruitmentLymphByInfection(RecruitmentLymphByInfection):
     def __init__(self, probability, macrophage_recruited_compartment, infection_compartments):
-        self.infection_compartments = infection_compartments
-        MacrophageRecruitmentLymph.__init__(self, probability, macrophage_recruited_compartment)
-
-    def increment_from_node(self, node, network):
-        return sum([node.subpopulations[c] for c in self.infection_compartments])
+        RecruitmentLymphByInfection.__init__(self, probability, infection_compartments,
+                                             macrophage_recruited_compartment)
