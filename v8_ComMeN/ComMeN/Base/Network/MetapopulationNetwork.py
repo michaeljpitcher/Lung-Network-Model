@@ -11,9 +11,9 @@ import math
 import networkx as nx
 import numpy as np
 
-from v8_ComMeN.ComMeN.Base.BaseClasses import *
-from v8_ComMeN.ComMeN.Base.Events.Event import Event
-from v8_ComMeN.ComMeN.Base.Node.Patch import Patch
+from ..BaseClasses import *
+from ..Events.Event import Event
+from ..Node.Patch import Patch
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -26,7 +26,7 @@ __status__ = "Development"
 
 class MetapopulationNetwork(nx.Graph):
 
-    def __init__(self, compartments, nodes, edges, events_and_node_types):
+    def __init__(self, compartments, nodes, edges, events_and_node_types, seeding=None):
         nx.Graph.__init__(self)
 
         self.compartments = compartments
@@ -52,7 +52,18 @@ class MetapopulationNetwork(nx.Graph):
 
         self.time = 0.0
 
+    def seed_network(self, seeding):
+        for node_id in seeding:
+            node = [n for n in self.nodes() if n.node_id == node_id][0]
+            for compartment in seeding[node_id]:
+                value = seeding[node_id][compartment]
+                node.update_subpopulation(compartment, value)
+
     def add_node(self, n, attr_dict=None, **attr):
+
+        if not isinstance(n, Patch):
+            print "TEST"
+
         assert isinstance(n, Patch), "Node {0} is not a Patch object".format(n)
         nx.Graph.add_node(self, n)
 
