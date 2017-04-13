@@ -75,8 +75,5 @@ class TranslocateTestCase(unittest.TestCase):
         self.assertEqual(self.nodes[0].subpopulations[self.compartment], 9)
         self.assertEqual(self.nodes[2].subpopulations[self.compartment], 1)
 
-
-
-
 if __name__ == '__main__':
     unittest.main()
