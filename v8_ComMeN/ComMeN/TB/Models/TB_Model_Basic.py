@@ -22,16 +22,17 @@ __status__ = "Development"
 
 class TB_Model_Basic(PulmonaryAnatomyNetwork):
 
-    def __init__(self):
+    def __init__(self, seeding):
 
         compartments = [BACTERIA, MACROPHAGE]
         events_and_node_types = dict()
-        events_and_node_types[BRONCHUS] = []
         bac_rep = BacteriaReplication(0.1, BACTERIA)
-        events_and_node_types[BRONCHUS].append(bac_rep)
         mac_ingest_bac = MacrophageIngestBacteria(0.1, MACROPHAGE, BACTERIA)
-        events_and_node_types[BRONCHUS].append(mac_ingest_bac)
+
+        events_and_node_types[bac_rep] = [BronchopulmonarySegment, BronchialTreeNode]
+        events_and_node_types[mac_ingest_bac] = [BronchopulmonarySegment, BronchialTreeNode]
+
         PulmonaryAnatomyNetwork.__init__(self, compartments, events_and_node_types, bronchial_tree_nodes=True,
                                          lymphatic_nodes=False, haematogenous_reseeding=False)
 
-        # TODO: Seed? How do you know the nodes?
+        self.seed_network(seeding)
