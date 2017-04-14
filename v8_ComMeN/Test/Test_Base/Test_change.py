@@ -8,7 +8,7 @@ class ChangeTestCase(unittest.TestCase):
     def setUp(self):
         self.comp_from = 'a'
         self.comp_to = 'b'
-        self.event = Change(0.1, self.comp_from, self.comp_to)
+        self.event = Change(None, 0.1, self.comp_from, self.comp_to)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_from, self.comp_from)

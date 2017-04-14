@@ -18,9 +18,9 @@ __status__ = "Development"
 
 
 class ChangeByOxygen(Change):
-    def __init__(self, probability, compartment_from, compartment_to, oxygen_high_to_change):
+    def __init__(self, node_types, probability, compartment_from, compartment_to, oxygen_high_to_change):
         self.oxygen_high_to_change = oxygen_high_to_change
-        Change.__init__(self, probability, compartment_from, compartment_to)
+        Change.__init__(self, node_types, probability, compartment_from, compartment_to)
 
     def increment_from_node(self, node, network):
         # TODO - check viability of this method - O2 TENSION IS NOT NECESSARILY BETWEEN 0 AND 1

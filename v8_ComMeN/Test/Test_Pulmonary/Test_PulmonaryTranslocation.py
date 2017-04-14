@@ -10,8 +10,8 @@ class TranslocateBronchusTestCase(unittest.TestCase):
 
     def setUp(self):
         self.comp = 'a'
-        self.event = TranslocateBronchus(0.1, self.comp)
-        self.event_weighted = TranslocateBronchus(0.1, self.comp, True)
+        self.event = TranslocateBronchus([BronchopulmonarySegment], 0.1, self.comp)
+        self.event_weighted = TranslocateBronchus([BronchopulmonarySegment], 0.1, self.comp, True)
 
     def test_initialise(self):
         self.assertFalse(self.event.edge_choice_based_on_weight)
@@ -26,7 +26,7 @@ class TranslocateBronchusTestCase(unittest.TestCase):
         for b in range(2, 10):
             edges.append((nodes[0], nodes[b], {EDGE_TYPE: BRONCHUS, WEIGHT: 1}))
 
-        events = {self.event: [BronchopulmonarySegment], self.event_weighted: [BronchopulmonarySegment]}
+        events = [self.event, self.event_weighted]
 
         network = MetapopulationNetwork([self.comp], nodes, edges, events)
 
@@ -39,8 +39,8 @@ class TranslocateLymphTestCase(unittest.TestCase):
 
     def setUp(self):
         self.comp = 'a'
-        self.event = TranslocateLymph(0.1, self.comp)
-        self.event_no_direction = TranslocateLymph(0.1, self.comp, False)
+        self.event = TranslocateLymph([BronchopulmonarySegment], 0.1, self.comp)
+        self.event_no_direction = TranslocateLymph([BronchopulmonarySegment], 0.1, self.comp, False)
 
     def test_initialise(self):
         self.assertTrue(self.event.direction_only)
@@ -55,7 +55,7 @@ class TranslocateLymphTestCase(unittest.TestCase):
         edges.append((nodes[0], nodes[2], {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: nodes[0], 'edgeid': 1}))
         edges.append((nodes[2], nodes[3], {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: nodes[3], 'edgeid': 2}))
         edges.append((nodes[0], nodes[3], {EDGE_TYPE: HAEMATOGENOUS, DIRECTION: nodes[3], 'edgeid': 3}))
-        events = {self.event: [BronchopulmonarySegment], self.event_no_direction: [BronchopulmonarySegment]}
+        events = [self.event, self.event_no_direction]
 
         network = MetapopulationNetwork([self.comp], nodes, edges, events)
 
@@ -84,8 +84,8 @@ class TranslocateBloodTestCase(unittest.TestCase):
 
     def setUp(self):
         self.comp = 'a'
-        self.event = TranslocateBlood(0.1, self.comp)
-        self.event_no_direction = TranslocateBlood(0.1, self.comp, False)
+        self.event = TranslocateBlood([BronchopulmonarySegment], 0.1, self.comp)
+        self.event_no_direction = TranslocateBlood([BronchopulmonarySegment], 0.1, self.comp, False)
 
     def test_initialise(self):
         self.assertTrue(self.event.direction_only)
@@ -100,7 +100,7 @@ class TranslocateBloodTestCase(unittest.TestCase):
         edges.append((nodes[0], nodes[2], {EDGE_TYPE: HAEMATOGENOUS, DIRECTION: nodes[0], 'edgeid': 1}))
         edges.append((nodes[2], nodes[3], {EDGE_TYPE: HAEMATOGENOUS, DIRECTION: nodes[3], 'edgeid': 2}))
         edges.append((nodes[0], nodes[3], {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: nodes[3], 'edgeid': 3}))
-        events = {self.event: [BronchopulmonarySegment], self.event_no_direction: [BronchopulmonarySegment]}
+        events = [self.event, self.event_no_direction]
 
         network = MetapopulationNetwork([self.comp], nodes, edges, events)
 

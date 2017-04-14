@@ -21,9 +21,9 @@ __status__ = "Development"
 
 class TranslocateBronchus(Translocate):
 
-    def __init__(self, probability, translocate_compartment, edge_choice_based_on_weight=False):
+    def __init__(self, node_types, probability, translocate_compartment, edge_choice_based_on_weight=False):
         self.edge_choice_based_on_weight = edge_choice_based_on_weight
-        Translocate.__init__(self, probability, translocate_compartment, BRONCHUS)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, BRONCHUS)
 
     def choose_neighbour(self, edges):
         # Choose an edge
@@ -41,9 +41,9 @@ class TranslocateBronchus(Translocate):
 
 class TranslocateLymph(Translocate):
 
-    def __init__(self, probability, translocate_compartment, direction_only=True):
+    def __init__(self, node_types, probability, translocate_compartment, direction_only=True):
         self.direction_only = direction_only
-        Translocate.__init__(self, probability, translocate_compartment, LYMPHATIC_VESSEL)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, LYMPHATIC_VESSEL)
 
     def viable_edges(self, node, network):
         edges = Translocate.viable_edges(self, node, network)
@@ -54,9 +54,9 @@ class TranslocateLymph(Translocate):
 
 class TranslocateBlood(Translocate):
 
-    def __init__(self, probability, translocate_compartment, direction_only=True):
+    def __init__(self, node_types, probability, translocate_compartment, direction_only=True):
         self.direction_only = direction_only
-        Translocate.__init__(self, probability, translocate_compartment, HAEMATOGENOUS)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, HAEMATOGENOUS)
 
     def viable_edges(self, node, network):
         edges = Translocate.viable_edges(self, node, network)

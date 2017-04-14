@@ -10,7 +10,7 @@ class TranslocateTestCase(unittest.TestCase):
         self.compartment = 'a'
         self.edge_type = 'edge1'
         EDGE_ID = 'edgeid'
-        self.event = Translocate(self.probability, self.compartment, self.edge_type)
+        self.event = Translocate([Patch], self.probability, self.compartment, self.edge_type)
 
         self.nodes = [Patch(0, [self.compartment]), Patch(1, [self.compartment]),
                       Patch(2, [self.compartment]), Patch(3, [self.compartment])]

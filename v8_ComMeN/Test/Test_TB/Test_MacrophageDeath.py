@@ -9,8 +9,8 @@ class MacrophageDeathRegularTestCase(unittest.TestCase):
         self.mac = 'mac'
         self.bac_int = "bac_i"
         self.bac_ext = 'bac_e'
-        self.event_bac_release = MacrophageDeathRegular(0.1, self.mac, self.bac_int, self.bac_ext)
-        self.event_no_bac_release = MacrophageDeathRegular(0.1, self.mac)
+        self.event_bac_release = MacrophageDeathRegular(None, 0.1, self.mac, self.bac_int, self.bac_ext)
+        self.event_no_bac_release = MacrophageDeathRegular(None, 0.1, self.mac)
 
     def test_initialise(self):
         self.assertEqual(self.event_bac_release.internal_bacteria_compartment, self.bac_int)
@@ -19,7 +19,7 @@ class MacrophageDeathRegularTestCase(unittest.TestCase):
         self.assertEqual(self.event_no_bac_release.bacteria_release_compartment_to, None)
 
         with self.assertRaises(AssertionError) as context:
-            event = MacrophageDeathRegular(0.1, self.mac, bacteria_release_compartment_to=self.bac_ext)
+            event = MacrophageDeathRegular(None, 0.1, self.mac, bacteria_release_compartment_to=self.bac_ext)
         self.assertEqual('Cannot release bacteria without providing a compartment for them to be released from',
                          str(context.exception))
 
@@ -46,8 +46,8 @@ class MacrophageDeathByTCellTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.tcell = 'tcell'
-        self.event_destroy = MacrophageDeathByTCell(0.1, self.mac, self.tcell)
-        self.event_not_destroy = MacrophageDeathByTCell(0.1, self.mac, self.tcell, False)
+        self.event_destroy = MacrophageDeathByTCell(None, 0.1, self.mac, self.tcell)
+        self.event_not_destroy = MacrophageDeathByTCell(None, 0.1, self.mac, self.tcell, False)
 
     def test_initialise(self):
         self.assertTrue(self.event_destroy.destroy_t_cell)
@@ -82,7 +82,7 @@ class MacrophageDeathByInfectionTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.infection_comps = ['inf_1', 'inf_2']
-        self.event = MacrophageDeathByInfection(0.1, self.mac, self.infection_comps)
+        self.event = MacrophageDeathByInfection(None, 0.1, self.mac, self.infection_comps)
 
     def test_initialise(self):
         self.assertItemsEqual(self.event.infection_compartments, self.infection_comps)

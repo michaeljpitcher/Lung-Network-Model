@@ -7,27 +7,29 @@ from v8_ComMeN.ComMeN.Base.Node.Patch import *
 class EventTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = 0.1
-        self.event = Event(self.prob)
+        self.node_types = ['type_a', 'type_b']
+        self.event = Event(self.node_types, self.prob)
 
         class NAEvent(Event):
-            def __init__(self, prob, type):
-                self.type = type
-                Event.__init__(self, prob)
+            def __init__(self, node_types, prob, value):
+                self.value = value
+                Event.__init__(self, node_types, prob)
 
             def increment_from_node(self, node, network):
-                return node.subpopulations[self.type]
+                return node.subpopulations[self.value]
 
             def update_node(self, node, network):
-                node.update_subpopulation(self.type, 1)
+                node.update_subpopulation(self.value, 1)
 
-        self.type = 'a'
-        self.non_abstract_event = NAEvent(self.prob, self.type)
+        self.value = 'a'
+        self.non_abstract_event = NAEvent(self.node_types, self.prob, self.value)
 
     def test_initialise(self):
         self.assertEqual(self.event.probability, self.prob)
         self.assertEqual(self.event.total, 0)
         self.assertEqual(self.event.rate, 0)
         self.assertEqual(len(self.event.nodes_impacted), 0)
+        self.assertItemsEqual(self.event.node_types, self.node_types)
 
     def test_attach_nodes(self):
         nodes = [Patch(0, ['a']), Patch(1, ['b'])]

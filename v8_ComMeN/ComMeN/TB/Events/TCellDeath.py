@@ -19,5 +19,5 @@ __status__ = "Development"
 
 class TCellDeathRegular(Destroy):
 
-    def __init__(self, probability, t_cell_compartment):
-        Destroy.__init__(self, probability, t_cell_compartment)
+    def __init__(self, node_types, probability, t_cell_compartment):
+        Destroy.__init__(self, node_types, probability, t_cell_compartment)

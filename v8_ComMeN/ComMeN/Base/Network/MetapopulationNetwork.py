@@ -27,7 +27,7 @@ __status__ = "Development"
 
 class MetapopulationNetwork(nx.Graph):
 
-    def __init__(self, compartments, nodes, edges, events_and_node_types, seeding=None):
+    def __init__(self, compartments, nodes, edges, events, seeding=None):
         nx.Graph.__init__(self)
 
         self.compartments = compartments
@@ -41,15 +41,16 @@ class MetapopulationNetwork(nx.Graph):
             self.add_edge(node1, node2, edge_data)
 
         # Events
-        assert isinstance(events_and_node_types, dict), "Supplied events must be of form - key:event, value:node_type"
-        for event in events_and_node_types:
+        assert len(events) > 0, "No events supplied"
+        for event in events:
             assert isinstance(event, Event), "{0} is not an instance of Event class".format(event)
-            for node_type in events_and_node_types[event]:
+            assert len(event.node_types) > 0, "No node types specified for event {0}".format(event)
+            for node_type in event.node_types:
                 viable_nodes = [n for n in nodes if isinstance(n, node_type)]
                 assert len(viable_nodes) > 0, "Node type {0} does not exist in network".format(node_type)
                 event.attach_nodes(viable_nodes)
 
-        self.events = events_and_node_types.keys()
+        self.events = events
 
         self.time = 0.0
 

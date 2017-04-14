@@ -11,12 +11,12 @@ class MacrophageIngestBacteriaTestCase(unittest.TestCase):
         self.bac_original = 'bac_o'
         self.bac_new = 'bac_n'
 
-        self.event_no_change = MacrophageIngestBacteria(0.1, self.mac_original, self.bac_original)
-        self.event_bac_change = MacrophageIngestBacteria(0.1, self.mac_original, self.bac_original,
+        self.event_no_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original)
+        self.event_bac_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
                                                          bacteria_change_compartment=self.bac_new)
-        self.event_mac_change = MacrophageIngestBacteria(0.1, self.mac_original, self.bac_original,
+        self.event_mac_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
                                                          macrophage_change_compartment=self.mac_new)
-        self.event_both_change = MacrophageIngestBacteria(0.1, self.mac_original, self.bac_original,
+        self.event_both_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
                                                           bacteria_change_compartment=self.bac_new,
                                                           macrophage_change_compartment=self.mac_new)
 
@@ -86,7 +86,7 @@ class MacrophageDestroyInternalBacteriaTestCase(unittest.TestCase):
         self.mac_inf = 'm_i'
         self.bac = 'bac'
         self.mac_heal = 'm_h'
-        self.event = MacrophageDestroyInternalBacteria(0.1, self.mac_inf, self.bac, self.mac_heal)
+        self.event = MacrophageDestroyInternalBacteria(None, 0.1, self.mac_inf, self.bac, self.mac_heal)
 
     def test_initialise(self):
         self.assertEqual(self.event.macrophage_compartment, self.mac_inf)

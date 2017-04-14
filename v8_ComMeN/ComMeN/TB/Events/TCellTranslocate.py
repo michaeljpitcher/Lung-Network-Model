@@ -19,11 +19,11 @@ __status__ = "Development"
 
 class TCellTranslocateBronchus(TranslocateBronchus):
 
-    def __init__(self, probability, t_cell_compartment, edge_choice_based_on_weight=False):
-        TranslocateBronchus.__init__(self, probability, t_cell_compartment, edge_choice_based_on_weight)
+    def __init__(self, node_types, probability, t_cell_compartment, edge_choice_based_on_weight=False):
+        TranslocateBronchus.__init__(self, node_types, probability, t_cell_compartment, edge_choice_based_on_weight)
 
 
 class TCellTranslocateLymph(TranslocateLymph):
 
-    def __init__(self, probability, t_cell_compartment, direction_only=True):
-        TranslocateLymph.__init__(self, probability, t_cell_compartment, direction_only)
+    def __init__(self, node_types, probability, t_cell_compartment, direction_only=True):
+        TranslocateLymph.__init__(self, node_types, probability, t_cell_compartment, direction_only)

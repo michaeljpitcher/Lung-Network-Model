@@ -28,29 +28,26 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
             self.edges.append((self.nodes[n1], self.nodes[n2], {EDGE_TYPE: self.edge_types[0]}))
         self.edges.append((self.nodes[0], self.nodes[9], {EDGE_TYPE: self.edge_types[1]}))
 
-        self.events_and_node_types = dict()
         class NAEvent(Event):
-            def __init__(self, prob, type):
-                self.type = type
-                Event.__init__(self, prob)
+            def __init__(self, node_types, prob, value):
+                self.value = value
+                Event.__init__(self, node_types, prob)
 
             def increment_from_node(self, node, network):
-                return node.subpopulations[self.type]
+                return node.subpopulations[self.value]
 
             def update_node(self, node, network):
-                node.update_subpopulation(self.type, 1)
+                node.update_subpopulation(self.value, 1)
 
-        self.event_node_type1 = NAEvent(0.1, 'a')
-        self.event_node_type2 = NAEvent(0.2, 'a')
-        self.event_node_type_both = NAEvent(0.3, 'a')
+        self.event_node_type1 = NAEvent([Patch_type1], 0.1, 'a')
+        self.event_node_type2 = NAEvent([Patch_type2], 0.2, 'a')
+        self.event_node_type_both = NAEvent([Patch_type1, Patch_type2], 0.3, 'a')
 
-        self.events_and_node_types[self.event_node_type1] = [Patch_type1]
-        self.events_and_node_types[self.event_node_type2] = [Patch_type2]
-        self.events_and_node_types[self.event_node_type_both] = [Patch_type1, Patch_type2]
-        self.network = MetapopulationNetwork(self.compartments, self.nodes, self.edges, self.events_and_node_types)
+        self.events = [self.event_node_type1, self.event_node_type2, self.event_node_type_both]
+        self.network = MetapopulationNetwork(self.compartments, self.nodes, self.edges, self.events)
 
     def test_add_node(self):
-        network = MetapopulationNetwork(['a'], [], [], {})
+        network = MetapopulationNetwork(['a'], [self.nodes[0]], [], [self.event_node_type1])
         node = Patch(0, ['a'])
         network.add_node(node)
         self.assertTrue(network.has_node(node))
@@ -61,11 +58,11 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
         self.assertEqual('Node 9 is not a Patch object', str(context.exception))
 
     def test_add_edge(self):
-        network = MetapopulationNetwork(['a'], [], [], {})
-        node = Patch(0, ['a'])
-        node2 = Patch(1, ['a'])
-        network.add_node(node)
-        network.add_node(node2)
+        node = self.nodes[0]
+        node2 = self.nodes[1]
+
+        network = MetapopulationNetwork(['a'], [node, node2], [], [self.event_node_type1])
+
         edge_data = {EDGE_TYPE: 'edge'}
         network.add_edge(node, node2, edge_data)
         self.assertTrue(network.has_edge(node, node2))
@@ -91,7 +88,7 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
         self.assertEqual(len(self.network.edges()), len(self.edges))
         for (u, v, data) in self.edges:
             self.assertTrue(self.network.has_edge(u, v))
-        self.assertItemsEqual(self.network.events, self.events_and_node_types.keys())
+        self.assertItemsEqual(self.network.events, self.events)
 
         self.assertItemsEqual(self.event_node_type1.nodes_impacted, self.nodes[0:5])
         self.assertItemsEqual(self.event_node_type2.nodes_impacted, self.nodes[5:10])

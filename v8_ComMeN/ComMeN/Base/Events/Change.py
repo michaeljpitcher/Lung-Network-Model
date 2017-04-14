@@ -19,10 +19,10 @@ __status__ = "Development"
 
 class Change(Event):
 
-    def __init__(self, probability, compartment_from, compartment_to):
+    def __init__(self, node_types, probability, compartment_from, compartment_to):
         self.compartment_from = compartment_from
         self.compartment_to = compartment_to
-        Event.__init__(self, probability)
+        Event.__init__(self, node_types, probability)
 
     def increment_from_node(self, node, network):
         return node.subpopulations[self.compartment_from]

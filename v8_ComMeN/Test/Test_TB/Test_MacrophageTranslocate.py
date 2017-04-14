@@ -33,8 +33,8 @@ class MacrophageTranslocateBronchusTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.bac= 'bac'
-        self.event_with_bac = MacrophageTranslocateBronchus(0.1, self.mac, False, self.bac)
-        self.event_no_bac = MacrophageTranslocateBronchus(0.1, self.mac, False, None)
+        self.event_with_bac = MacrophageTranslocateBronchus(None, 0.1, self.mac, False, self.bac)
+        self.event_no_bac = MacrophageTranslocateBronchus(None, 0.1, self.mac, False, None)
 
     def test_initialise(self):
         self.assertEqual(self.event_with_bac.bacteria_compartment_to_translocate, self.bac)
@@ -67,8 +67,8 @@ class MacrophageTranslocateLymphTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.bac= 'bac'
-        self.event_with_bac = MacrophageTranslocateLymph(0.1, self.mac, False, self.bac)
-        self.event_no_bac = MacrophageTranslocateLymph(0.1, self.mac, False, None)
+        self.event_with_bac = MacrophageTranslocateLymph(None, 0.1, self.mac, False, self.bac)
+        self.event_no_bac = MacrophageTranslocateLymph(None, 0.1, self.mac, False, None)
 
     def test_initialise(self):
         self.assertEqual(self.event_with_bac.bacteria_compartment_to_translocate, self.bac)
@@ -101,8 +101,8 @@ class MacrophageTranslocateBloodTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.bac= 'bac'
-        self.event_with_bac = MacrophageTranslocateBlood(0.1, self.mac, False, self.bac)
-        self.event_no_bac = MacrophageTranslocateBlood(0.1, self.mac, False, None)
+        self.event_with_bac = MacrophageTranslocateBlood(None, 0.1, self.mac, False, self.bac)
+        self.event_no_bac = MacrophageTranslocateBlood(None, 0.1, self.mac, False, None)
 
     def test_initialise(self):
         self.assertEqual(self.event_with_bac.bacteria_compartment_to_translocate, self.bac)

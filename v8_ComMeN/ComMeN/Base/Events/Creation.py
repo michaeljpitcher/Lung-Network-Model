@@ -19,9 +19,9 @@ __status__ = "Development"
 
 class Create(Event):
 
-    def __init__(self, probability, compartment_created):
+    def __init__(self, node_types, probability, compartment_created):
         self.compartment_created = compartment_created
-        Event.__init__(self, probability)
+        Event.__init__(self, node_types, probability)
 
     def increment_from_node(self, node, network):
         return 1
@@ -32,8 +32,8 @@ class Create(Event):
 
 class Replication(Create):
 
-    def __init__(self, probability, compartment_replicating):
-        Create.__init__(self, probability, compartment_replicating)
+    def __init__(self, node_types, probability, compartment_replicating):
+        Create.__init__(self, node_types, probability, compartment_replicating)
 
     def increment_from_node(self, node, network):
         return node.subpopulations[self.compartment_created]

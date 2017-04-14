@@ -19,9 +19,9 @@ __status__ = "Development"
 
 class RecruitmentBronchial(Create):
 
-    def __init__(self, probability, recruited_compartment, based_on_perfusion=True):
+    def __init__(self, node_types, probability, recruited_compartment, based_on_perfusion=True):
         self.based_on_perfusion = based_on_perfusion
-        Create.__init__(self, probability, recruited_compartment)
+        Create.__init__(self, node_types, probability, recruited_compartment)
 
     def increment_from_node(self, node, network):
         if self.based_on_perfusion:
@@ -32,9 +32,9 @@ class RecruitmentBronchial(Create):
 
 class RecruitmentBronchialByInfection(RecruitmentBronchial):
 
-    def __init__(self, probability, recruited_compartment, infection_compartments, based_on_perfusion=True):
+    def __init__(self, node_types, probability, recruited_compartment, infection_compartments, based_on_perfusion=True):
         self.infection_compartments = infection_compartments
-        RecruitmentBronchial.__init__(self, probability, recruited_compartment, based_on_perfusion)
+        RecruitmentBronchial.__init__(self, node_types, probability, recruited_compartment, based_on_perfusion)
 
     def increment_from_node(self, node, network):
         return RecruitmentBronchial.increment_from_node(self, node, network) * \
@@ -43,14 +43,14 @@ class RecruitmentBronchialByInfection(RecruitmentBronchial):
 
 class RecruitmentLymph(Create):
 
-    def __init__(self, probability, recruited_compartment):
-        Create.__init__(self, probability, recruited_compartment)
+    def __init__(self, node_types, probability, recruited_compartment):
+        Create.__init__(self, node_types, probability, recruited_compartment)
 
 
 class RecruitmentLymphByInfection(RecruitmentLymph):
-    def __init__(self, probability, recruited_compartment, infection_compartments):
+    def __init__(self, node_types, probability, recruited_compartment, infection_compartments):
         self.infection_compartments = infection_compartments
-        RecruitmentLymph.__init__(self, probability, recruited_compartment)
+        RecruitmentLymph.__init__(self, node_types, probability, recruited_compartment)
 
     def increment_from_node(self, node, network):
         return RecruitmentLymph.increment_from_node(self, node, network) * \

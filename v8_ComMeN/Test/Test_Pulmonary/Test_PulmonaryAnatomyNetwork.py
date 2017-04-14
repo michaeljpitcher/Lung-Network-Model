@@ -6,12 +6,12 @@ from v8_ComMeN.ComMeN.Pulmonary.Network.PulmonaryAnatomyNetwork import *
 class PulmonaryAnatomyNetworkTestCase(unittest.TestCase):
     def setUp(self):
         self.compartments = ['a']
-        self.nodes_event_types = {}
-        self.network_bronchial = PulmonaryAnatomyNetwork(self.compartments, self.nodes_event_types, True, STRAHLER,
+        self.events = [Event([BronchopulmonarySegment], 0.1)]
+        self.network_bronchial = PulmonaryAnatomyNetwork(self.compartments, self.events, True, STRAHLER,
                                                          False, False)
-        self.network_bronchial_lymphatic = PulmonaryAnatomyNetwork(self.compartments, self.nodes_event_types, True,
+        self.network_bronchial_lymphatic = PulmonaryAnatomyNetwork(self.compartments, self.events, True,
                                                                    STRAHLER, True, False)
-        self.network_bronchial_lymph_haem = PulmonaryAnatomyNetwork(self.compartments, self.nodes_event_types, True,
+        self.network_bronchial_lymph_haem = PulmonaryAnatomyNetwork(self.compartments, self.events, True,
                                                                     STRAHLER, True, True)
 
     def test_initialise(self):

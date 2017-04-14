@@ -19,5 +19,5 @@ __status__ = "Development"
 
 class BacteriaChangeByOxygen(ChangeByOxygen):
 
-    def __init__(self, probability, compartment_from, compartment_to, oxygen_high_to_change):
-        ChangeByOxygen.__init__(self, probability, compartment_from, compartment_to, oxygen_high_to_change)
+    def __init__(self, node_types, probability, compartment_from, compartment_to, oxygen_high_to_change):
+        ChangeByOxygen.__init__(self, node_types, probability, compartment_from, compartment_to, oxygen_high_to_change)

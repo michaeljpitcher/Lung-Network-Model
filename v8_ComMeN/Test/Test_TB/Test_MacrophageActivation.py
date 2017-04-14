@@ -10,8 +10,8 @@ class MacrophageActivationTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.bac_int = 'bac_i'
-        self.event_no_bac = MacrophageActivation(0.1, self.mac_reg, self.mac_act)
-        self.event_with_bac = MacrophageActivation(0.1, self.mac_reg, self.mac_act, self.bac_int)
+        self.event_no_bac = MacrophageActivation(None, 0.1, self.mac_reg, self.mac_act)
+        self.event_with_bac = MacrophageActivation(None, 0.1, self.mac_reg, self.mac_act, self.bac_int)
 
     def test_initialise(self):
         self.assertEqual(self.event_no_bac.bacteria_compartment_destroy, None)
@@ -45,7 +45,7 @@ class MacrophageActivationByInfectionTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.inf_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageActivationByInfection(0.1, self.mac_reg, self.mac_act, self.inf_comps)
+        self.event = MacrophageActivationByInfection(None, 0.1, self.mac_reg, self.mac_act, self.inf_comps)
 
     def test_initialise(self):
         self.assertItemsEqual(self.event.infection_compartments, self.inf_comps)
@@ -67,7 +67,7 @@ class MacrophageActivationByTCellTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.t_cell_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageActivationByTCell(0.1, self.mac_reg, self.mac_act, self.t_cell_comps)
+        self.event = MacrophageActivationByTCell(None, 0.1, self.mac_reg, self.mac_act, self.t_cell_comps)
 
     def test_initialise(self):
         self.assertItemsEqual(self.event.t_cell_compartments, self.t_cell_comps)
@@ -89,7 +89,7 @@ class MacrophageDeactivationByLackOfInfectionTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.inf_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageDeactivationByLackOfInfection(0.1, self.mac_act, self.mac_reg, self.inf_comps)
+        self.event = MacrophageDeactivationByLackOfInfection(None, 0.1, self.mac_act, self.mac_reg, self.inf_comps)
 
     def test_initialise(self):
         self.assertItemsEqual(self.event.infection_compartments, self.inf_comps)

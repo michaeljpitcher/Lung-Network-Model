@@ -27,10 +27,10 @@ def move_bacteria(node, neighbour, bac_compartment, mac_compartment):
 
 class MacrophageTranslocateBronchus(TranslocateBronchus):
 
-    def __init__(self, probability, macrophage_compartment, edge_choice_based_on_weight=False,
+    def __init__(self, node_types, probability, macrophage_compartment, edge_choice_based_on_weight=False,
                  bacteria_compartment_to_translocate=None):
         self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
-        TranslocateBronchus.__init__(self, probability, macrophage_compartment, edge_choice_based_on_weight)
+        TranslocateBronchus.__init__(self, node_types, probability, macrophage_compartment, edge_choice_based_on_weight)
 
     def move(self, node, neighbour):
         if self.bacteria_compartment_to_translocate is not None:
@@ -40,10 +40,10 @@ class MacrophageTranslocateBronchus(TranslocateBronchus):
 
 class MacrophageTranslocateLymph(TranslocateLymph):
 
-    def __init__(self, probability, macrophage_compartment, direction_only=True,
+    def __init__(self, node_types, probability, macrophage_compartment, direction_only=True,
                  bacteria_compartment_to_translocate=None):
         self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
-        TranslocateLymph.__init__(self, probability, macrophage_compartment, direction_only)
+        TranslocateLymph.__init__(self, node_types, probability, macrophage_compartment, direction_only)
 
     def move(self, node, neighbour):
         if self.bacteria_compartment_to_translocate is not None:
@@ -53,10 +53,10 @@ class MacrophageTranslocateLymph(TranslocateLymph):
 
 class MacrophageTranslocateBlood(TranslocateBlood):
 
-    def __init__(self, probability, macrophage_compartment, direction_only=True,
+    def __init__(self, node_types, probability, macrophage_compartment, direction_only=True,
                  bacteria_compartment_to_translocate=None):
         self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
-        TranslocateBlood.__init__(self, probability, macrophage_compartment, direction_only)
+        TranslocateBlood.__init__(self, node_types, probability, macrophage_compartment, direction_only)
 
     def move(self, node, neighbour):
         if self.bacteria_compartment_to_translocate is not None:

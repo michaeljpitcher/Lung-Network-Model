@@ -19,10 +19,10 @@ __status__ = "Development"
 
 class Translocate(Event):
 
-    def __init__(self, probability, translocate_compartment, edge_type):
+    def __init__(self, node_types, probability, translocate_compartment, edge_type):
         self.translocate_compartment = translocate_compartment
         self.edge_type = edge_type
-        Event.__init__(self, probability)
+        Event.__init__(self, node_types, probability)
 
     def increment_from_node(self, node, network):
         edges = self.viable_edges(node, network)

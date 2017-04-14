@@ -7,7 +7,7 @@ class CreationTestCase(unittest.TestCase):
     def setUp(self):
         self.probability = 0.1
         self.compartment = 'a'
-        self.event = Create(self.probability, self.compartment)
+        self.event = Create(None, self.probability, self.compartment)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_created, self.compartment)
@@ -25,7 +25,7 @@ class ReplicationTestCase(unittest.TestCase):
     def setUp(self):
         self.probability = 0.1
         self.compartment = 'a'
-        self.event = Replication(self.probability, self.compartment)
+        self.event = Replication(None, self.probability, self.compartment)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_created, self.compartment)

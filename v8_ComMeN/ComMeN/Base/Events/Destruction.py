@@ -19,9 +19,9 @@ __status__ = "Development"
 
 class Destroy(Event):
 
-    def __init__(self, probability, compartment_destroyed):
+    def __init__(self, node_types, probability, compartment_destroyed):
         self.compartment_destroyed = compartment_destroyed
-        Event.__init__(self, probability)
+        Event.__init__(self, node_types, probability)
 
     def increment_from_node(self, node, network):
         return node.subpopulations[self.compartment_destroyed]

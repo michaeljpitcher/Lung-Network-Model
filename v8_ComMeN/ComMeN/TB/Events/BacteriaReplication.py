@@ -19,5 +19,5 @@ __status__ = "Development"
 
 class BacteriaReplication(Replication):
 
-    def __init__(self, probability, bacteria_compartment):
-        Replication.__init__(self, probability, bacteria_compartment)
+    def __init__(self, node_types, probability, bacteria_compartment):
+        Replication.__init__(self, node_types, probability, bacteria_compartment)

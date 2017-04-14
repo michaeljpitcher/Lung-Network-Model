@@ -18,20 +18,22 @@ __status__ = "Development"
 
 
 class TCellRecruitmentBronchial(RecruitmentBronchial):
-    def __init__(self, probability, t_cell_compartment, based_on_perfusion=True):
-        RecruitmentBronchial.__init__(self, probability, t_cell_compartment, based_on_perfusion)
+    def __init__(self, node_types, probability, t_cell_compartment, based_on_perfusion=True):
+        RecruitmentBronchial.__init__(self, node_types, probability, t_cell_compartment, based_on_perfusion)
 
 
 class TCellRecruitmentBronchialByInfection(RecruitmentBronchialByInfection):
-    def __init__(self, probability, t_cell_recruited_compartment, infection_compartments, based_on_perfusion=True):
-        RecruitmentBronchialByInfection.__init__(self, probability, t_cell_recruited_compartment, based_on_perfusion)
+    def __init__(self, node_types, probability, t_cell_recruited_compartment, infection_compartments,
+                 based_on_perfusion=True):
+        RecruitmentBronchialByInfection.__init__(self, node_types, probability, t_cell_recruited_compartment,
+                                                 infection_compartments, based_on_perfusion)
 
 
 class TCellRecruitmentLymph(RecruitmentLymph):
-    def __init__(self, probability, t_cell_compartment):
-        RecruitmentLymph.__init__(self, probability, t_cell_compartment)
+    def __init__(self, node_types, probability, t_cell_compartment):
+        RecruitmentLymph.__init__(self, node_types, probability, t_cell_compartment)
 
 
 class TCellRecruitmentLymphByInfection(RecruitmentLymphByInfection):
-    def __init__(self, probability, t_cell_compartment, infection_compartments):
-        RecruitmentLymphByInfection.__init__(self, probability, t_cell_compartment)
+    def __init__(self, node_types, probability, t_cell_compartment, infection_compartments):
+        RecruitmentLymphByInfection.__init__(self, node_types, probability, t_cell_compartment, infection_compartments)

@@ -9,8 +9,8 @@ class PulmonaryChangeTestCase(unittest.TestCase):
     def setUp(self):
         self.comp_from = 'a'
         self.comp_to = 'b'
-        self.event_high = ChangeByOxygen(0.1, self.comp_from, self.comp_to, True)
-        self.event_low = ChangeByOxygen(0.1, self.comp_from, self.comp_to, False)
+        self.event_high = ChangeByOxygen(None, 0.1, self.comp_from, self.comp_to, True)
+        self.event_low = ChangeByOxygen(None, 0.1, self.comp_from, self.comp_to, False)
 
     def test_initialise(self):
         high_node = BronchopulmonarySegment(0, [self.comp_from, self.comp_to], 0.3, 0.1, (8, 8))

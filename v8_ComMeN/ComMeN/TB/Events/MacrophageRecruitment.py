@@ -18,22 +18,22 @@ __status__ = "Development"
 
 
 class MacrophageRecruitmentBronchial(RecruitmentBronchial):
-    def __init__(self, probability, macrophage_compartment, based_on_perfusion=True):
-        RecruitmentBronchial.__init__(self, probability, macrophage_compartment, based_on_perfusion)
+    def __init__(self, node_types, probability, macrophage_compartment, based_on_perfusion=True):
+        RecruitmentBronchial.__init__(self, node_types, probability, macrophage_compartment, based_on_perfusion)
 
 
 class MacrophageRecruitmentBronchialByInfection(RecruitmentBronchialByInfection):
-    def __init__(self, probability, macrophage_recruited_compartment, infection_compartments, based_on_perfusion=True):
-        RecruitmentBronchialByInfection.__init__(self, probability, macrophage_recruited_compartment,
+    def __init__(self, node_types, probability, macrophage_recruited_compartment, infection_compartments, based_on_perfusion=True):
+        RecruitmentBronchialByInfection.__init__(self, node_types, probability, macrophage_recruited_compartment,
                                                  infection_compartments, based_on_perfusion)
 
 
 class MacrophageRecruitmentLymph(RecruitmentLymph):
-    def __init__(self, probability, macrophage_compartment):
-        RecruitmentLymph.__init__(self, probability, macrophage_compartment)
+    def __init__(self, node_types, probability, macrophage_compartment):
+        RecruitmentLymph.__init__(self, node_types, probability, macrophage_compartment)
 
 
 class MacrophageRecruitmentLymphByInfection(RecruitmentLymphByInfection):
-    def __init__(self, probability, macrophage_recruited_compartment, infection_compartments):
-        RecruitmentLymphByInfection.__init__(self, probability, infection_compartments,
+    def __init__(self, node_types, probability, macrophage_recruited_compartment, infection_compartments):
+        RecruitmentLymphByInfection.__init__(self, node_types, probability, infection_compartments,
                                              macrophage_recruited_compartment)

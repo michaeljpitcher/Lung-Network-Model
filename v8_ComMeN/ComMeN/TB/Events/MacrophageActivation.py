@@ -19,10 +19,10 @@ __status__ = "Development"
 
 class MacrophageActivation(Change):
 
-    def __init__(self, probability, macrophage_compartment_from, macrophage_compartment_to,
+    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
                  bacteria_compartment_destroy=None):
         self.bacteria_compartment_destroy = bacteria_compartment_destroy
-        Change.__init__(self, probability, macrophage_compartment_from, macrophage_compartment_to)
+        Change.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to)
 
     def update_node(self, node, network):
         if self.bacteria_compartment_destroy is not None:
@@ -34,10 +34,10 @@ class MacrophageActivation(Change):
 
 class MacrophageActivationByInfection(MacrophageActivation):
 
-    def __init__(self, probability, macrophage_compartment_from, macrophage_compartment_to, infection_compartments,
+    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to, infection_compartments,
                  bacteria_compartment_destroy=None):
         self.infection_compartments = infection_compartments
-        MacrophageActivation.__init__(self, probability, macrophage_compartment_from, macrophage_compartment_to,
+        MacrophageActivation.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
                                       bacteria_compartment_destroy)
 
     def increment_from_node(self, node, network):
@@ -47,10 +47,10 @@ class MacrophageActivationByInfection(MacrophageActivation):
 
 class MacrophageActivationByTCell(MacrophageActivation):
 
-    def __init__(self, probability, macrophage_compartment_from, macrophage_compartment_to, t_cell_compartments,
+    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to, t_cell_compartments,
                  bacteria_compartment_destroy=None):
         self.t_cell_compartments = t_cell_compartments
-        MacrophageActivation.__init__(self, probability, macrophage_compartment_from, macrophage_compartment_to,
+        MacrophageActivation.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
                                       bacteria_compartment_destroy)
 
     def increment_from_node(self, node, network):
@@ -60,15 +60,15 @@ class MacrophageActivationByTCell(MacrophageActivation):
 
 class MacrophageDeactivation(Change):
 
-    def __init__(self, probability, macrophage_compartment_from, macrophage_compartment_to):
-        Change.__init__(self, probability, macrophage_compartment_from, macrophage_compartment_to)
+    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to):
+        Change.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to)
 
 
 class MacrophageDeactivationByLackOfInfection(MacrophageDeactivation):
 
-    def __init__(self, probability, macrophage_compartment_from, macrophage_compartment_to, infection_compartments):
+    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to, infection_compartments):
         self.infection_compartments = infection_compartments
-        MacrophageDeactivation.__init__(self, probability, macrophage_compartment_from, macrophage_compartment_to)
+        MacrophageDeactivation.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to)
 
     def increment_from_node(self, node, network):
         # TODO - check this: epsilon = low number

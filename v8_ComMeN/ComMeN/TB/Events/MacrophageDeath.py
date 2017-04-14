@@ -20,14 +20,14 @@ __status__ = "Development"
 
 class MacrophageDeathRegular(Destroy):
 
-    def __init__(self, probability, macrophage_compartment, internal_bacteria_compartment=None,
+    def __init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment=None,
                  bacteria_release_compartment_to=None):
         if bacteria_release_compartment_to is not None:
             assert internal_bacteria_compartment is not None, \
                 "Cannot release bacteria without providing a compartment for them to be released from"
         self.internal_bacteria_compartment = internal_bacteria_compartment
         self.bacteria_release_compartment_to = bacteria_release_compartment_to
-        Destroy.__init__(self, probability, macrophage_compartment)
+        Destroy.__init__(self, node_types, probability, macrophage_compartment)
 
     def update_node(self, node, network):
         # Check if there is bacteria inside
@@ -43,11 +43,11 @@ class MacrophageDeathRegular(Destroy):
 
 class MacrophageDeathByTCell(MacrophageDeathRegular):
 
-    def __init__(self, probability, macrophage_compartment, t_cell_compartment, destroy_t_cell=True,
+    def __init__(self, node_types, probability, macrophage_compartment, t_cell_compartment, destroy_t_cell=True,
                  internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
         self.t_cell_compartment = t_cell_compartment
         self.destroy_t_cell = destroy_t_cell
-        MacrophageDeathRegular.__init__(self, probability, macrophage_compartment, internal_bacteria_compartment,
+        MacrophageDeathRegular.__init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment,
                                         bacteria_release_compartment_to)
 
     def increment_from_node(self, node, network):
@@ -62,10 +62,10 @@ class MacrophageDeathByTCell(MacrophageDeathRegular):
 
 class MacrophageDeathByInfection(MacrophageDeathRegular):
 
-    def __init__(self, probability, macrophage_compartment, infection_compartments,
+    def __init__(self, node_types, probability, macrophage_compartment, infection_compartments,
                  internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
         self.infection_compartments = infection_compartments
-        MacrophageDeathRegular.__init__(self, probability, macrophage_compartment, internal_bacteria_compartment,
+        MacrophageDeathRegular.__init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment,
                                         bacteria_release_compartment_to)
 
     def increment_from_node(self, node, network):

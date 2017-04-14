@@ -19,12 +19,12 @@ __status__ = "Development"
 
 class MacrophageIngestBacteria(Destroy):
 
-    def __init__(self, probability, macrophage_compartment, bacteria_compartment, macrophage_change_compartment=None,
+    def __init__(self, node_types, probability, macrophage_compartment, bacteria_compartment, macrophage_change_compartment=None,
                  bacteria_change_compartment=None):
         self.macrophage_compartment = macrophage_compartment
         self.macrophage_change_compartment = macrophage_change_compartment
         self.bacteria_change_compartment = bacteria_change_compartment
-        Destroy.__init__(self, probability, bacteria_compartment)
+        Destroy.__init__(self, node_types, probability, bacteria_compartment)
 
     def increment_from_node(self, node, network):
         return node.subpopulations[self.macrophage_compartment] * Destroy.increment_from_node(self, node, network)
@@ -42,11 +42,11 @@ class MacrophageIngestBacteria(Destroy):
 
 class MacrophageDestroyInternalBacteria(Destroy):
 
-    def __init__(self, probability, macrophage_compartment, bacteria_compartment, healed_macrophage_compartment):
+    def __init__(self, node_types, probability, macrophage_compartment, bacteria_compartment, healed_macrophage_compartment):
         self.macrophage_compartment = macrophage_compartment
         # Compartment to return macrophage to if it destroys its last bacteria
         self.healed_macrophage_compartment = healed_macrophage_compartment
-        Destroy.__init__(self, probability, bacteria_compartment)
+        Destroy.__init__(self, node_types, probability, bacteria_compartment)
 
     def increment_from_node(self, node, network):
         # TODO - this isn't dependent on bacterial loads, check validity

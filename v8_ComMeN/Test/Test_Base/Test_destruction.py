@@ -6,7 +6,7 @@ from v8_ComMeN.ComMeN.Base.Node.Patch import *
 class DestroyTestCase(unittest.TestCase):
     def setUp(self):
         self.compartment = 'a'
-        self.event = Destroy(0.1, self.compartment)
+        self.event = Destroy(None, 0.1, self.compartment)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_destroyed, self.compartment)

@@ -19,7 +19,8 @@ __status__ = "Development"
 
 class Event:
 
-    def __init__(self, probability):
+    def __init__(self, node_types, probability):
+        self.node_types = node_types
         self.probability = probability
         self.total = 0
         self.rate = 0

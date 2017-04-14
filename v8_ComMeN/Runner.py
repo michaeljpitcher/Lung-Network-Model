@@ -21,7 +21,7 @@ __status__ = "Development"
 
 seeding = {30:{BACTERIA: 10, MACROPHAGE: 40}}
 m = TBModelBasic(seeding, 0.6, 0.01)
-m.run(10)
+m.run(10, 999)
 
 for n in m.nodes():
     print n.node_id, n.subpopulations
