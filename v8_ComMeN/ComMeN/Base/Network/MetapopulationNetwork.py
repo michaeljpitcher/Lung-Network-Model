@@ -62,10 +62,6 @@ class MetapopulationNetwork(nx.Graph):
                 node.update_subpopulation(compartment, value)
 
     def add_node(self, n, attr_dict=None, **attr):
-
-        if not isinstance(n, Patch):
-            print "TEST"
-
         assert isinstance(n, Patch), "Node {0} is not a Patch object".format(n)
         nx.Graph.add_node(self, n)
 
@@ -83,7 +79,7 @@ class MetapopulationNetwork(nx.Graph):
         # else:
         #     v.neighbours[EDGE_TYPE] = [u]
 
-    def run(self, time_limit=0, run_id=None):
+    def run(self, time_limit=0, run_id=None, output=True):
         csv_file = None
         csv_writer = None
 
@@ -95,7 +91,8 @@ class MetapopulationNetwork(nx.Graph):
             self.record_data(csv_writer)
 
         while self.time < time_limit:
-            self.timestep_print()
+            if output:
+                self.timestep_print()
             for e in self.events:
                 e.update_rate(self)
             total_rate = sum([e.rate for e in self.events])
@@ -119,7 +116,8 @@ class MetapopulationNetwork(nx.Graph):
             self.time += dt
             if run_id is not None:
                 self.record_data(csv_writer)
-        self.timestep_print()
+        if output:
+            self.timestep_print()
         if run_id is not None:
             csv_file.close()
 
