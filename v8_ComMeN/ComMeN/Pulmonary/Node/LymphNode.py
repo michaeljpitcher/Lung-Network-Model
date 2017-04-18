@@ -21,3 +21,6 @@ class LymphNode(LungPatch):
 
     def __init__(self, node_id, compartments, position, drugs=None):
         LungPatch.__init__(self, node_id, compartments, position, drugs)
+
+    def __str__(self):
+        return "LymphNode {" + str(self.node_id) + "}"

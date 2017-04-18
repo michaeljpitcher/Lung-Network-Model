@@ -25,3 +25,6 @@ class LungPatch(Patch):
             for drug in drugs:
                 self.chemotherapy[drug] = 0.0
         Patch.__init__(self, node_id, compartments, position)
+
+    def str(self):
+        return "Lung Patch {" + str(self.node_id) + "}"

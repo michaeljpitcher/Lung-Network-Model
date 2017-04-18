@@ -29,3 +29,6 @@ class BronchopulmonarySegment(LungPatch):
             self.oxygen_tension = 0.0000000001
         else:
             self.oxygen_tension = self.ventilation - self.perfusion
+
+    def __str__(self):
+        return "BronchopulmonarySegment {" + str(self.node_id) + "}"
