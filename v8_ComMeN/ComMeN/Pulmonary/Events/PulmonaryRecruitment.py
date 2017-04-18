@@ -30,15 +30,15 @@ class RecruitmentBronchial(Create):
             return Create.increment_from_node(self, node, network)
 
 
-class RecruitmentBronchialByInfection(RecruitmentBronchial):
+class RecruitmentBronchialByExternals(RecruitmentBronchial):
 
-    def __init__(self, node_types, probability, recruited_compartment, infection_compartments, based_on_perfusion=True):
-        self.infection_compartments = infection_compartments
+    def __init__(self, node_types, probability, recruited_compartment, external_compartments, based_on_perfusion=True):
+        self.external_compartments = external_compartments
         RecruitmentBronchial.__init__(self, node_types, probability, recruited_compartment, based_on_perfusion)
 
     def increment_from_node(self, node, network):
         return RecruitmentBronchial.increment_from_node(self, node, network) * \
-               sum([node.subpopulations[c] for c in self.infection_compartments])
+               sum([node.subpopulations[c] for c in self.external_compartments])
 
 
 class RecruitmentLymph(Create):
@@ -47,11 +47,11 @@ class RecruitmentLymph(Create):
         Create.__init__(self, node_types, probability, recruited_compartment)
 
 
-class RecruitmentLymphByInfection(RecruitmentLymph):
-    def __init__(self, node_types, probability, recruited_compartment, infection_compartments):
-        self.infection_compartments = infection_compartments
+class RecruitmentLymphByExternals(RecruitmentLymph):
+    def __init__(self, node_types, probability, recruited_compartment, external_compartments):
+        self.external_compartments = external_compartments
         RecruitmentLymph.__init__(self, node_types, probability, recruited_compartment)
 
     def increment_from_node(self, node, network):
         return RecruitmentLymph.increment_from_node(self, node, network) * \
-               sum([node.subpopulations[c] for c in self.infection_compartments])
+               sum([node.subpopulations[c] for c in self.external_compartments])
