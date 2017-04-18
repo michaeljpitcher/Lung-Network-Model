@@ -29,7 +29,6 @@ class BronchialTreeNode(LungPatch):
             self.oxygen_tension = 0.0000000001
         else:
             self.oxygen_tension = self.ventilation - self.perfusion
-        self.chemotherapy = dict()
 
     def __str__(self):
         return "BronchialTreeNode {" + str(self.node_id) + "}"
