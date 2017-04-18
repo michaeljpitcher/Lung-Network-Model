@@ -18,7 +18,7 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class MacrophageDeathRegular(Destroy):
+class MacrophageDeath(Destroy):
 
     def __init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment=None,
                  bacteria_release_compartment_to=None):
@@ -41,33 +41,21 @@ class MacrophageDeathRegular(Destroy):
         Destroy.update_node(self, node, network)
 
 
-class MacrophageDeathByTCell(MacrophageDeathRegular):
+class MacrophageDeathByExternals(MacrophageDeath):
 
-    def __init__(self, node_types, probability, macrophage_compartment, t_cell_compartment, destroy_t_cell=True,
-                 internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
-        self.t_cell_compartment = t_cell_compartment
-        self.destroy_t_cell = destroy_t_cell
-        MacrophageDeathRegular.__init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment,
-                                        bacteria_release_compartment_to)
+    def __init__(self, node_types, probability, macrophage_compartment, external_compartments,
+                 externals_to_destroy=None, internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
+        self.external_compartments = external_compartments
+        self.externals_to_destroy = externals_to_destroy
+        MacrophageDeath.__init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment,
+                                 bacteria_release_compartment_to)
 
     def increment_from_node(self, node, network):
-        return MacrophageDeathRegular.increment_from_node(self, node, network) * \
-               node.subpopulations[self.t_cell_compartment]
+        return MacrophageDeath.increment_from_node(self, node, network) * sum([node.subpopulations[c] for c in
+                                                                       self.external_compartments])
 
     def update_node(self, node, network):
-        MacrophageDeathRegular.update_node(self, node, network)
-        if self.destroy_t_cell:
-            node.update_subpopulation(self.t_cell_compartment, -1)
-
-
-class MacrophageDeathByInfection(MacrophageDeathRegular):
-
-    def __init__(self, node_types, probability, macrophage_compartment, infection_compartments,
-                 internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
-        self.infection_compartments = infection_compartments
-        MacrophageDeathRegular.__init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment,
-                                        bacteria_release_compartment_to)
-
-    def increment_from_node(self, node, network):
-        return node.subpopulations[self.compartment_destroyed] * sum([node.subpopulations[c] for c in
-                                                                       self.infection_compartments])
+        MacrophageDeath.update_node(self, node, network)
+        if self.externals_to_destroy:
+            for c in self.externals_to_destroy:
+                node.update_subpopulation(c, -1)

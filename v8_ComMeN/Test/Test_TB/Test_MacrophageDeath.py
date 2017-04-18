@@ -9,8 +9,8 @@ class MacrophageDeathRegularTestCase(unittest.TestCase):
         self.mac = 'mac'
         self.bac_int = "bac_i"
         self.bac_ext = 'bac_e'
-        self.event_bac_release = MacrophageDeathRegular(None, 0.1, self.mac, self.bac_int, self.bac_ext)
-        self.event_no_bac_release = MacrophageDeathRegular(None, 0.1, self.mac)
+        self.event_bac_release = MacrophageDeath(None, 0.1, self.mac, self.bac_int, self.bac_ext)
+        self.event_no_bac_release = MacrophageDeath(None, 0.1, self.mac)
 
     def test_initialise(self):
         self.assertEqual(self.event_bac_release.internal_bacteria_compartment, self.bac_int)
@@ -19,7 +19,7 @@ class MacrophageDeathRegularTestCase(unittest.TestCase):
         self.assertEqual(self.event_no_bac_release.bacteria_release_compartment_to, None)
 
         with self.assertRaises(AssertionError) as context:
-            event = MacrophageDeathRegular(None, 0.1, self.mac, bacteria_release_compartment_to=self.bac_ext)
+            event = MacrophageDeath(None, 0.1, self.mac, bacteria_release_compartment_to=self.bac_ext)
         self.assertEqual('Cannot release bacteria without providing a compartment for them to be released from',
                          str(context.exception))
 

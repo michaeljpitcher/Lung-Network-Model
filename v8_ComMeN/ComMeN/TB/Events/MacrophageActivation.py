@@ -32,49 +32,32 @@ class MacrophageActivation(Change):
         Change.update_node(self, node, network)
 
 
-class MacrophageActivationByInfection(MacrophageActivation):
+class MacrophageActivationByExternals(MacrophageActivation):
 
-    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to, infection_compartments,
-                 bacteria_compartment_destroy=None):
-        self.infection_compartments = infection_compartments
-        MacrophageActivation.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
-                                      bacteria_compartment_destroy)
-
-    def increment_from_node(self, node, network):
-        return MacrophageActivation.increment_from_node(self, node, network) * \
-               sum([node.subpopulations[c] for c in self.infection_compartments])
-
-
-class MacrophageActivationByTCell(MacrophageActivation):
-
-    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to, t_cell_compartments,
-                 bacteria_compartment_destroy=None):
-        self.t_cell_compartments = t_cell_compartments
-        MacrophageActivation.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
-                                      bacteria_compartment_destroy)
+    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
+                 external_compartments, bacteria_compartment_destroy=None):
+        self.external_compartments = external_compartments
+        MacrophageActivation.__init__(self, node_types, probability, macrophage_compartment_from,
+                                      macrophage_compartment_to, bacteria_compartment_destroy)
 
     def increment_from_node(self, node, network):
         return MacrophageActivation.increment_from_node(self, node, network) * \
-               sum([node.subpopulations[c] for c in self.t_cell_compartments])
+               sum([node.subpopulations[c] for c in self.external_compartments])
 
 
-class MacrophageDeactivation(Change):
+class MacrophageDeactivationByLackOfExternals(Change):
 
-    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to):
-        Change.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to)
-
-
-class MacrophageDeactivationByLackOfInfection(MacrophageDeactivation):
-
-    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to, infection_compartments):
-        self.infection_compartments = infection_compartments
-        MacrophageDeactivation.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to)
+    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
+                 external_compartments):
+        self.external_compartments = external_compartments
+        Change.__init__(self, node_types, probability, macrophage_compartment_from,
+                                        macrophage_compartment_to)
 
     def increment_from_node(self, node, network):
         # TODO - check this: epsilon = low number
         epsilon = 0.00000001
-        number_infection = sum([node.subpopulations[c] for c in self.infection_compartments])
-        if number_infection == 0:
-            return MacrophageDeactivation.increment_from_node(self, node, network) * (1 / epsilon)
+        number_externals = sum([node.subpopulations[c] for c in self.external_compartments])
+        if number_externals == 0:
+            return Change.increment_from_node(self, node, network) * (1 / epsilon)
         else:
-            return MacrophageDeactivation.increment_from_node(self, node, network) * (1 / number_infection)
+            return Change.increment_from_node(self, node, network) * (1 / number_externals)

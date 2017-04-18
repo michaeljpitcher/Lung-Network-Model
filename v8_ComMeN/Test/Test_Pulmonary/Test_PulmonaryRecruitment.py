@@ -27,8 +27,8 @@ class RecruitmentBronchialByInfectionTestCase(unittest.TestCase):
     def setUp(self):
         self.comp = 'comp'
         self.infect_comps = ['inf_1', 'inf_2']
-        self.event = RecruitmentBronchialByInfection(None, 0.1, self.comp, self.infect_comps)
-        self.event_not_perfusion = RecruitmentBronchialByInfection(None, 0.1, self.comp, self.infect_comps, False)
+        self.event = RecruitmentBronchialByExternals(None, 0.1, self.comp, self.infect_comps)
+        self.event_not_perfusion = RecruitmentBronchialByExternals(None, 0.1, self.comp, self.infect_comps, False)
 
     def test_increment_from_node(self):
         node = BronchopulmonarySegment(0, [self.comp] + self.infect_comps, 0.0, 0.5, (8, 8))
@@ -58,7 +58,7 @@ class RecruitmentLymphByInfectionTestCase(unittest.TestCase):
     def setUp(self):
         self.comp = 'comp'
         self.infect_comps = ['inf_1', 'inf_2']
-        self.event = RecruitmentLymphByInfection(None, 0.1, self.comp, self.infect_comps)
+        self.event = RecruitmentLymphByExternals(None, 0.1, self.comp, self.infect_comps)
 
     def test_increment_from_node(self):
         node = LymphNode(0, [self.comp] + self.infect_comps, (8, 8))
