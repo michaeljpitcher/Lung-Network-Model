@@ -41,9 +41,17 @@ class TranslocateBronchus(Translocate):
 
 class TranslocateLymph(Translocate):
 
-    def __init__(self, node_types, probability, translocate_compartment, direction_only=True):
+    def __init__(self, node_types, probability, translocate_compartment, direction_only=True, flow_based=True):
         self.direction_only = direction_only
+        self.flow_based = flow_based
         Translocate.__init__(self, node_types, probability, translocate_compartment, LYMPHATIC_VESSEL)
+
+    def increment_from_node(self, node, network):
+        if self.flow_based:
+            edges = self.viable_edges(node, network)
+            return node.subpopulations[self.translocate_compartment] * sum([data[FLOW_RATE] for _,data in edges])
+        else:
+            return Translocate.increment_from_node(self, node, network)
 
     def viable_edges(self, node, network):
         edges = Translocate.viable_edges(self, node, network)
