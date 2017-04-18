@@ -46,12 +46,12 @@ class MacrophageDeathByTCellTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.tcell = 'tcell'
-        self.event_destroy = MacrophageDeathByTCell(None, 0.1, self.mac, self.tcell)
-        self.event_not_destroy = MacrophageDeathByTCell(None, 0.1, self.mac, self.tcell, False)
+        self.event_destroy = MacrophageDeathByExternals(None, 0.1, self.mac, [self.tcell], [self.tcell])
+        self.event_not_destroy = MacrophageDeathByExternals(None, 0.1, self.mac, [self.tcell])
 
     def test_initialise(self):
-        self.assertTrue(self.event_destroy.destroy_t_cell)
-        self.assertFalse(self.event_not_destroy.destroy_t_cell)
+        self.assertItemsEqual(self.event_destroy.externals_to_destroy, [self.tcell])
+        self.assertFalse(self.event_not_destroy.externals_to_destroy)
 
     def test_increment_from_node(self):
         node = Patch(0, [self.mac, self.tcell])
@@ -82,10 +82,10 @@ class MacrophageDeathByInfectionTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.infection_comps = ['inf_1', 'inf_2']
-        self.event = MacrophageDeathByInfection(None, 0.1, self.mac, self.infection_comps)
+        self.event = MacrophageDeathByExternals(None, 0.1, self.mac, self.infection_comps)
 
     def test_initialise(self):
-        self.assertItemsEqual(self.event.infection_compartments, self.infection_comps)
+        self.assertItemsEqual(self.event.external_compartments, self.infection_comps)
 
     def test_increment_from_node(self):
         node = Patch(0, [self.mac] + self.infection_comps)

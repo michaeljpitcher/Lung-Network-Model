@@ -39,38 +39,16 @@ class MacrophageActivationTestCase(unittest.TestCase):
         self.assertEqual(node.subpopulations[self.bac_int], 100 - (100/10))
 
 
-class MacrophageActivationByInfectionTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self.mac_reg = 'mac_a'
-        self.mac_act = 'mac_b'
-        self.inf_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageActivationByInfection(None, 0.1, self.mac_reg, self.mac_act, self.inf_comps)
-
-    def test_initialise(self):
-        self.assertItemsEqual(self.event.infection_compartments, self.inf_comps)
-
-    def test_increment_from_node(self):
-        node = Patch(0, [self.mac_reg, self.mac_act] + self.inf_comps)
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
-        node.update_subpopulation(self.mac_reg, 10)
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
-        node.update_subpopulation(self.inf_comps[0], 1)
-        self.assertEqual(self.event.increment_from_node(node, None), 10 * 1)
-        node.update_subpopulation(self.inf_comps[1], 2)
-        self.assertEqual(self.event.increment_from_node(node, None), 10 * (1+2))
-
-
 class MacrophageActivationByTCellTestCase(unittest.TestCase):
 
     def setUp(self):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.t_cell_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageActivationByTCell(None, 0.1, self.mac_reg, self.mac_act, self.t_cell_comps)
+        self.event = MacrophageActivationByExternals(None, 0.1, self.mac_reg, self.mac_act, self.t_cell_comps)
 
     def test_initialise(self):
-        self.assertItemsEqual(self.event.t_cell_compartments, self.t_cell_comps)
+        self.assertItemsEqual(self.event.external_compartments, self.t_cell_comps)
 
     def test_increment_from_node(self):
         node = Patch(0, [self.mac_reg, self.mac_act] + self.t_cell_comps)
@@ -89,10 +67,10 @@ class MacrophageDeactivationByLackOfInfectionTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.inf_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageDeactivationByLackOfInfection(None, 0.1, self.mac_act, self.mac_reg, self.inf_comps)
+        self.event = MacrophageDeactivationByLackOfExternals(None, 0.1, self.mac_act, self.mac_reg, self.inf_comps)
 
     def test_initialise(self):
-        self.assertItemsEqual(self.event.infection_compartments, self.inf_comps)
+        self.assertItemsEqual(self.event.external_compartments, self.inf_comps)
 
     def test_increment_from_node(self):
         node = Patch(0, [self.mac_reg, self.mac_act] + self.inf_comps)
