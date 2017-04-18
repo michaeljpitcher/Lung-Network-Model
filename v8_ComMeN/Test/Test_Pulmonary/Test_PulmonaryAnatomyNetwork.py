@@ -69,7 +69,14 @@ class PulmonaryAnatomyNetworkTestCase(unittest.TestCase):
         for (u, v) in LYMPH_EDGES:
             self.assertTrue((u, v) in actual_lymph_edges or (v, u) in actual_lymph_edges)
 
-        # TODO: Haematogenous tests
+        actual_lymph_edges = [(u, v, data) for (u, v, data) in
+                              self.network_bronchial_lymphatic.edges(data=True) if data[EDGE_TYPE] == LYMPHATIC_VESSEL]
+        for (u, v, data) in actual_lymph_edges:
+            self.assertTrue(isinstance(u, LymphNode) or isinstance(v, LymphNode))
+            self.assertTrue(isinstance(data[DIRECTION], LymphNode))
+
+        # Haematogenous tests
+
         actual_bronch_edges = [(u.node_id, v.node_id) for (u, v, data) in
                                self.network_bronchial_lymph_haem.edges(data=True) if data[EDGE_TYPE] == BRONCHUS]
         self.assertEqual(len(actual_bronch_edges), len(BRONCHIAL_TREE_EDGES))
@@ -101,6 +108,13 @@ class PulmonaryAnatomyNetworkTestCase(unittest.TestCase):
         for (u, v) in HAEMATOGENOUS_EDGES:
             self.assertTrue((u, v) in actual_haem_edges or (v, u) in actual_haem_edges)
 
+        actual_haem_edges = [(u, v, data) for (u, v, data) in
+                             self.network_bronchial_lymph_haem.edges(data=True) if data[EDGE_TYPE] == HAEMATOGENOUS]
+
+        for (u,v,data) in actual_haem_edges:
+            self.assertTrue((isinstance(u, LymphNode) and isinstance(v, BronchopulmonarySegment)) or
+                            (isinstance(v, LymphNode) and isinstance(u, BronchopulmonarySegment)))
+            self.assertTrue(isinstance(data[DIRECTION], BronchopulmonarySegment))
 
 if __name__ == '__main__':
     unittest.main()

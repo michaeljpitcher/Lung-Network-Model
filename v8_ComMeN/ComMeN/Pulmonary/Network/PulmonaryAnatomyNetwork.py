@@ -67,14 +67,16 @@ class PulmonaryAnatomyNetwork(MetapopulationNetwork):
                 node = LymphNode(id, compartments, position)
                 nodes.append(node)
 
+            flow_rates = calculate_lymph_flow_rates(BRONCHOPULMONARY_SEGMENT_POSITIONS)
+
             for (u,v) in LYMPH_EDGES:
-                edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: v}
+                edge_data = {EDGE_TYPE: LYMPHATIC_VESSEL, DIRECTION: nodes[v], FLOW_RATE: flow_rates[(u,v)]}
                 edge = (nodes[u], nodes[v], edge_data)
                 edges.append(edge)
 
         if haematogenous_reseeding:
             for (u, v) in HAEMATOGENOUS_EDGES:
-                edge_data = {EDGE_TYPE: HAEMATOGENOUS, DIRECTION: v}
+                edge_data = {EDGE_TYPE: HAEMATOGENOUS, DIRECTION: nodes[v]}
                 edge = (nodes[u], nodes[v], edge_data)
                 edges.append(edge)
 

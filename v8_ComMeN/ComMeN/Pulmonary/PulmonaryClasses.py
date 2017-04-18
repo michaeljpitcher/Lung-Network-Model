@@ -20,5 +20,6 @@ BRONCHUS = 'bronchus'
 LYMPHATIC_VESSEL = 'lymphatic_vessel'
 HAEMATOGENOUS = 'haematogenous'
 
-DIRECTION = 'direction'
 WEIGHT = 'weight'
+DIRECTION = 'direction'
+FLOW_RATE = 'flow_rate'

@@ -30,11 +30,27 @@ LYMPH_NODE_POSITIONS[43] = (5.8, 8.2)
 LYMPH_NODE_POSITIONS[44] = (6.0, 9.8)
 
 LYMPH_EDGES = [(36, 38), (37, 38), (38, 40), (39, 40), (40, 41), (42, 43), (43, 44)]
+
 for drainage_id in range(32, 36):
     LYMPH_EDGES.append((drainage_id, 36))
+
 for drainage_id in range(28, 32):
     LYMPH_EDGES.append((drainage_id, 42))
 for drainage_id in range(23, 28):
     LYMPH_EDGES.append((drainage_id, 37))
 for drainage_id in range(18, 23):
     LYMPH_EDGES.append((drainage_id, 39))
+
+
+def calculate_lymph_flow_rates(terminal_node_positions):
+    flow_rates = dict()
+
+    for (a,b) in LYMPH_EDGES:
+        if not a in terminal_node_positions and not b in terminal_node_positions:
+            flow_rates[(a,b)] = 1.0
+        elif a in terminal_node_positions:
+            flow_rates[(a, b)] = (10.0 - terminal_node_positions[a][1]) / 10.0
+        else:
+            flow_rates[(a, b)] = (10.0 - terminal_node_positions[b][1]) / 10.0
+
+    return flow_rates
