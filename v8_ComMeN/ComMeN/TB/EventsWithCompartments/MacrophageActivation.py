@@ -22,35 +22,56 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class MacrophageSpontaneousActivation(MacrophageActivation):
+class RegularMacrophageSpontaneousActivation(MacrophageActivation):
 
     def __init__(self, probability):
         MacrophageActivation.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                      MACROPHAGE_REGULAR, MACROPHAGE_ACTIVATED, BACTERIA_INTRACELLULAR)
+                                      MACROPHAGE_REGULAR, MACROPHAGE_ACTIVATED)
 
 
-class MacrophageActivationByChemokine(MacrophageActivationByExternals):
+class InfectedMacrophageSpontaneousActivation(MacrophageActivation):
+
+    def __init__(self, probability):
+        MacrophageActivation.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                      MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED, BACTERIA_INTRACELLULAR)
+
+
+class RegularMacrophageActivationByChemokine(MacrophageActivationByExternals):
 
     def __init__(self, probability):
         MacrophageActivationByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                                  probability, MACROPHAGE_REGULAR, MACROPHAGE_ACTIVATED,
+                                                 [MACROPHAGE_INFECTED])
+
+
+class InfectedMacrophageActivationByChemokine(MacrophageActivationByExternals):
+
+    def __init__(self, probability):
+        MacrophageActivationByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
+                                                 probability, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED,
                                                  [MACROPHAGE_INFECTED], BACTERIA_INTRACELLULAR)
 
 
-class MacrophageActivationByTCells(MacrophageActivationByExternals):
+class RegularMacrophageActivationByTCells(MacrophageActivationByExternals):
     def __init__(self, probability):
         MacrophageActivationByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
-                                                 probability, MACROPHAGE_REGULAR, MACROPHAGE_ACTIVATED, [T_CELL],
+                                                 probability, MACROPHAGE_REGULAR, MACROPHAGE_ACTIVATED, [T_CELL])
+
+
+class InfectedMacrophageActivationByTCells(MacrophageActivationByExternals):
+    def __init__(self, probability):
+        MacrophageActivationByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
+                                                 probability, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED, [T_CELL],
                                                  BACTERIA_INTRACELLULAR)
 
 
-class MacrophageSpontaneousDeactivation(Change):
+class ActivatedMacrophageSpontaneousDeactivation(Change):
     def __init__(self, probability):
         Change.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                         MACROPHAGE_ACTIVATED, MACROPHAGE_REGULAR)
 
 
-class MacrophageDeactivationByLackOfInfection(MacrophageDeactivationByLackOfExternals):
+class ActivatedMacrophageDeactivationByLackOfInfection(MacrophageDeactivationByLackOfExternals):
     def __init__(self, probability):
         MacrophageDeactivationByLackOfExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                                          probability, MACROPHAGE_ACTIVATED, MACROPHAGE_REGULAR,
