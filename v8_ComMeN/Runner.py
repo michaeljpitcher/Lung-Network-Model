@@ -6,10 +6,10 @@ Long Docstring
 
 """
 
-from ComMeN.TB.Models.TB_Model_Basic import TBModelBasic
-from ComMeN.TB.TBClasses import *
-from ComMeN.Pulmonary.Node.LymphNode import *
-from ComMeN.Base.Node.Patch import *
+from ComMeN.Pulmonary.Network.PulmonaryAnatomyNetwork import *
+from ComMeN.TB.EventsWithCompartments.TCellRecruitment import *
+from ComMeN.Pulmonary.Visuals.PulmonaryNetworkGraph import *
+
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -19,9 +19,7 @@ __version__ = "1.0.8"
 __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
-seeding = {30:{BACTERIA: 10, MACROPHAGE: 40}}
-m = TBModelBasic(seeding, 0.6, 0.01)
-m.run(10, 999)
+event = TCellRecruitmentBronchialRegular(0.1)
+a = PulmonaryAnatomyNetwork(['a','b'],[event], True,HORSFIELD,True,True)
 
-for n in m.nodes():
-    print n.node_id, n.subpopulations
+draw_pulmonary_network_graph(a, "TITLE")
