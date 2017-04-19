@@ -28,18 +28,18 @@ class RegularMacrophageRecruitmentBronchial(RecruitmentBronchial):
 
 
 class RegularMacrophageRecruitmentBronchialByInfection(RecruitmentBronchialByExternals):
-    def __init__(self, node_types, probability):
+    def __init__(self, probability):
         RecruitmentBronchialByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
                                                  MACROPHAGE_REGULAR,
                                                  [MACROPHAGE_INFECTED], True)
 
 
 class RegularMacrophageRecruitmentLymph(RecruitmentLymph):
-    def __init__(self, node_types, probability):
+    def __init__(self, probability):
         RecruitmentLymph.__init__(self, [LymphNode], probability, MACROPHAGE_REGULAR)
 
 
 class RegularMacrophageRecruitmentLymphByInfection(RecruitmentLymphByExternals):
-    def __init__(self, node_types, probability):
+    def __init__(self, probability):
         RecruitmentLymphByExternals.__init__(self, [LymphNode], probability, MACROPHAGE_REGULAR, [MACROPHAGE_INFECTED])
 
