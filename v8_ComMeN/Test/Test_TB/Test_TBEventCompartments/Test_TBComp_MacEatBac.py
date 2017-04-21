@@ -5,7 +5,7 @@ from v8_ComMeN.ComMeN.TB.EventsWithCompartments.MacrophageIngestBacteria import 
 
 class RestingMacrophageIngestFastBacteriaRetainTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = RestingMacrophageIngestFastBacteriaRetain(0.1)
+        self.event = RegularMacrophageIngestFastBacteriaRetain(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageIngestBacteria))
@@ -18,7 +18,7 @@ class RestingMacrophageIngestFastBacteriaRetainTestCase(unittest.TestCase):
 
 class RestingMacrophageIngestFastBacteriaDestroyTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = RestingMacrophageIngestFastBacteriaDestroy(0.1)
+        self.event = RegularMacrophageIngestFastBacteriaDestroy(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageIngestBacteria))
@@ -31,7 +31,7 @@ class RestingMacrophageIngestFastBacteriaDestroyTestCase(unittest.TestCase):
 
 class RestingMacrophageIngestSlowBacteriaRetainTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = RestingMacrophageIngestSlowBacteriaRetain(0.1)
+        self.event = RegularMacrophageIngestSlowBacteriaRetain(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageIngestBacteria))
@@ -44,7 +44,7 @@ class RestingMacrophageIngestSlowBacteriaRetainTestCase(unittest.TestCase):
 
 class RestingMacrophageIngestSlowBacteriaDestroyTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = RestingMacrophageIngestSlowBacteriaDestroy(0.1)
+        self.event = RegularMacrophageIngestSlowBacteriaDestroy(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageIngestBacteria))

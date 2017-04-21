@@ -21,27 +21,27 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class RestingMacrophageIngestFastBacteriaRetain(MacrophageIngestBacteria):
+class RegularMacrophageIngestFastBacteriaRetain(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                           MACROPHAGE_REGULAR, BACTERIA_FAST,
                                           MACROPHAGE_INFECTED, BACTERIA_INTRACELLULAR)
 
 
-class RestingMacrophageIngestFastBacteriaDestroy(MacrophageIngestBacteria):
+class RegularMacrophageIngestFastBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                           MACROPHAGE_REGULAR, BACTERIA_FAST)
 
 
-class RestingMacrophageIngestSlowBacteriaRetain(MacrophageIngestBacteria):
+class RegularMacrophageIngestSlowBacteriaRetain(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                           MACROPHAGE_REGULAR, BACTERIA_SLOW,
                                           MACROPHAGE_INFECTED, BACTERIA_INTRACELLULAR)
 
 
-class RestingMacrophageIngestSlowBacteriaDestroy(MacrophageIngestBacteria):
+class RegularMacrophageIngestSlowBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                           MACROPHAGE_REGULAR, BACTERIA_SLOW)
