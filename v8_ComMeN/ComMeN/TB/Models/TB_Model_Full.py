@@ -10,11 +10,9 @@ from ...Pulmonary.Network.PulmonaryAnatomyNetwork import *
 from ..TBClasses import *
 import inspect
 import sys
-import os
+import pkgutil
 
-from ..EventsWithCompartments import *
-
-
+from .. import EventsWithCompartments
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -27,7 +25,7 @@ __status__ = "Development"
 
 class TBModelFull(PulmonaryAnatomyNetwork):
 
-    def __init__(self, initial_macrophages_bps, initial_macrophages_tbn, initial_macrophages_lymph,
+    def __init__(self, initial_macrophages_bps, initial_macrophages_btn, initial_macrophages_lymph,
                  initial_bacteria_fast, initial_bacteria_slow, probabilities,
                  include_bronchials, include_lymphatics, include_bloodstream,
                  tree_weight_method=HORSFIELD):
@@ -37,23 +35,26 @@ class TBModelFull(PulmonaryAnatomyNetwork):
                        [T_CELL]
 
         # TODO - not the nicest code but this does work. Maybe find better way to import (i.e. Event subclasses?)
-        # Get all modules within the EventsWithCompartments directory (based on files ending py
-        event_modules = ['ComMeN.TB.EventsWithCompartments.' + p[0:-3] for p in
-                         os.listdir("ComMeN/TB/EventsWithCompartments") if p.endswith('.py') and p != '__init__.py']
-
+        package = EventsWithCompartments
+        prefix = package.__name__ + "."
         # Look in each module for classes
         event_classes = []
-        for module in event_modules:
-            event_classes += inspect.getmembers(sys.modules[module], lambda member: inspect.isclass(member) and
-                                                                                    member.__module__ == module)
+        for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
+            #print "Importing event module: {0} and searching for classes...".format(modname)
+            __import__(modname)
+            event_classes += inspect.getmembers(sys.modules[modname], lambda member: inspect.isclass(member) and
+                                                               member.__module__ == modname)
 
         # Using class name and class, add event (class name is probability key)
         events = []
+        skipped_events = []
         for (prob_key, event_class) in event_classes:
             if prob_key in probabilities:
                 events.append(event_class(probabilities[prob_key]))
             else:
-                print "Event {0} probability not defined, skipping".format(prob_key)
+                skipped_events.append(prob_key)
+
+        #print "Events without probabilities skipped: {0}".format(skipped_events)
 
         PulmonaryAnatomyNetwork.__init__(self, compartments, events,
                                          bronchial_tree_nodes=include_bronchials,
@@ -61,8 +62,13 @@ class TBModelFull(PulmonaryAnatomyNetwork):
                                          lymphatic_nodes=include_lymphatics,
                                          haematogenous_reseeding=include_bloodstream)
 
-        seeding = dict()
+        self.seed_network_node_type(BronchopulmonarySegment, {MACROPHAGE_REGULAR: initial_macrophages_bps})
+        self.seed_network_node_type(BronchialTreeNode, {MACROPHAGE_REGULAR: initial_macrophages_btn})
+        self.seed_network_node_type(LymphNode, {MACROPHAGE_REGULAR: initial_macrophages_lymph})
 
-
-
-        self.seed_network(seeding)
+        for node_id in initial_bacteria_fast:
+            seeding = {BACTERIA_FAST: initial_bacteria_fast[node_id]}
+            self.seed_network_node_id(node_id, seeding)
+        for node_id in initial_bacteria_slow:
+            seeding = {BACTERIA_SLOW: initial_bacteria_slow[node_id]}
+            self.seed_network_node_id(node_id, seeding)
