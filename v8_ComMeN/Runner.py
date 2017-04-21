@@ -39,11 +39,21 @@ for section in probability_sections:
     for event in config.items(section):
         probabilities[event[0]] = float(event[1])
 
-seeding = dict()
-print config.items("InitialSeedingMacrophages")
+macs_per_bps = config.getint('InitialSeedingMacrophages', 'macrophages_per_bronchopulmonarysegment')
+macs_per_btn = config.getint('InitialSeedingMacrophages', 'macrophages_per_bronchialtreenode')
+macs_per_lymph = config.getint('InitialSeedingMacrophages', 'macrophages_per_lymphnode')
 
-model = TBModelFull(seeding, probabilities, include_bronchials=include_bronchials,
+# TODO - base on ventilation?
+initial_fast_bacteria = dict()
+for (node_id, count) in config.items('InitialSeedingBacteriaFast'):
+    initial_fast_bacteria[int(node_id)] = int(count)
+initial_slow_bacteria = dict()
+for (node_id, count) in config.items('InitialSeedingBacteriaSlow'):
+    initial_slow_bacteria[int(node_id)] = int(count)
+
+model = TBModelFull(macs_per_bps, macs_per_btn, macs_per_lymph, initial_fast_bacteria, initial_slow_bacteria,
+                    probabilities, include_bronchials=include_bronchials,
                      tree_weight_method=tree_weight_method, include_lymphatics=include_lymphatics,
                      include_bloodstream=include_bloodstream)
 
-model.run(100)
+model.run(1)
