@@ -76,14 +76,8 @@ class MetapopulationNetwork(nx.Graph):
         assert self.has_node(v), "Node {0} not present in network".format(v)
         assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0} - {1}".format(u, v)
         nx.Graph.add_edge(self, u, v, attr_dict)
-        # if attr_dict[EDGE_TYPE] in u.neighbours:
-        #     u.neighbours[EDGE_TYPE].append(v)
-        # else:
-        #     u.neighbours[EDGE_TYPE] = [v]
-        # if attr_dict[EDGE_TYPE] in v.neighbours:
-        #     v.neighbours[EDGE_TYPE].append(u)
-        # else:
-        #     v.neighbours[EDGE_TYPE] = [u]
+        u.neighbours.append((v, attr_dict))
+        v.neighbours.append((u, attr_dict))
 
     def run(self, time_limit=0, run_id=None, output=True):
         csv_file = None
@@ -136,12 +130,3 @@ class MetapopulationNetwork(nx.Graph):
 
     def timestep_print(self):
         print "t=", self.time
-
-    def get_neighbouring_edges(self, node, edge_type=None):
-        # TODO - may be slow to calculate this all the time, better to do it once and save,
-        # also hampers the unit tests because self.edges can change order
-        if not edge_type:
-            return [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)]
-        else:
-            return [(neighbour, data) for (_, neighbour, data) in self.edges(node, data=True)
-                                  if data[EDGE_TYPE] == edge_type]

@@ -60,16 +60,25 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
         self.assertEqual('Node 9 is not a Patch object', str(context.exception))
 
     def test_add_edge(self):
-        node = self.nodes[0]
-        node2 = self.nodes[1]
+        node = Patch_type1(0, self.compartments)
+        node2 = Patch_type1(1, self.compartments)
 
         network = MetapopulationNetwork(['a'], [node, node2], [], [self.event_node_type1])
+
+        self.assertEqual(len(node.neighbours), 0)
+        self.assertEqual(len(node2.neighbours), 0)
 
         edge_data = {EDGE_TYPE: 'edge'}
         network.add_edge(node, node2, edge_data)
         self.assertTrue(network.has_edge(node, node2))
         self.assertItemsEqual(network.edge[node][node2].keys(), edge_data.keys())
         self.assertEqual(network.edge[node][node2][EDGE_TYPE], 'edge')
+        self.assertEqual(len(node.neighbours), 1)
+        self.assertEqual(node.neighbours[0][0], node2)
+        self.assertEqual(node.neighbours[0][1], edge_data)
+        self.assertEqual(len(node2.neighbours), 1)
+        self.assertEqual(node2.neighbours[0][0], node)
+        self.assertEqual(node2.neighbours[0][1], edge_data)
 
         # Fail node not present
         node3 = Patch(2, ['a'])

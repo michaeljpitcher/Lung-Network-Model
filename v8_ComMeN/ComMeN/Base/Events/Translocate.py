@@ -7,6 +7,7 @@ Long Docstring
 """
 
 from Event import *
+from ..BaseClasses import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -34,7 +35,7 @@ class Translocate(Event):
         self.move(node, chosen_neighbour)
 
     def viable_edges(self, node, network):
-        return sorted(network.get_neighbouring_edges(node, self.edge_type))
+        return [(n, data) for (n, data) in node.neighbours if data[EDGE_TYPE] == self.edge_type]
 
     def choose_neighbour(self, edges):
         return edges[np.random.randint(0, len(edges))][0]
