@@ -3,17 +3,19 @@ import unittest
 from v8_ComMeN.ComMeN.Base.Network.MetapopulationNetwork import *
 
 
+class Patch_type1(Patch):
+    def __init__(self, id, compartments):
+        Patch.__init__(self, id, compartments)
+
+
+class Patch_type2(Patch):
+    def __init__(self, id, compartments):
+        Patch.__init__(self, id, compartments)
+
+
 class MetapopulationNetworkTestCase(unittest.TestCase):
     def setUp(self):
         self.compartments = ['a', 'b', 'c']
-
-        class Patch_type1(Patch):
-            def __init__(self, id, compartments):
-                Patch.__init__(self, id, compartments)
-
-        class Patch_type2(Patch):
-            def __init__(self, id, compartments):
-                Patch.__init__(self, id, compartments)
 
         self.nodes = []
         for a in range(5):
@@ -95,6 +97,33 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
         self.assertItemsEqual(self.event_node_type_both.nodes_impacted, self.nodes)
 
         self.assertEqual(self.network.time, 0.0)
+
+    def test_seed_network_node_type(self):
+        seeding = {self.compartments[0]: 5, self.compartments[1]: 8}
+        self.network.seed_network_node_type(Patch_type1, seeding)
+
+        for n in self.network.nodes():
+            if isinstance(n, Patch_type1):
+                self.assertEqual(n.subpopulations[self.compartments[0]], 5)
+                self.assertEqual(n.subpopulations[self.compartments[1]], 8)
+                self.assertEqual(n.subpopulations[self.compartments[2]], 0)
+            else:
+                self.assertEqual(n.subpopulations[self.compartments[0]], 0)
+                self.assertEqual(n.subpopulations[self.compartments[1]], 0)
+                self.assertEqual(n.subpopulations[self.compartments[2]], 0)
+
+    def test_seed_network_node_id(self):
+        seeding = {self.compartments[1]: 3, self.compartments[2]: 7}
+        self.network.seed_network_node_id(7, seeding)
+        for n in self.network.nodes():
+            if n.node_id == 7:
+                self.assertEqual(n.subpopulations[self.compartments[0]], 0)
+                self.assertEqual(n.subpopulations[self.compartments[1]], 3)
+                self.assertEqual(n.subpopulations[self.compartments[2]], 7)
+            else:
+                self.assertEqual(n.subpopulations[self.compartments[0]], 0)
+                self.assertEqual(n.subpopulations[self.compartments[1]], 0)
+                self.assertEqual(n.subpopulations[self.compartments[2]], 0)
 
     def test_run(self):
         np.random.seed(101)

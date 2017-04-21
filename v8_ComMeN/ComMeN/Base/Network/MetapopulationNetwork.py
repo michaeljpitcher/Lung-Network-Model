@@ -54,12 +54,18 @@ class MetapopulationNetwork(nx.Graph):
 
         self.time = 0.0
 
-    def seed_network(self, seeding):
-        for node_id in seeding:
-            node = [n for n in self.nodes() if n.node_id == node_id][0]
-            for compartment in seeding[node_id]:
-                value = seeding[node_id][compartment]
-                node.update_subpopulation(compartment, value)
+    def seed_network_node_type(self, node_type, seeding):
+        nodes = [n for n in self.nodes() if isinstance(n, node_type)]
+        for compartment in seeding:
+            for node in nodes:
+                node.update_subpopulation(compartment, seeding[compartment])
+
+    def seed_network_node_id(self, node_id, seeding):
+        node = [n for n in self.nodes() if n.node_id == node_id]
+        assert len(node) == 1, "Node {0} not found"
+        node = node[0]
+        for compartment in seeding:
+            node.update_subpopulation(compartment, seeding[compartment])
 
     def add_node(self, n, attr_dict=None, **attr):
         assert isinstance(n, Patch), "Node {0} is not a Patch object".format(n)
