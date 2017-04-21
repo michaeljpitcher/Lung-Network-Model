@@ -31,7 +31,7 @@ class RegularMacrophageRecruitmentLymphTestCase(unittest.TestCase):
         self.event = RegularMacrophageRecruitmentLymph(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, RecruitmentBronchial))
+        self.assertTrue(isinstance(self.event, RecruitmentLymph))
         self.assertItemsEqual(self.event.node_types, [LymphNode])
         self.assertEqual(self.event.compartment_created, MACROPHAGE_REGULAR)
 
@@ -41,7 +41,7 @@ class RegularMacrophageRecruitmentLymphByInfectionTestCase(unittest.TestCase):
         self.event = RegularMacrophageRecruitmentLymphByInfection(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, RecruitmentBronchialByExternals))
+        self.assertTrue(isinstance(self.event, RecruitmentLymphByExternals))
         self.assertItemsEqual(self.event.node_types, [LymphNode])
         self.assertEqual(self.event.compartment_created, MACROPHAGE_REGULAR)
         self.assertItemsEqual(self.event.external_compartments, [MACROPHAGE_INFECTED])
