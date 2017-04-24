@@ -39,13 +39,7 @@ class ActivatedMacrophageSpontaneousDeath(MacrophageDeath):
                                  MACROPHAGE_ACTIVATED)
 
 
-class InfectedMacrophageDeathByTCell(MacrophageDeathByExternals):
-    # TODO - kills all internal bacteria & T-cell - check this, may need two events or more
-    def __init__(self, probability):
-        MacrophageDeathByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                            MACROPHAGE_INFECTED, [T_CELL], [T_CELL], BACTERIA_INTRACELLULAR)
-
-
+# NECROSIS
 class InfectedMacrophageDeathByIntracellularBacteria(MacrophageDeathByExternals):
     def __init__(self, probability):
         MacrophageDeathByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,

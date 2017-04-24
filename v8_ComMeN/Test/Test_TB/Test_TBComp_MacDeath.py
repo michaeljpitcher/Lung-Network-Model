@@ -39,20 +39,6 @@ class ActivatedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.assertFalse(self.event.bacteria_release_compartment_to)
 
 
-class InfectedMacrophageDeathByTCellTestCase(unittest.TestCase):
-    def setUp(self):
-        self.event = InfectedMacrophageDeathByTCell(0.1)
-
-    def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeathByExternals))
-        self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
-        self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)
-        self.assertFalse(self.event.bacteria_release_compartment_to)
-        self.assertItemsEqual(self.event.external_compartments, [T_CELL])
-        self.assertItemsEqual(self.event.externals_to_destroy, [T_CELL])
-
-
 class InfectedMacrophageDeathByIntracellularBacteriaTestCase(unittest.TestCase):
     def setUp(self):
         self.event = InfectedMacrophageDeathByIntracellularBacteria(0.1)
