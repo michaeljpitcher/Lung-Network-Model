@@ -33,10 +33,8 @@ include_lymphatics = config.getboolean("TopologyParameters", "lymphatics")
 include_bloodstream = config.getboolean("TopologyParameters", "bloodstream")
 
 # Read probabilities from config
-probability_sections = ["BacterialEventProbabilities", "MacrophageEventProbabilities", "TCellEventProbabilities"]
 probabilities = dict()
-for section in probability_sections:
-    for event in config.items(section):
+for event in config.items('EventProbabilities'):
         probabilities[event[0]] = float(event[1])
 
 macs_per_bps = config.getint('InitialSeedingMacrophages', 'macrophages_per_bronchopulmonarysegment')
@@ -56,4 +54,9 @@ model = TBModelFull(macs_per_bps, macs_per_btn, macs_per_lymph, initial_fast_bac
                      tree_weight_method=tree_weight_method, include_lymphatics=include_lymphatics,
                      include_bloodstream=include_bloodstream)
 
-model.run(1)
+import cProfile
+cp = cProfile.Profile()
+cp.enable()
+model.run(5)
+cp.disable()
+cp.print_stats('tottime')
