@@ -21,7 +21,7 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class TCellDestroysInfectedMacrophage(MacrophageDeathByExternals):
+class TCellCytotoxicDestroysInfectedMacrophage(MacrophageDeathByExternals):
     # TODO - kills all internal bacteria not T-cell - check this, may need two events or more
     def __init__(self, probability):
         MacrophageDeathByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,

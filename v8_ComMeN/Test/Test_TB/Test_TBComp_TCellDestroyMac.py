@@ -5,7 +5,7 @@ from v8_ComMeN.ComMeN.TB.EventsWithCompartments.TCellDestroyMacrophage import *
 
 class InfectedMacrophageDeathByTCellTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellDestroysInfectedMacrophage(0.1)
+        self.event = TCellCytotoxicDestroysInfectedMacrophage(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageDeathByExternals))
