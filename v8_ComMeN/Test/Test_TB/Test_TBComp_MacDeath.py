@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.MacrophageDeath import *
+from v8_ComMeN.ComMeN.TB.Events.MacrophageDeath import *
 
 
 class RegularMacrophageSpontaneousDeathTestCase(unittest.TestCase):
@@ -8,7 +8,7 @@ class RegularMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.event = RegularMacrophageSpontaneousDeath(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeath))
+        self.assertTrue(isinstance(self.event, PhagocyteDeath))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_REGULAR)
         self.assertFalse(self.event.internal_bacteria_compartment)
@@ -20,7 +20,7 @@ class InfectedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.event = InfectedMacrophageSpontaneousDeath(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeath))
+        self.assertTrue(isinstance(self.event, PhagocyteDeath))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)
@@ -32,7 +32,7 @@ class ActivatedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.event = ActivatedMacrophageSpontaneousDeath(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeath))
+        self.assertTrue(isinstance(self.event, PhagocyteDeath))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_ACTIVATED)
         self.assertFalse(self.event.internal_bacteria_compartment)
@@ -44,7 +44,7 @@ class InfectedMacrophageDeathByIntracellularBacteriaTestCase(unittest.TestCase):
         self.event = InfectedMacrophageDeathByIntracellularBacteria(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeathByOtherCompartments))
+        self.assertTrue(isinstance(self.event, PhagocyteDeathByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)

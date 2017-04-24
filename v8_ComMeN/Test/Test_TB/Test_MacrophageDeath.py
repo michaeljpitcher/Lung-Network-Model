@@ -1,7 +1,7 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageDeath import *
 from v8_ComMeN.ComMeN.Base.Node.Patch import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteDeath import *
 
 
 class MacrophageDeathRegularTestCase(unittest.TestCase):
@@ -9,8 +9,8 @@ class MacrophageDeathRegularTestCase(unittest.TestCase):
         self.mac = 'mac'
         self.bac_int = "bac_i"
         self.bac_ext = 'bac_e'
-        self.event_bac_release = MacrophageDeath(None, 0.1, self.mac, self.bac_int, self.bac_ext)
-        self.event_no_bac_release = MacrophageDeath(None, 0.1, self.mac)
+        self.event_bac_release = PhagocyteDeath(None, 0.1, self.mac, self.bac_int, self.bac_ext)
+        self.event_no_bac_release = PhagocyteDeath(None, 0.1, self.mac)
 
     def test_initialise(self):
         self.assertEqual(self.event_bac_release.internal_bacteria_compartment, self.bac_int)
@@ -19,7 +19,7 @@ class MacrophageDeathRegularTestCase(unittest.TestCase):
         self.assertEqual(self.event_no_bac_release.bacteria_release_compartment_to, None)
 
         with self.assertRaises(AssertionError) as context:
-            event = MacrophageDeath(None, 0.1, self.mac, bacteria_release_compartment_to=self.bac_ext)
+            event = PhagocyteDeath(None, 0.1, self.mac, bacteria_release_compartment_to=self.bac_ext)
         self.assertEqual('Cannot release bacteria without providing a compartment for them to be released from',
                          str(context.exception))
 
@@ -46,8 +46,8 @@ class MacrophageDeathByTCellTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.tcell = 'tcell'
-        self.event_destroy = MacrophageDeathByOtherCompartments(None, 0.1, self.mac, [self.tcell], [self.tcell])
-        self.event_not_destroy = MacrophageDeathByOtherCompartments(None, 0.1, self.mac, [self.tcell])
+        self.event_destroy = PhagocyteDeathByOtherCompartments(None, 0.1, self.mac, [self.tcell], [self.tcell])
+        self.event_not_destroy = PhagocyteDeathByOtherCompartments(None, 0.1, self.mac, [self.tcell])
 
     def test_initialise(self):
         self.assertItemsEqual(self.event_destroy.extra_compartments_to_destroy, [self.tcell])
@@ -82,7 +82,7 @@ class MacrophageDeathByInfectionTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.infection_comps = ['inf_1', 'inf_2']
-        self.event = MacrophageDeathByOtherCompartments(None, 0.1, self.mac, self.infection_comps)
+        self.event = PhagocyteDeathByOtherCompartments(None, 0.1, self.mac, self.infection_comps)
 
     def test_initialise(self):
         self.assertItemsEqual(self.event.death_causing_compartments, self.infection_comps)

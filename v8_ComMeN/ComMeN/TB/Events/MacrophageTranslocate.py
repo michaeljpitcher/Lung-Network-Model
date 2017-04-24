@@ -6,9 +6,11 @@ Long Docstring
 
 """
 
-# TODO - bit too much code duplication here
-
-from ...Pulmonary.Events.PulmonaryTranslocate import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteTranslocate import *
+from ..TBClasses import *
+from ...Pulmonary.Node.BronchialTreeNode import *
+from ...Pulmonary.Node.BronchopulmonarySegment import *
+from ...Pulmonary.Node.LymphNode import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -19,46 +21,66 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-def move_bacteria(node, neighbour, bac_compartment, mac_compartment):
-    bac_number = node.compartment_per_compartment(bac_compartment, mac_compartment)
-    node.update_subpopulation(bac_compartment, -1 * bac_number)
-    neighbour.update_subpopulation(bac_compartment, bac_number)
+class RegularMacrophageTranslocateBronchus(PhagocyteTranslocateBronchus):
+    def __init__(self, probability):
+        PhagocyteTranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode],
+                                              probability,
+                                              phagocyte_compartment=MACROPHAGE_REGULAR,
+                                              edge_choice_based_on_weight=True)
 
 
-class MacrophageTranslocateBronchus(TranslocateBronchus):
-
-    def __init__(self, node_types, probability, macrophage_compartment, edge_choice_based_on_weight=False,
-                 bacteria_compartment_to_translocate=None):
-        self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
-        TranslocateBronchus.__init__(self, node_types, probability, macrophage_compartment, edge_choice_based_on_weight)
-
-    def move(self, node, neighbour):
-        if self.bacteria_compartment_to_translocate is not None:
-            move_bacteria(node, neighbour, self.bacteria_compartment_to_translocate, self.translocate_compartment)
-        TranslocateBronchus.move(self, node, neighbour)
+class InfectedMacrophageTranslocateBronchus(PhagocyteTranslocateBronchus):
+    def __init__(self, probability):
+        PhagocyteTranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode],
+                                              probability, phagocyte_compartment=MACROPHAGE_INFECTED,
+                                              edge_choice_based_on_weight=True,
+                                              internal_compartment_to_translocate=BACTERIA_INTRACELLULAR)
 
 
-class MacrophageTranslocateLymph(TranslocateLymph):
-
-    def __init__(self, node_types, probability, macrophage_compartment, direction_only=True,
-                 bacteria_compartment_to_translocate=None):
-        self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
-        TranslocateLymph.__init__(self, node_types, probability, macrophage_compartment, direction_only)
-
-    def move(self, node, neighbour):
-        if self.bacteria_compartment_to_translocate is not None:
-            move_bacteria(node, neighbour, self.bacteria_compartment_to_translocate, self.translocate_compartment)
-        TranslocateLymph.move(self, node, neighbour)
+class ActivatedMacrophageTranslocateBronchus(PhagocyteTranslocateBronchus):
+    def __init__(self, probability):
+        PhagocyteTranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode],
+                                              probability,
+                                              phagocyte_compartment=MACROPHAGE_ACTIVATED,
+                                              edge_choice_based_on_weight=True)
 
 
-class MacrophageTranslocateBlood(TranslocateBlood):
+class RegularMacrophageTranslocateLymph(PhagocyteTranslocateLymph):
+    def __init__(self, probability):
+        PhagocyteTranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                           phagocyte_compartment=MACROPHAGE_REGULAR,
+                                           direction_only=True)
 
-    def __init__(self, node_types, probability, macrophage_compartment, direction_only=True,
-                 bacteria_compartment_to_translocate=None):
-        self.bacteria_compartment_to_translocate = bacteria_compartment_to_translocate
-        TranslocateBlood.__init__(self, node_types, probability, macrophage_compartment, direction_only)
 
-    def move(self, node, neighbour):
-        if self.bacteria_compartment_to_translocate is not None:
-            move_bacteria(node, neighbour, self.bacteria_compartment_to_translocate, self.translocate_compartment)
-        TranslocateBlood.move(self, node, neighbour)
+class InfectedMacrophageTranslocateLymph(PhagocyteTranslocateLymph):
+    def __init__(self, probability):
+        PhagocyteTranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode],
+                                           probability, phagocyte_compartment=MACROPHAGE_INFECTED,
+                                           direction_only=True,
+                                           internal_compartment_to_translocate=BACTERIA_INTRACELLULAR)
+
+
+class ActivatedMacrophageTranslocateLymph(PhagocyteTranslocateLymph):
+    def __init__(self, probability):
+        PhagocyteTranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode],
+                                           probability, phagocyte_compartment=MACROPHAGE_ACTIVATED,
+                                           direction_only=True)
+
+
+class RegularMacrophageTranslocateBlood(PhagocyteTranslocateBlood):
+    def __init__(self, probability):
+        PhagocyteTranslocateBlood.__init__(self, [LymphNode], probability, phagocyte_compartment=MACROPHAGE_REGULAR,
+                                           direction_only=True)
+
+
+class InfectedMacrophageTranslocateBlood(PhagocyteTranslocateBlood):
+    def __init__(self, probability):
+        PhagocyteTranslocateBlood.__init__(self, [LymphNode], probability, phagocyte_compartment=MACROPHAGE_INFECTED,
+                                           direction_only=True,
+                                           bacteria_compartment_to_translocate=BACTERIA_INTRACELLULAR)
+
+
+class ActivatedMacrophageTranslocateBlood(PhagocyteTranslocateBlood):
+    def __init__(self, probability):
+        PhagocyteTranslocateBlood.__init__(self, [LymphNode], probability, phagocyte_compartment=MACROPHAGE_ACTIVATED,
+                                           direction_only=True)

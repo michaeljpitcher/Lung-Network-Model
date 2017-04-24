@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.MacrophageTranslocate import *
+from v8_ComMeN.ComMeN.TB.Events.MacrophageTranslocate import *
 
 
 class RegularMacrophageTranslocateBronchusTestCase(unittest.TestCase):
@@ -8,11 +8,11 @@ class RegularMacrophageTranslocateBronchusTestCase(unittest.TestCase):
         self.event = RegularMacrophageTranslocateBronchus(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateBronchus))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateBronchus))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_REGULAR)
         self.assertTrue(self.event.edge_choice_based_on_weight)
-        self.assertFalse(self.event.bacteria_compartment_to_translocate)
+        self.assertFalse(self.event.internal_compartment_to_translocate)
 
 
 class InfectedMacrophageTranslocateBronchusTestCase(unittest.TestCase):
@@ -20,11 +20,11 @@ class InfectedMacrophageTranslocateBronchusTestCase(unittest.TestCase):
         self.event = InfectedMacrophageTranslocateBronchus(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateBronchus))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateBronchus))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_INFECTED)
         self.assertTrue(self.event.edge_choice_based_on_weight)
-        self.assertEqual(self.event.bacteria_compartment_to_translocate, BACTERIA_INTRACELLULAR)
+        self.assertEqual(self.event.internal_compartment_to_translocate, BACTERIA_INTRACELLULAR)
 
 
 class ActivatedMacrophageTranslocateBronchusTestCase(unittest.TestCase):
@@ -32,11 +32,11 @@ class ActivatedMacrophageTranslocateBronchusTestCase(unittest.TestCase):
         self.event = ActivatedMacrophageTranslocateBronchus(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateBronchus))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateBronchus))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_ACTIVATED)
         self.assertTrue(self.event.edge_choice_based_on_weight)
-        self.assertFalse(self.event.bacteria_compartment_to_translocate)
+        self.assertFalse(self.event.internal_compartment_to_translocate)
 
 
 class RegularMacrophageTranslocateLymphTestCase(unittest.TestCase):
@@ -44,12 +44,12 @@ class RegularMacrophageTranslocateLymphTestCase(unittest.TestCase):
         self.event = RegularMacrophageTranslocateLymph(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateLymph))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateLymph))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_REGULAR)
         self.assertTrue(self.event.flow_based)
         self.assertTrue(self.event.direction_only)
-        self.assertFalse(self.event.bacteria_compartment_to_translocate)
+        self.assertFalse(self.event.internal_compartment_to_translocate)
 
 
 class InfectedMacrophageTranslocateLymphTestCase(unittest.TestCase):
@@ -57,12 +57,12 @@ class InfectedMacrophageTranslocateLymphTestCase(unittest.TestCase):
         self.event = InfectedMacrophageTranslocateLymph(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateLymph))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateLymph))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_INFECTED)
         self.assertTrue(self.event.flow_based)
         self.assertTrue(self.event.direction_only)
-        self.assertEqual(self.event.bacteria_compartment_to_translocate, BACTERIA_INTRACELLULAR)
+        self.assertEqual(self.event.internal_compartment_to_translocate, BACTERIA_INTRACELLULAR)
 
 
 class ActivatedMacrophageTranslocateLymphTestCase(unittest.TestCase):
@@ -70,12 +70,12 @@ class ActivatedMacrophageTranslocateLymphTestCase(unittest.TestCase):
         self.event = ActivatedMacrophageTranslocateLymph(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateLymph))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateLymph))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_ACTIVATED)
         self.assertTrue(self.event.flow_based)
         self.assertTrue(self.event.direction_only)
-        self.assertFalse(self.event.bacteria_compartment_to_translocate)
+        self.assertFalse(self.event.internal_compartment_to_translocate)
 
 
 class RegularMacrophageTranslocateBloodTestCase(unittest.TestCase):
@@ -83,11 +83,11 @@ class RegularMacrophageTranslocateBloodTestCase(unittest.TestCase):
         self.event = RegularMacrophageTranslocateBlood(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateBlood))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateBlood))
         self.assertItemsEqual(self.event.node_types, [LymphNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_REGULAR)
         self.assertTrue(self.event.direction_only)
-        self.assertFalse(self.event.bacteria_compartment_to_translocate)
+        self.assertFalse(self.event.internal_compartment_to_translocate)
 
 
 class InfectedMacrophageTranslocateBloodTestCase(unittest.TestCase):
@@ -95,11 +95,11 @@ class InfectedMacrophageTranslocateBloodTestCase(unittest.TestCase):
         self.event = InfectedMacrophageTranslocateBlood(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateBlood))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateBlood))
         self.assertItemsEqual(self.event.node_types, [LymphNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_INFECTED)
         self.assertTrue(self.event.direction_only)
-        self.assertEqual(self.event.bacteria_compartment_to_translocate, BACTERIA_INTRACELLULAR)
+        self.assertEqual(self.event.internal_compartment_to_translocate, BACTERIA_INTRACELLULAR)
 
 
 class ActivatedMacrophageTranslocateBloodTestCase(unittest.TestCase):
@@ -107,11 +107,11 @@ class ActivatedMacrophageTranslocateBloodTestCase(unittest.TestCase):
         self.event = ActivatedMacrophageTranslocateBlood(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageTranslocateBlood))
+        self.assertTrue(isinstance(self.event, PhagocyteTranslocateBlood))
         self.assertItemsEqual(self.event.node_types, [LymphNode])
         self.assertEqual(self.event.translocate_compartment, MACROPHAGE_ACTIVATED)
         self.assertTrue(self.event.direction_only)
-        self.assertFalse(self.event.bacteria_compartment_to_translocate)
+        self.assertFalse(self.event.internal_compartment_to_translocate)
 
 
 if __name__ == '__main__':

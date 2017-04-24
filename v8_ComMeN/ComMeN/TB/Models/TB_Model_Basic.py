@@ -6,10 +6,10 @@ Long Docstring
 
 """
 
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteIngestBacteria import PhagocyteIngestBacteria
+from ..Events.BacteriaReplication import BacteriaReplication
 from ..TBClasses import *
 from ...Pulmonary.Network.PulmonaryAnatomyNetwork import *
-from ..Events.BacteriaReplication import BacteriaReplication
-from ..Events.MacrophageIngestBacteria import MacrophageIngestBacteria
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -28,7 +28,7 @@ class TBModelBasic(PulmonaryAnatomyNetwork):
         events_and_node_types = dict()
 
         bac_rep = BacteriaReplication(probabity_bac_rep, BACTERIA)
-        mac_ingest_bac = MacrophageIngestBacteria(probability_mac_ingest, MACROPHAGE, BACTERIA)
+        mac_ingest_bac = PhagocyteIngestBacteria(probability_mac_ingest, MACROPHAGE, BACTERIA)
 
         events_and_node_types[bac_rep] = [BronchopulmonarySegment, BronchialTreeNode]
         events_and_node_types[mac_ingest_bac] = [BronchopulmonarySegment, BronchialTreeNode]

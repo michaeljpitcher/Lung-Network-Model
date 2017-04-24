@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.MacrophageActivation import *
+from v8_ComMeN.ComMeN.TB.Events.MacrophageActivation import *
 
 
 class RegularMacrophageSpontaneousActivationTestCase(unittest.TestCase):
@@ -8,7 +8,7 @@ class RegularMacrophageSpontaneousActivationTestCase(unittest.TestCase):
         self.event = RegularMacrophageSpontaneousActivation(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivation))
+        self.assertTrue(isinstance(self.event, PhagocyteActivation))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_REGULAR)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
@@ -20,7 +20,7 @@ class InfectedMacrophageSpontaneousActivationTestCase(unittest.TestCase):
         self.event = InfectedMacrophageSpontaneousActivation(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivation))
+        self.assertTrue(isinstance(self.event, PhagocyteActivation))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
@@ -32,7 +32,7 @@ class RegularMacrophageActivationByChemokineTestCase(unittest.TestCase):
         self.event = RegularMacrophageActivationByCytokine(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
+        self.assertTrue(isinstance(self.event, PhagocyteActivationByExternals))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_REGULAR)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
@@ -45,7 +45,7 @@ class InfectedMacrophageActivationByChemokineTestCase(unittest.TestCase):
         self.event = InfectedMacrophageActivationByCytokine(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
+        self.assertTrue(isinstance(self.event, PhagocyteActivationByExternals))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
@@ -69,7 +69,7 @@ class ActivatedMacrophageDeactivationByLackOfInfectionTestCase(unittest.TestCase
         self.event = ActivatedMacrophageDeactivationByLackOfCytokine(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeactivationByLackOfExternals))
+        self.assertTrue(isinstance(self.event, PhagocyteDeactivationByLackOfExternals))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_ACTIVATED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_REGULAR)

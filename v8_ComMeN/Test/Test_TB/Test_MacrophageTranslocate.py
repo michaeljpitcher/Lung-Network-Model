@@ -1,7 +1,7 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageTranslocate import *
 from v8_ComMeN.ComMeN.Base.Node.Patch import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteTranslocate import *
 
 
 class MacrophageTranslocationBaseFunctionTestCase(unittest.TestCase):
@@ -19,7 +19,7 @@ class MacrophageTranslocationBaseFunctionTestCase(unittest.TestCase):
         node.update_subpopulation(mac, 10)
         node.update_subpopulation(bac, 89)
 
-        move_bacteria(node, neighbour, bac, mac)
+        move_internals(node, neighbour, bac, mac)
 
         # Doesn't move macrophage, that's handled elsewhere
         self.assertEqual(node.subpopulations[mac], 10)
@@ -33,12 +33,12 @@ class MacrophageTranslocateBronchusTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.bac= 'bac'
-        self.event_with_bac = MacrophageTranslocateBronchus(None, 0.1, self.mac, False, self.bac)
-        self.event_no_bac = MacrophageTranslocateBronchus(None, 0.1, self.mac, False, None)
+        self.event_with_bac = PhagocyteTranslocateBronchus(None, 0.1, self.mac, False, self.bac)
+        self.event_no_bac = PhagocyteTranslocateBronchus(None, 0.1, self.mac, False, None)
 
     def test_initialise(self):
-        self.assertEqual(self.event_with_bac.bacteria_compartment_to_translocate, self.bac)
-        self.assertEqual(self.event_no_bac.bacteria_compartment_to_translocate, None)
+        self.assertEqual(self.event_with_bac.internal_compartment_to_translocate, self.bac)
+        self.assertEqual(self.event_no_bac.internal_compartment_to_translocate, None)
 
     def test_move(self):
         node = Patch(0, [self.mac, self.bac])
@@ -67,12 +67,12 @@ class MacrophageTranslocateLymphTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.bac= 'bac'
-        self.event_with_bac = MacrophageTranslocateLymph(None, 0.1, self.mac, False, self.bac)
-        self.event_no_bac = MacrophageTranslocateLymph(None, 0.1, self.mac, False, None)
+        self.event_with_bac = PhagocyteTranslocateLymph(None, 0.1, self.mac, False, self.bac)
+        self.event_no_bac = PhagocyteTranslocateLymph(None, 0.1, self.mac, False, None)
 
     def test_initialise(self):
-        self.assertEqual(self.event_with_bac.bacteria_compartment_to_translocate, self.bac)
-        self.assertEqual(self.event_no_bac.bacteria_compartment_to_translocate, None)
+        self.assertEqual(self.event_with_bac.internal_compartment_to_translocate, self.bac)
+        self.assertEqual(self.event_no_bac.internal_compartment_to_translocate, None)
 
     def test_move(self):
         node = Patch(0, [self.mac, self.bac])
@@ -101,12 +101,12 @@ class MacrophageTranslocateBloodTestCase(unittest.TestCase):
     def setUp(self):
         self.mac = 'mac'
         self.bac= 'bac'
-        self.event_with_bac = MacrophageTranslocateBlood(None, 0.1, self.mac, False, self.bac)
-        self.event_no_bac = MacrophageTranslocateBlood(None, 0.1, self.mac, False, None)
+        self.event_with_bac = PhagocyteTranslocateBlood(None, 0.1, self.mac, False, self.bac)
+        self.event_no_bac = PhagocyteTranslocateBlood(None, 0.1, self.mac, False, None)
 
     def test_initialise(self):
-        self.assertEqual(self.event_with_bac.bacteria_compartment_to_translocate, self.bac)
-        self.assertEqual(self.event_no_bac.bacteria_compartment_to_translocate, None)
+        self.assertEqual(self.event_with_bac.internal_compartment_to_translocate, self.bac)
+        self.assertEqual(self.event_no_bac.internal_compartment_to_translocate, None)
 
     def test_move(self):
         node = Patch(0, [self.mac, self.bac])

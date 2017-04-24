@@ -6,7 +6,12 @@ Long Docstring
 
 """
 
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteActivation import *
+from ..TBClasses import *
 from ...Base.Events.Change import *
+from ...Pulmonary.Node.BronchialTreeNode import *
+from ...Pulmonary.Node.BronchopulmonarySegment import *
+from ...Pulmonary.Node.LymphNode import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,47 +22,54 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class MacrophageActivation(Change):
+class RegularMacrophageSpontaneousActivation(PhagocyteActivation):
 
-    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
-                 bacteria_compartment_destroy=None):
-        self.bacteria_compartment_destroy = bacteria_compartment_destroy
-        Change.__init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to)
-
-    def update_node(self, node, network):
-        if self.bacteria_compartment_destroy is not None:
-            amount = node.compartment_per_compartment(self.bacteria_compartment_destroy,
-                                                      self.compartment_from)
-            node.update_subpopulation(self.bacteria_compartment_destroy, -1 * amount)
-        Change.update_node(self, node, network)
+    def __init__(self, probability):
+        PhagocyteActivation.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                     phagocyte_compartment_from=MACROPHAGE_REGULAR,
+                                     phagocyte_compartment_to=MACROPHAGE_ACTIVATED)
 
 
-class MacrophageActivationByExternals(MacrophageActivation):
+class InfectedMacrophageSpontaneousActivation(PhagocyteActivation):
 
-    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
-                 external_compartments, bacteria_compartment_destroy=None):
-        self.external_compartments = external_compartments
-        MacrophageActivation.__init__(self, node_types, probability, macrophage_compartment_from,
-                                      macrophage_compartment_to, bacteria_compartment_destroy)
-
-    def increment_from_node(self, node, network):
-        return MacrophageActivation.increment_from_node(self, node, network) * \
-               sum([node.subpopulations[c] for c in self.external_compartments])
+    def __init__(self, probability):
+        PhagocyteActivation.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                     phagocyte_compartment_from=MACROPHAGE_INFECTED,
+                                     phagocyte_compartment_to=MACROPHAGE_ACTIVATED,
+                                     bacteria_compartment_destroy=BACTERIA_INTRACELLULAR)
 
 
-class MacrophageDeactivationByLackOfExternals(Change):
+class RegularMacrophageActivationByCytokine(PhagocyteActivationByExternals):
 
-    def __init__(self, node_types, probability, macrophage_compartment_from, macrophage_compartment_to,
-                 external_compartments):
-        self.external_compartments = external_compartments
-        Change.__init__(self, node_types, probability, macrophage_compartment_from,
-                                        macrophage_compartment_to)
+    def __init__(self, probability):
+        PhagocyteActivationByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
+                                                probability,
+                                                phagocyte_compartment_from=MACROPHAGE_REGULAR,
+                                                phagocyte_compartment_to=MACROPHAGE_ACTIVATED,
+                                                external_compartments=CYTOKINE_COMPARTMENTS)
 
-    def increment_from_node(self, node, network):
-        # TODO - check this: epsilon = low number
-        epsilon = 0.00000001
-        number_externals = sum([node.subpopulations[c] for c in self.external_compartments])
-        if number_externals == 0:
-            return Change.increment_from_node(self, node, network) * (1 / epsilon)
-        else:
-            return Change.increment_from_node(self, node, network) * (1 / number_externals)
+
+class InfectedMacrophageActivationByCytokine(PhagocyteActivationByExternals):
+
+    def __init__(self, probability):
+        PhagocyteActivationByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
+                                                probability,
+                                                phagocyte_compartment_from=MACROPHAGE_INFECTED,
+                                                phagocyte_compartment_to=MACROPHAGE_ACTIVATED,
+                                                external_compartments=CYTOKINE_COMPARTMENTS,
+                                                bacteria_compartment_destroy=BACTERIA_INTRACELLULAR)
+
+
+class ActivatedMacrophageSpontaneousDeactivation(Change):
+    def __init__(self, probability):
+        Change.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                        MACROPHAGE_ACTIVATED, MACROPHAGE_REGULAR)
+
+
+class ActivatedMacrophageDeactivationByLackOfCytokine(PhagocyteDeactivationByLackOfExternals):
+    def __init__(self, probability):
+        PhagocyteDeactivationByLackOfExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
+                                                        probability,
+                                                        phagocyte_compartment_from=MACROPHAGE_ACTIVATED,
+                                                        phagocyte_compartment_to=MACROPHAGE_REGULAR,
+                                                        external_compartments=CYTOKINE_COMPARTMENTS)

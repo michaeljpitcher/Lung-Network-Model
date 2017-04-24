@@ -6,7 +6,11 @@ Long Docstring
 
 """
 
-from ...Base.Events.Destruction import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteIngestBacteria import *
+from ..TBClasses import *
+from ...Pulmonary.Node.BronchialTreeNode import *
+from ...Pulmonary.Node.BronchopulmonarySegment import *
+from ...Pulmonary.Node.LymphNode import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,47 +21,86 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class MacrophageIngestBacteria(Destroy):
-
-    def __init__(self, node_types, probability, macrophage_compartment, bacteria_compartment, macrophage_change_compartment=None,
-                 bacteria_change_compartment=None):
-        self.macrophage_compartment = macrophage_compartment
-        self.macrophage_change_compartment = macrophage_change_compartment
-        self.bacteria_change_compartment = bacteria_change_compartment
-        Destroy.__init__(self, node_types, probability, bacteria_compartment)
-
-    def increment_from_node(self, node, network):
-        return node.subpopulations[self.macrophage_compartment] * Destroy.increment_from_node(self, node, network)
-
-    def update_node(self, node, network):
-        if self.macrophage_change_compartment:
-            node.update_subpopulation(self.macrophage_compartment, -1)
-            node.update_subpopulation(self.macrophage_change_compartment, 1)
-
-        Destroy.update_node(self, node, network)
-
-        if self.bacteria_change_compartment:
-            node.update_subpopulation(self.bacteria_change_compartment, 1)
+class RegularMacrophageIngestFastBacteriaRetain(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_REGULAR,
+                                         bacteria_compartment=BACTERIA_FAST,
+                                         phagocyte_change_compartment=MACROPHAGE_INFECTED,
+                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
 
 
-class MacrophageDestroyInternalBacteria(Destroy):
+class RegularMacrophageIngestFastBacteriaDestroy(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_REGULAR,
+                                         bacteria_compartment=BACTERIA_FAST)
 
-    def __init__(self, node_types, probability, macrophage_compartment, bacteria_compartment, healed_macrophage_compartment):
-        self.macrophage_compartment = macrophage_compartment
-        # Compartment to return macrophage to if it destroys its last bacteria
-        self.healed_macrophage_compartment = healed_macrophage_compartment
-        Destroy.__init__(self, node_types, probability, bacteria_compartment)
 
-    def increment_from_node(self, node, network):
-        # TODO - this isn't dependent on bacterial loads, check validity
-        # If there are intracellular bacteria present, then based on number of macs, else no chance
-        if node.subpopulations[self.compartment_destroyed] > 0:
-            return node.subpopulations[self.macrophage_compartment]
-        else:
-            return 0
+class RegularMacrophageIngestSlowBacteriaRetain(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_REGULAR,
+                                         bacteria_compartment=BACTERIA_SLOW,
+                                         phagocyte_change_compartment=MACROPHAGE_INFECTED,
+                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
 
-    def update_node(self, node, network):
-        Destroy.update_node(self, node, network)
-        if node.subpopulations[self.compartment_destroyed] < node.subpopulations[self.macrophage_compartment]:
-            node.update_subpopulation(self.macrophage_compartment, -1)
-            node.update_subpopulation(self.healed_macrophage_compartment, 1)
+
+class RegularMacrophageIngestSlowBacteriaDestroy(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_REGULAR,
+                                         bacteria_compartment=BACTERIA_SLOW)
+
+
+class InfectedMacrophageIngestFastBacteriaRetain(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_INFECTED,
+                                         bacteria_compartment=BACTERIA_FAST,
+                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
+
+
+class InfectedMacrophageIngestFastBacteriaDestroy(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_INFECTED,
+                                         bacteria_compartment=BACTERIA_FAST)
+
+
+class InfectedMacrophageIngestSlowBacteriaRetain(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_INFECTED,
+                                         bacteria_compartment=BACTERIA_SLOW,
+                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
+
+
+class InfectedMacrophageIngestSlowBacteriaDestroy(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_INFECTED,
+                                         bacteria_compartment=BACTERIA_SLOW)
+
+
+class ActivatedMacrophageIngestFastBacteriaDestroy(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_ACTIVATED,
+                                         bacteria_compartment=BACTERIA_FAST)
+
+
+class ActivatedMacrophageIngestSlowBacteriaDestroy(PhagocyteIngestBacteria):
+    def __init__(self, probability):
+        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                         phagocyte_compartment=MACROPHAGE_ACTIVATED,
+                                         bacteria_compartment=BACTERIA_SLOW)
+
+
+class InfectedMacrophageDestroyInternalBacteria(PhagocyteDestroyInternalBacteria):
+    def __init__(self, probability):
+        PhagocyteDestroyInternalBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
+                                                  probability,
+                                                  phagocyte_compartment=MACROPHAGE_INFECTED,
+                                                  bacteria_compartment=BACTERIA_INTRACELLULAR,
+                                                  healed_phagocyte_compartment=MACROPHAGE_REGULAR)

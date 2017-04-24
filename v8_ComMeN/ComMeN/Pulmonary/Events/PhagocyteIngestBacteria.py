@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+
+"""Short docstring
+
+Long Docstring
+
+"""
+
+from v8_ComMeN.ComMeN.Base.Events.Destruction import *
+
+__author__ = "Michael Pitcher"
+__copyright__ = "Copyright 2017"
+__credits__ = ["Michael Pitcher"]
+__license__ = ""
+__version__ = "1.0.8"
+__email__ = "mjp22@st-andrews.ac.uk"
+__status__ = "Development"
+
+
+class PhagocyteIngestBacteria(Destroy):
+
+    def __init__(self, node_types, probability, phagocyte_compartment, bacteria_compartment, phagocyte_change_compartment=None,
+                 bacteria_change_compartment=None):
+        self.phagocyte_compartment = phagocyte_compartment
+        self.phagocyte_change_compartment = phagocyte_change_compartment
+        self.bacteria_change_compartment = bacteria_change_compartment
+        Destroy.__init__(self, node_types, probability, bacteria_compartment)
+
+    def increment_from_node(self, node, network):
+        return node.subpopulations[self.phagocyte_compartment] * Destroy.increment_from_node(self, node, network)
+
+    def update_node(self, node, network):
+        if self.phagocyte_change_compartment:
+            node.update_subpopulation(self.phagocyte_compartment, -1)
+            node.update_subpopulation(self.phagocyte_change_compartment, 1)
+
+        Destroy.update_node(self, node, network)
+
+        if self.bacteria_change_compartment:
+            node.update_subpopulation(self.bacteria_change_compartment, 1)
+
+
+class PhagocyteDestroyInternalBacteria(Destroy):
+
+    def __init__(self, node_types, probability, phagocyte_compartment, bacteria_compartment, healed_phagocyte_compartment):
+        self.phagocyte_compartment = phagocyte_compartment
+        # Compartment to return macrophage to if it destroys its last bacteria
+        self.healed_phagocyte_compartment = healed_phagocyte_compartment
+        Destroy.__init__(self, node_types, probability, bacteria_compartment)
+
+    def increment_from_node(self, node, network):
+        # TODO - this isn't dependent on bacterial loads, check validity
+        # If there are intracellular bacteria present, then based on number of macs, else no chance
+        if node.subpopulations[self.compartment_destroyed] > 0:
+            return node.subpopulations[self.phagocyte_compartment]
+        else:
+            return 0
+
+    def update_node(self, node, network):
+        Destroy.update_node(self, node, network)
+        if node.subpopulations[self.compartment_destroyed] < node.subpopulations[self.phagocyte_compartment]:
+            node.update_subpopulation(self.phagocyte_compartment, -1)
+            node.update_subpopulation(self.healed_phagocyte_compartment, 1)

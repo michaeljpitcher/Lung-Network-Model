@@ -1,7 +1,7 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageIngestBacteria import *
 from v8_ComMeN.ComMeN.Base.Node.Patch import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteIngestBacteria import *
 
 
 class MacrophageIngestBacteriaTestCase(unittest.TestCase):
@@ -11,27 +11,27 @@ class MacrophageIngestBacteriaTestCase(unittest.TestCase):
         self.bac_original = 'bac_o'
         self.bac_new = 'bac_n'
 
-        self.event_no_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original)
-        self.event_bac_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
-                                                         bacteria_change_compartment=self.bac_new)
-        self.event_mac_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
-                                                         macrophage_change_compartment=self.mac_new)
-        self.event_both_change = MacrophageIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
-                                                          bacteria_change_compartment=self.bac_new,
-                                                          macrophage_change_compartment=self.mac_new)
+        self.event_no_change = PhagocyteIngestBacteria(None, 0.1, self.mac_original, self.bac_original)
+        self.event_bac_change = PhagocyteIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
+                                                        bacteria_change_compartment=self.bac_new)
+        self.event_mac_change = PhagocyteIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
+                                                        phagocyte_change_compartment=self.mac_new)
+        self.event_both_change = PhagocyteIngestBacteria(None, 0.1, self.mac_original, self.bac_original,
+                                                         bacteria_change_compartment=self.bac_new,
+                                                         phagocyte_change_compartment=self.mac_new)
 
     def test_initialise(self):
-        self.assertEqual(self.event_no_change.macrophage_compartment, self.mac_original)
-        self.assertEqual(self.event_no_change.macrophage_change_compartment, None)
+        self.assertEqual(self.event_no_change.phagocyte_compartment, self.mac_original)
+        self.assertEqual(self.event_no_change.phagocyte_change_compartment, None)
         self.assertEqual(self.event_no_change.bacteria_change_compartment, None)
-        self.assertEqual(self.event_bac_change.macrophage_compartment, self.mac_original)
-        self.assertEqual(self.event_bac_change.macrophage_change_compartment, None)
+        self.assertEqual(self.event_bac_change.phagocyte_compartment, self.mac_original)
+        self.assertEqual(self.event_bac_change.phagocyte_change_compartment, None)
         self.assertEqual(self.event_bac_change.bacteria_change_compartment, self.bac_new)
-        self.assertEqual(self.event_mac_change.macrophage_compartment, self.mac_original)
-        self.assertEqual(self.event_mac_change.macrophage_change_compartment, self.mac_new)
+        self.assertEqual(self.event_mac_change.phagocyte_compartment, self.mac_original)
+        self.assertEqual(self.event_mac_change.phagocyte_change_compartment, self.mac_new)
         self.assertEqual(self.event_mac_change.bacteria_change_compartment, None)
-        self.assertEqual(self.event_both_change.macrophage_compartment, self.mac_original)
-        self.assertEqual(self.event_both_change.macrophage_change_compartment, self.mac_new)
+        self.assertEqual(self.event_both_change.phagocyte_compartment, self.mac_original)
+        self.assertEqual(self.event_both_change.phagocyte_change_compartment, self.mac_new)
         self.assertEqual(self.event_both_change.bacteria_change_compartment, self.bac_new)
 
     def test_increment_from_node(self):
@@ -86,11 +86,11 @@ class MacrophageDestroyInternalBacteriaTestCase(unittest.TestCase):
         self.mac_inf = 'm_i'
         self.bac = 'bac'
         self.mac_heal = 'm_h'
-        self.event = MacrophageDestroyInternalBacteria(None, 0.1, self.mac_inf, self.bac, self.mac_heal)
+        self.event = PhagocyteDestroyInternalBacteria(None, 0.1, self.mac_inf, self.bac, self.mac_heal)
 
     def test_initialise(self):
-        self.assertEqual(self.event.macrophage_compartment, self.mac_inf)
-        self.assertEqual(self.event.healed_macrophage_compartment, self.mac_heal)
+        self.assertEqual(self.event.phagocyte_compartment, self.mac_inf)
+        self.assertEqual(self.event.healed_phagocyte_compartment, self.mac_heal)
 
     def test_increment_from_node(self):
         node = Patch(0, [self.mac_heal, self.mac_inf, self.bac])

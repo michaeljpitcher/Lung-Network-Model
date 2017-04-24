@@ -1,7 +1,7 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageActivation import *
 from v8_ComMeN.ComMeN.Base.Node.Patch import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteActivation import *
 
 
 class MacrophageActivationTestCase(unittest.TestCase):
@@ -10,8 +10,8 @@ class MacrophageActivationTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.bac_int = 'bac_i'
-        self.event_no_bac = MacrophageActivation(None, 0.1, self.mac_reg, self.mac_act)
-        self.event_with_bac = MacrophageActivation(None, 0.1, self.mac_reg, self.mac_act, self.bac_int)
+        self.event_no_bac = PhagocyteActivation(None, 0.1, self.mac_reg, self.mac_act)
+        self.event_with_bac = PhagocyteActivation(None, 0.1, self.mac_reg, self.mac_act, self.bac_int)
 
     def test_initialise(self):
         self.assertEqual(self.event_no_bac.bacteria_compartment_destroy, None)
@@ -45,7 +45,7 @@ class MacrophageActivationByTCellTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.t_cell_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageActivationByExternals(None, 0.1, self.mac_reg, self.mac_act, self.t_cell_comps)
+        self.event = PhagocyteActivationByExternals(None, 0.1, self.mac_reg, self.mac_act, self.t_cell_comps)
 
     def test_initialise(self):
         self.assertItemsEqual(self.event.external_compartments, self.t_cell_comps)
@@ -67,7 +67,7 @@ class MacrophageDeactivationByLackOfInfectionTestCase(unittest.TestCase):
         self.mac_reg = 'mac_a'
         self.mac_act = 'mac_b'
         self.inf_comps = ['inf_a', 'inf_b']
-        self.event = MacrophageDeactivationByLackOfExternals(None, 0.1, self.mac_act, self.mac_reg, self.inf_comps)
+        self.event = PhagocyteDeactivationByLackOfExternals(None, 0.1, self.mac_act, self.mac_reg, self.inf_comps)
 
     def test_initialise(self):
         self.assertItemsEqual(self.event.external_compartments, self.inf_comps)

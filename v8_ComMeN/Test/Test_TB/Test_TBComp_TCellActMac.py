@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.TCellActivatesMacrophage import *
+from v8_ComMeN.ComMeN.TB.Events.TCellActivatesMacrophage import *
 
 
 class RegularMacrophageActivationByTCellsTestCase(unittest.TestCase):
@@ -8,7 +8,7 @@ class RegularMacrophageActivationByTCellsTestCase(unittest.TestCase):
         self.event = MacrophageRegularActivationByTCellHelper(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
+        self.assertTrue(isinstance(self.event, PhagocyteActivationByExternals))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_REGULAR)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
@@ -21,7 +21,7 @@ class InfectedMacrophageActivationByTCellsTestCase(unittest.TestCase):
         self.event = MacrophageInfectedActivationByTCellHelper(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
+        self.assertTrue(isinstance(self.event, PhagocyteActivationByExternals))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)

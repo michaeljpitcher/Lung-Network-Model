@@ -1,1 +1,3 @@
-__all__ = ['MacrophageActivation', 'MacrophageDeath', 'MacrophageIngestBacteria', 'MacrophageTranslocate']
+__all__ = ['BacteriaChange', 'BacteriaReplication', 'BacteriaTranslocate', 'MacrophageActivation', 'MacrophageDeath',
+           'MacrophageIngestBacteria', 'MacrophageRecruitment', 'MacrophageTranslocate', 'TCellDeath',
+           'TCellRecruitment', 'TCellTranslocate']

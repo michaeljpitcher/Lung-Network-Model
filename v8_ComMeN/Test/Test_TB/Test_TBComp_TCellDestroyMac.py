@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.TCellDestroyMacrophage import *
+from v8_ComMeN.ComMeN.TB.Events.TCellDestroyMacrophage import *
 
 
 class InfectedMacrophageDeathByTCellTestCase(unittest.TestCase):
@@ -8,7 +8,7 @@ class InfectedMacrophageDeathByTCellTestCase(unittest.TestCase):
         self.event = TCellCytotoxicDestroysInfectedMacrophage(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeathByOtherCompartments))
+        self.assertTrue(isinstance(self.event, PhagocyteDeathByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)
