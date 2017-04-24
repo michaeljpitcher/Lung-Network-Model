@@ -23,32 +23,42 @@ __status__ = "Development"
 
 class TCellHelperTranslocateBronchus(TranslocateBronchus):
     def __init__(self, probability):
-        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability, T_CELL_HELPER,
-                                     True)
+        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+                                     translocate_compartment=T_CELL_HELPER,
+                                     edge_choice_based_on_weight=True)
 
 
 class TCellHelperTranslocateLymph(TranslocateLymph):
     def __init__(self, probability):
-        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability, T_CELL_HELPER, True)
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                  translocate_compartment=T_CELL_HELPER,
+                                  direction_only=True)
 
 
 class TCellHelperTranslocateBlood(TranslocateBlood):
     def __init__(self, probability):
-        TranslocateBlood.__init__(self, [LymphNode], probability, T_CELL_HELPER, True)
+        TranslocateBlood.__init__(self, [LymphNode], probability,
+                                  translocate_compartment=T_CELL_HELPER,
+                                  direction_only=True)
 
 
 class TCellCytotoxicTranslocateBronchus(TranslocateBronchus):
     def __init__(self, probability):
-        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability, T_CELL_CYTOTOXIC,
-                                     True)
+        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+                                     translocate_compartment=T_CELL_CYTOTOXIC,
+                                     edge_choice_based_on_weight=True)
 
 
 class TCellCytotoxicTranslocateLymph(TranslocateLymph):
     def __init__(self, probability):
-        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability, T_CELL_CYTOTOXIC, True)
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                  translocate_compartment=T_CELL_CYTOTOXIC,
+                                  direction_only=True)
 
 
 class TCellCytotoxicTranslocateBlood(TranslocateBlood):
     def __init__(self, probability):
-        TranslocateBlood.__init__(self, [LymphNode], probability, T_CELL_CYTOTOXIC, True)
+        TranslocateBlood.__init__(self, [LymphNode], probability,
+                                  translocate_compartment=T_CELL_CYTOTOXIC,
+                                  direction_only=True)
 

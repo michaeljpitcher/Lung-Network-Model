@@ -23,42 +23,53 @@ __status__ = "Development"
 
 class TCellHelperRecruitmentBronchialRegular(RecruitmentBronchial):
     def __init__(self, probability):
-        RecruitmentBronchial.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability, T_CELL_HELPER, True)
+        RecruitmentBronchial.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability,
+                                      recruited_compartment=T_CELL_HELPER,
+                                      based_on_perfusion=True)
 
 
 class TCellHelperRecruitmentBronchialThroughInfection(RecruitmentBronchialByExternals):
     def __init__(self, probability):
         RecruitmentBronchialByExternals.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability,
-                                                 T_CELL_HELPER, [MACROPHAGE_INFECTED], True)
+                                                 recruited_compartment=T_CELL_HELPER,
+                                                 external_compartments=[MACROPHAGE_INFECTED],
+                                                 based_on_perfusion=True)
 
 
 class TCellHelperRecruitmentLymphRegular(RecruitmentLymph):
     def __init__(self, probability):
-        RecruitmentLymph.__init__(self, [LymphNode], probability, T_CELL_HELPER)
+        RecruitmentLymph.__init__(self, [LymphNode], probability, recruited_compartment=T_CELL_HELPER)
 
 
 class TCellHelperRecruitmentLymphThroughInfection(RecruitmentLymphByExternals):
     def __init__(self, probability):
-        RecruitmentLymphByExternals.__init__(self, [LymphNode], probability, T_CELL_HELPER, [MACROPHAGE_INFECTED])
+        RecruitmentLymphByExternals.__init__(self, [LymphNode], probability,
+                                             recruited_compartment=T_CELL_HELPER,
+                                             external_compartments=[MACROPHAGE_INFECTED])
 
 
 class TCellCytotoxicRecruitmentBronchialRegular(RecruitmentBronchial):
     def __init__(self, probability):
-        RecruitmentBronchial.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability, T_CELL_CYTOTOXIC,
-                                      True)
+        RecruitmentBronchial.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability,
+                                      recruited_compartment=T_CELL_CYTOTOXIC,
+                                      based_on_perfusion=True)
 
 
 class TCellCytotoxicRecruitmentBronchialThroughInfection(RecruitmentBronchialByExternals):
     def __init__(self, probability):
         RecruitmentBronchialByExternals.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability,
-                                                 T_CELL_CYTOTOXIC, [MACROPHAGE_INFECTED], True)
+                                                 recruited_compartment=T_CELL_CYTOTOXIC,
+                                                 external_compartments=[MACROPHAGE_INFECTED],
+                                                 based_on_perfusion=True)
 
 
 class TCellCytotoxicRecruitmentLymphRegular(RecruitmentLymph):
     def __init__(self, probability):
-        RecruitmentLymph.__init__(self, [LymphNode], probability, T_CELL_CYTOTOXIC)
+        RecruitmentLymph.__init__(self, [LymphNode], probability, recruited_compartment=T_CELL_CYTOTOXIC)
 
 
 class TCellCytotoxicRecruitmentLymphThroughInfection(RecruitmentLymphByExternals):
     def __init__(self, probability):
-        RecruitmentLymphByExternals.__init__(self, [LymphNode], probability, T_CELL_CYTOTOXIC, [MACROPHAGE_INFECTED])
+        RecruitmentLymphByExternals.__init__(self, [LymphNode], probability,
+                                             recruited_compartment=T_CELL_CYTOTOXIC,
+                                             external_compartments=[MACROPHAGE_INFECTED])

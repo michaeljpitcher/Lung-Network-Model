@@ -24,25 +24,28 @@ __status__ = "Development"
 class RegularMacrophageSpontaneousDeath(MacrophageDeath):
     def __init__(self, probability):
         MacrophageDeath.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                 MACROPHAGE_REGULAR)
+                                 macrophage_compartment=MACROPHAGE_REGULAR)
 
 
 class InfectedMacrophageSpontaneousDeath(MacrophageDeath):
     def __init__(self, probability):
         MacrophageDeath.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                 MACROPHAGE_INFECTED, BACTERIA_INTRACELLULAR, BACTERIA_SLOW)
+                                 macrophage_compartment=MACROPHAGE_INFECTED,
+                                 internal_bacteria_compartment=BACTERIA_INTRACELLULAR,
+                                 bacteria_release_compartment_to=BACTERIA_SLOW)
 
 
 class ActivatedMacrophageSpontaneousDeath(MacrophageDeath):
     def __init__(self, probability):
         MacrophageDeath.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                 MACROPHAGE_ACTIVATED)
+                                 macrophage_compartment=MACROPHAGE_ACTIVATED)
 
 
 # NECROSIS
 class InfectedMacrophageDeathByIntracellularBacteria(MacrophageDeathByExternals):
     def __init__(self, probability):
         MacrophageDeathByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                            MACROPHAGE_INFECTED, [BACTERIA_INTRACELLULAR],
+                                            macrophage_compartment=MACROPHAGE_INFECTED,
+                                            external_compartments=[BACTERIA_INTRACELLULAR],
                                             internal_bacteria_compartment=BACTERIA_INTRACELLULAR,
                                             bacteria_release_compartment_to=BACTERIA_SLOW)

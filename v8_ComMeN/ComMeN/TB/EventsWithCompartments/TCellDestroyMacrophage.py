@@ -25,7 +25,7 @@ class TCellDestroysInfectedMacrophage(MacrophageDeathByExternals):
     # TODO - kills all internal bacteria not T-cell - check this, may need two events or more
     def __init__(self, probability):
         MacrophageDeathByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                            MACROPHAGE_INFECTED, external_compartments=[T_CELL_CYTOTOXIC],
+                                            macrophage_compartment=MACROPHAGE_INFECTED,
+                                            external_compartments=[T_CELL_CYTOTOXIC],
                                             externals_to_destroy=[],
-                                            internal_bacteria_compartment=BACTERIA_INTRACELLULAR,
-                                            bacteria_release_compartment_to=None)
+                                            internal_bacteria_compartment=BACTERIA_INTRACELLULAR)

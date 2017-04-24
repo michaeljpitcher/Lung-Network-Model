@@ -24,9 +24,11 @@ __status__ = "Development"
 
 class SpontaneousTCellHelperDeath(Destroy):
     def __init__(self, probability):
-        Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability, T_CELL_HELPER)
+        Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                         compartment_destroyed=T_CELL_HELPER)
 
 
 class SpontaneousTCellCytotoxicDeath(Destroy):
     def __init__(self, probability):
-        Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability, T_CELL_CYTOTOXIC)
+        Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                         compartment_destroyed=T_CELL_CYTOTOXIC)

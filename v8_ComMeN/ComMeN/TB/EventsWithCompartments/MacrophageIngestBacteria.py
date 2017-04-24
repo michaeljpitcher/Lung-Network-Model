@@ -24,69 +24,83 @@ __status__ = "Development"
 class RegularMacrophageIngestFastBacteriaRetain(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_REGULAR, BACTERIA_FAST,
-                                          MACROPHAGE_INFECTED, BACTERIA_INTRACELLULAR)
+                                          macrophage_compartment=MACROPHAGE_REGULAR,
+                                          bacteria_compartment=BACTERIA_FAST,
+                                          macrophage_change_compartment=MACROPHAGE_INFECTED,
+                                          bacteria_change_compartment=BACTERIA_INTRACELLULAR)
 
 
 class RegularMacrophageIngestFastBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_REGULAR, BACTERIA_FAST)
+                                          macrophage_compartment=MACROPHAGE_REGULAR,
+                                          bacteria_compartment=BACTERIA_FAST)
 
 
 class RegularMacrophageIngestSlowBacteriaRetain(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_REGULAR, BACTERIA_SLOW,
-                                          MACROPHAGE_INFECTED, BACTERIA_INTRACELLULAR)
+                                          macrophage_compartment=MACROPHAGE_REGULAR,
+                                          bacteria_compartment=BACTERIA_SLOW,
+                                          macrophage_change_compartment=MACROPHAGE_INFECTED,
+                                          bacteria_change_compartment=BACTERIA_INTRACELLULAR)
 
 
 class RegularMacrophageIngestSlowBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_REGULAR, BACTERIA_SLOW)
+                                          macrophage_compartment=MACROPHAGE_REGULAR,
+                                          bacteria_compartment=BACTERIA_SLOW)
 
 
 class InfectedMacrophageIngestFastBacteriaRetain(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_INFECTED, BACTERIA_FAST,
+                                          macrophage_compartment=MACROPHAGE_INFECTED,
+                                          bacteria_compartment=BACTERIA_FAST,
                                           bacteria_change_compartment=BACTERIA_INTRACELLULAR)
 
 
 class InfectedMacrophageIngestFastBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_INFECTED, BACTERIA_FAST)
+                                          macrophage_compartment=MACROPHAGE_INFECTED,
+                                          bacteria_compartment=BACTERIA_FAST)
 
 
 class InfectedMacrophageIngestSlowBacteriaRetain(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_INFECTED, BACTERIA_SLOW,
+                                          macrophage_compartment=MACROPHAGE_INFECTED,
+                                          bacteria_compartment=BACTERIA_SLOW,
                                           bacteria_change_compartment=BACTERIA_INTRACELLULAR)
 
 
 class InfectedMacrophageIngestSlowBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_INFECTED, BACTERIA_SLOW)
+                                          macrophage_compartment=MACROPHAGE_INFECTED,
+                                          bacteria_compartment=BACTERIA_SLOW)
 
 
 class ActivatedMacrophageIngestFastBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_ACTIVATED, BACTERIA_FAST)
+                                          macrophage_compartment=MACROPHAGE_ACTIVATED,
+                                          bacteria_compartment=BACTERIA_FAST)
 
 
 class ActivatedMacrophageIngestSlowBacteriaDestroy(MacrophageIngestBacteria):
     def __init__(self, probability):
         MacrophageIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                          MACROPHAGE_ACTIVATED, BACTERIA_SLOW)
+                                          macrophage_compartment=MACROPHAGE_ACTIVATED,
+                                          bacteria_compartment=BACTERIA_SLOW)
 
 
 class InfectedMacrophageDestroyInternalBacteria(MacrophageDestroyInternalBacteria):
     def __init__(self, probability):
         MacrophageDestroyInternalBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
-                                                   probability, MACROPHAGE_INFECTED,
-                                                   BACTERIA_INTRACELLULAR, MACROPHAGE_REGULAR)
+                                                   probability,
+                                                   macrophage_compartment=MACROPHAGE_INFECTED,
+                                                   bacteria_compartment=BACTERIA_INTRACELLULAR,
+                                                   healed_macrophage_compartment=MACROPHAGE_REGULAR)

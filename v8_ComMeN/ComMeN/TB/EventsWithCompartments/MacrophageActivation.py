@@ -69,6 +69,7 @@ class ActivatedMacrophageSpontaneousDeactivation(Change):
 class ActivatedMacrophageDeactivationByLackOfInfection(MacrophageDeactivationByLackOfExternals):
     def __init__(self, probability):
         MacrophageDeactivationByLackOfExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
-                                                         probability, MACROPHAGE_ACTIVATED, MACROPHAGE_REGULAR,
-                                                         [MACROPHAGE_INFECTED])
-
+                                                         probability,
+                                                         macrophage_compartment_from=MACROPHAGE_ACTIVATED,
+                                                         macrophage_compartment_to=MACROPHAGE_REGULAR,
+                                                         external_compartments=[MACROPHAGE_INFECTED])
