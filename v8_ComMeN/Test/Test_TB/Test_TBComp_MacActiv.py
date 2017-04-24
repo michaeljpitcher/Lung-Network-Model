@@ -53,32 +53,6 @@ class InfectedMacrophageActivationByChemokineTestCase(unittest.TestCase):
         self.assertEqual(self.event.bacteria_compartment_destroy, BACTERIA_INTRACELLULAR)
 
 
-class RegularMacrophageActivationByTCellsTestCase(unittest.TestCase):
-    def setUp(self):
-        self.event = RegularMacrophageActivationByTCells(0.1)
-
-    def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
-        self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
-        self.assertEqual(self.event.compartment_from, MACROPHAGE_REGULAR)
-        self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertItemsEqual(self.event.external_compartments, [T_CELL])
-        self.assertFalse(self.event.bacteria_compartment_destroy)
-
-
-class InfectedMacrophageActivationByTCellsTestCase(unittest.TestCase):
-    def setUp(self):
-        self.event = InfectedMacrophageActivationByTCells(0.1)
-
-    def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
-        self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
-        self.assertEqual(self.event.compartment_from, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertItemsEqual(self.event.external_compartments, [T_CELL])
-        self.assertEqual(self.event.bacteria_compartment_destroy, BACTERIA_INTRACELLULAR)
-
-
 class ActivatedMacrophageSpontaneousDeactivationTestCase(unittest.TestCase):
     def setUp(self):
         self.event = ActivatedMacrophageSpontaneousDeactivation(0.1)
