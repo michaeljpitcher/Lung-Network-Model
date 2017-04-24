@@ -41,21 +41,22 @@ class MacrophageDeath(Destroy):
         Destroy.update_node(self, node, network)
 
 
-class MacrophageDeathByExternals(MacrophageDeath):
+class MacrophageDeathByOtherCompartments(MacrophageDeath):
 
-    def __init__(self, node_types, probability, macrophage_compartment, external_compartments,
-                 externals_to_destroy=None, internal_bacteria_compartment=None, bacteria_release_compartment_to=None):
-        self.external_compartments = external_compartments
-        self.externals_to_destroy = externals_to_destroy
+    def __init__(self, node_types, probability, macrophage_compartment, death_causing_compartments,
+                 extra_compartments_to_destroy=None, internal_bacteria_compartment=None,
+                 bacteria_release_compartment_to=None):
+        self.death_causing_compartments = death_causing_compartments
+        self.extra_compartments_to_destroy = extra_compartments_to_destroy
         MacrophageDeath.__init__(self, node_types, probability, macrophage_compartment, internal_bacteria_compartment,
                                  bacteria_release_compartment_to)
 
     def increment_from_node(self, node, network):
         return MacrophageDeath.increment_from_node(self, node, network) * sum([node.subpopulations[c] for c in
-                                                                       self.external_compartments])
+                                                                               self.death_causing_compartments])
 
     def update_node(self, node, network):
         MacrophageDeath.update_node(self, node, network)
-        if self.externals_to_destroy:
-            for c in self.externals_to_destroy:
+        if self.extra_compartments_to_destroy:
+            for c in self.extra_compartments_to_destroy:
                 node.update_subpopulation(c, -1)
