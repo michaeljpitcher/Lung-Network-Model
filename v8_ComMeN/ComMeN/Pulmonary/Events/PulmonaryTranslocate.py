@@ -54,6 +54,7 @@ class TranslocateLymph(Translocate):
             return Translocate.increment_from_node(self, node, network)
 
     def viable_edges(self, node, network):
+        # TODO - slight inefficiency here (maybe don't add to neighbours if DIRECTION?)
         edges = Translocate.viable_edges(self, node, network)
         if self.direction_only:
             edges = [(n, data) for (n, data) in edges if data[DIRECTION] == n]

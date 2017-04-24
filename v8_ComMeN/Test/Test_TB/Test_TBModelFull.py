@@ -41,7 +41,5 @@ class TBModelFullTestCase(unittest.TestCase):
                                                         MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED,
                                                         T_CELL])
 
-
-
 if __name__ == '__main__':
     unittest.main()

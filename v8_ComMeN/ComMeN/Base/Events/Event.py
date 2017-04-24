@@ -30,7 +30,6 @@ class Event:
         self.nodes_impacted += nodes
 
     def update_rate(self, network):
-        assert len(self.nodes_impacted) > 0, "No nodes for event {0}".format(type(self))
         self.total = 0
         for node in self.nodes_impacted:
             self.total += self.increment_from_node(node, network)
