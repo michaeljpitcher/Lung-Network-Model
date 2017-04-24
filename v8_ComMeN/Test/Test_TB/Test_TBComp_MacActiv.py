@@ -29,7 +29,7 @@ class InfectedMacrophageSpontaneousActivationTestCase(unittest.TestCase):
 
 class RegularMacrophageActivationByChemokineTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = RegularMacrophageActivationByChemokine(0.1)
+        self.event = RegularMacrophageActivationByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
@@ -42,7 +42,7 @@ class RegularMacrophageActivationByChemokineTestCase(unittest.TestCase):
 
 class InfectedMacrophageActivationByChemokineTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = InfectedMacrophageActivationByChemokine(0.1)
+        self.event = InfectedMacrophageActivationByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageActivationByExternals))
@@ -66,7 +66,7 @@ class ActivatedMacrophageSpontaneousDeactivationTestCase(unittest.TestCase):
 
 class ActivatedMacrophageDeactivationByLackOfInfectionTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = ActivatedMacrophageDeactivationByLackOfInfection(0.1)
+        self.event = ActivatedMacrophageDeactivationByLackOfCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, MacrophageDeactivationByLackOfExternals))

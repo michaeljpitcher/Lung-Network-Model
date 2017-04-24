@@ -32,3 +32,7 @@ T_CELL_CYTOTOXIC = 't_cell_cytotoxic'
 # DENDRITIC_CELL = 'dendritic_cell'
 # DENDRITIC_CELL_REGULAR = 'dendritic_cell_regular'
 # DENDRITIC_CELL_INFECTED = 'dendritic_cell_infected'
+
+# Compartments that exude Cytokine
+# TODO - treat all cytokine as one
+CYTOKINE_COMPARTMENTS = [MACROPHAGE_INFECTED]

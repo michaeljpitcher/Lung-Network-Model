@@ -16,7 +16,7 @@ class RegularMacrophageRecruitmentBronchialTestCase(unittest.TestCase):
 
 class RegularMacrophageRecruitmentBronchialByInfectionTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = RegularMacrophageRecruitmentBronchialByInfection(0.1)
+        self.event = RegularMacrophageRecruitmentBronchialByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, RecruitmentBronchialByExternals))
@@ -38,7 +38,7 @@ class RegularMacrophageRecruitmentLymphTestCase(unittest.TestCase):
 
 class RegularMacrophageRecruitmentLymphByInfectionTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = RegularMacrophageRecruitmentLymphByInfection(0.1)
+        self.event = RegularMacrophageRecruitmentLymphByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, RecruitmentLymphByExternals))

@@ -16,7 +16,7 @@ class TCellHelperRecruitmentBronchialRegularTestCase(unittest.TestCase):
 
 class TCellHelperRecruitmentBronchialThroughInfectionTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellHelperRecruitmentBronchialThroughInfection(0.1)
+        self.event = TCellHelperRecruitmentBronchialByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, RecruitmentBronchialByExternals))
@@ -38,7 +38,7 @@ class TCellHelperRecruitmentLymphRegularTestCase(unittest.TestCase):
 
 class TCellHelperRecruitmentLymphThroughInfectionTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellHelperRecruitmentLymphThroughInfection(0.1)
+        self.event = TCellHelperRecruitmentLymphByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, RecruitmentLymphByExternals))
@@ -60,7 +60,7 @@ class TCellCytotoxicRecruitmentBronchialRegularTestCase(unittest.TestCase):
 
 class TCellCytotoxicRecruitmentBronchialThroughInfectionTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellCytotoxicRecruitmentBronchialThroughInfection(0.1)
+        self.event = TCellCytotoxicRecruitmentBronchialByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, RecruitmentBronchialByExternals))
@@ -82,7 +82,7 @@ class TCellCytotoxicRecruitmentLymphRegularTestCase(unittest.TestCase):
 
 class TCellCytotoxicRecruitmentLymphThroughInfectionTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellCytotoxicRecruitmentLymphThroughInfection(0.1)
+        self.event = TCellCytotoxicRecruitmentLymphByCytokine(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, RecruitmentLymphByExternals))

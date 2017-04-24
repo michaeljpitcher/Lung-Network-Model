@@ -44,13 +44,13 @@ class InfectedMacrophageDeathByIntracellularBacteriaTestCase(unittest.TestCase):
         self.event = InfectedMacrophageDeathByIntracellularBacteria(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, MacrophageDeathByExternals))
+        self.assertTrue(isinstance(self.event, MacrophageDeathByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)
         self.assertEqual(self.event.bacteria_release_compartment_to, BACTERIA_SLOW)
-        self.assertItemsEqual(self.event.external_compartments, [BACTERIA_INTRACELLULAR])
-        self.assertFalse(self.event.externals_to_destroy)
+        self.assertItemsEqual(self.event.death_causing_compartments, [BACTERIA_INTRACELLULAR])
+        self.assertFalse(self.event.extra_compartments_to_destroy)
 
 
 if __name__ == '__main__':

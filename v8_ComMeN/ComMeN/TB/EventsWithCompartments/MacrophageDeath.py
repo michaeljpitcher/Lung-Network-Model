@@ -42,10 +42,10 @@ class ActivatedMacrophageSpontaneousDeath(MacrophageDeath):
 
 
 # NECROSIS
-class InfectedMacrophageDeathByIntracellularBacteria(MacrophageDeathByExternals):
+class InfectedMacrophageDeathByIntracellularBacteria(MacrophageDeathByOtherCompartments):
     def __init__(self, probability):
-        MacrophageDeathByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                            macrophage_compartment=MACROPHAGE_INFECTED,
-                                            external_compartments=[BACTERIA_INTRACELLULAR],
-                                            internal_bacteria_compartment=BACTERIA_INTRACELLULAR,
-                                            bacteria_release_compartment_to=BACTERIA_SLOW)
+        MacrophageDeathByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                                    macrophage_compartment=MACROPHAGE_INFECTED,
+                                                    death_causing_compartments=[BACTERIA_INTRACELLULAR],
+                                                    internal_bacteria_compartment=BACTERIA_INTRACELLULAR,
+                                                    bacteria_release_compartment_to=BACTERIA_SLOW)
