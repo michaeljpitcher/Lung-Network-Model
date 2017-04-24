@@ -23,31 +23,37 @@ __status__ = "Development"
 
 class BacteriaTranslocateBronchusFast(TranslocateBronchus):
     def __init__(self, probability):
-        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability, BACTERIA_FAST,
-                                     True)
+        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+                                     translocate_compartment=BACTERIA_FAST,
+                                     edge_choice_based_on_weight=True)
 
 
 class BacteriaTranslocateBronchusSlow(TranslocateBronchus):
     def __init__(self, probability):
-        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability, BACTERIA_SLOW,
-                                     True)
+        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+                                     translocate_compartment=BACTERIA_SLOW,
+                                     edge_choice_based_on_weight=True)
 
 
 class BacteriaTranslocateLymphFast(TranslocateLymph):
     def __init__(self, probability):
-        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability, BACTERIA_FAST, True)
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                  translocate_compartment=BACTERIA_FAST, direction_only=True)
 
 
 class BacteriaTranslocateLymphSlow(TranslocateLymph):
     def __init__(self, probability):
-        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability, BACTERIA_SLOW, True)
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                  translocate_compartment=BACTERIA_SLOW, direction_only=True)
 
 
 class BacteriaTranslocateHaematogenousFast(TranslocateBlood):
     def __init__(self, probability):
-        TranslocateBlood.__init__(self, [LymphNode], probability, BACTERIA_FAST, True)
+        TranslocateBlood.__init__(self, [LymphNode], probability,
+                                  translocate_compartment=BACTERIA_FAST, direction_only=True)
 
 
 class BacteriaTranslocateHaematogenousSlow(TranslocateBlood):
     def __init__(self, probability):
-        TranslocateBlood.__init__(self, [LymphNode], probability, BACTERIA_SLOW, True)
+        TranslocateBlood.__init__(self, [LymphNode], probability,
+                                  translocate_compartment=BACTERIA_SLOW, direction_only=True)

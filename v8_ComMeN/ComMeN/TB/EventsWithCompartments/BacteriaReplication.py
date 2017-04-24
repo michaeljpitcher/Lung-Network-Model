@@ -23,15 +23,17 @@ __status__ = "Development"
 
 class BacteriaReplicationFast(Replication):
     def __init__(self, probability):
-        Replication.__init__(self, [BronchialTreeNode, BronchopulmonarySegment, LymphNode], probability, BACTERIA_FAST)
+        Replication.__init__(self, [BronchialTreeNode, BronchopulmonarySegment, LymphNode], probability,
+                             compartment_replicating=BACTERIA_FAST)
 
 
 class BacteriaReplicationSlow(Replication):
     def __init__(self, probability):
-        Replication.__init__(self, [BronchialTreeNode, BronchopulmonarySegment, LymphNode], probability, BACTERIA_SLOW)
+        Replication.__init__(self, [BronchialTreeNode, BronchopulmonarySegment, LymphNode], probability,
+                             compartment_replicating=BACTERIA_SLOW)
 
 
 class BacteriaReplicationIntracellular(Replication):
     def __init__(self, probability):
         Replication.__init__(self, [BronchialTreeNode, BronchopulmonarySegment, LymphNode], probability,
-                             BACTERIA_INTRACELLULAR)
+                             compartment_replicating=BACTERIA_INTRACELLULAR)
