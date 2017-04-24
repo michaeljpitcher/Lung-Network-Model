@@ -7,7 +7,7 @@ Long Docstring
 """
 
 import math
-
+import logging
 import networkx as nx
 import numpy as np
 import csv
@@ -27,7 +27,7 @@ __status__ = "Development"
 
 class MetapopulationNetwork(nx.Graph):
 
-    def __init__(self, compartments, nodes, edges, events, seeding=None):
+    def __init__(self, compartments, nodes, edges, events):
         nx.Graph.__init__(self)
 
         self.compartments = compartments
@@ -51,7 +51,6 @@ class MetapopulationNetwork(nx.Graph):
                 event.attach_nodes(viable_nodes)
 
         self.events = events
-
         self.time = 0.0
 
     def seed_network_node_type(self, node_type, seeding):
@@ -79,9 +78,18 @@ class MetapopulationNetwork(nx.Graph):
         u.neighbours.append((v, attr_dict))
         v.neighbours.append((u, attr_dict))
 
-    def run(self, time_limit=0, run_id=None, output=True):
+    def run(self, time_limit=0, run_id=None, output=True, debug=False):
         csv_file = None
         csv_writer = None
+
+        if debug:
+            if run_id is not None:
+                filename = 'TBModel_' + str(run_id) + '.log'
+            else:
+                filename = 'TBModel.log'
+            logging.basicConfig(filename=filename, format='%(asctime)s:%(levelname)s:%(message)s',
+                                level=logging.DEBUG)
+            logging.debug("Running TB automaton model: run id = " + str(run_id))
 
         if run_id is not None:
             csv_file = open(str(run_id) + '.csv', 'wb')
@@ -111,6 +119,7 @@ class MetapopulationNetwork(nx.Graph):
                 running_total += e.rate
                 if running_total > r:
                     e.update_network(self)
+                    logging.debug("Event performed: " + e.__class__.__name__ + ". Time now:" + str(self.time + dt))
                     break
 
             self.time += dt
