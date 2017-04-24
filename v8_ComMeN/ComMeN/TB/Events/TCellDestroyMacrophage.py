@@ -28,4 +28,4 @@ class TCellCytotoxicDestroysInfectedMacrophage(PhagocyteDeathByOtherCompartments
                                                    phagocyte_compartment=MACROPHAGE_INFECTED,
                                                    death_causing_compartments=[T_CELL_CYTOTOXIC],
                                                    extra_compartments_to_destroy=[],
-                                                   internal_bacteria_compartment=BACTERIA_INTRACELLULAR)
+                                                   internal_compartment=BACTERIA_INTRACELLULAR)

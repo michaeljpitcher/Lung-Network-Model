@@ -11,8 +11,8 @@ class InfectedMacrophageDeathByTCellTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.event, PhagocyteDeathByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)
-        self.assertFalse(self.event.bacteria_release_compartment_to)
+        self.assertEqual(self.event.internal_compartment, BACTERIA_INTRACELLULAR)
+        self.assertFalse(self.event.compartment_to_release_internal_into)
         self.assertItemsEqual(self.event.death_causing_compartments, [T_CELL_CYTOTOXIC])
         self.assertFalse(self.event.extra_compartments_to_destroy)
 

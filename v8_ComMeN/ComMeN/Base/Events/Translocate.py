@@ -20,9 +20,10 @@ __status__ = "Development"
 
 class Translocate(Event):
 
-    def __init__(self, node_types, probability, translocate_compartment, edge_type):
+    def __init__(self, node_types, probability, translocate_compartment, edge_type, internal_compartments=None):
         self.translocate_compartment = translocate_compartment
         self.edge_type = edge_type
+        self.internal_compartments = internal_compartments
         Event.__init__(self, node_types, probability)
 
     def increment_from_node(self, node, network):
@@ -41,5 +42,10 @@ class Translocate(Event):
         return edges[np.random.randint(0, len(edges))][0]
 
     def move(self, node, neighbour):
+        if self.internal_compartments:
+            for c in self.internal_compartments:
+                amount_to_move = node.compartment_per_compartment(c, self.translocate_compartment)
+                node.update_subpopulation(c, -1 * amount_to_move)
+                neighbour.update_subpopulation(c, amount_to_move)
         node.update_subpopulation(self.translocate_compartment, -1)
         neighbour.update_subpopulation(self.translocate_compartment, 1)

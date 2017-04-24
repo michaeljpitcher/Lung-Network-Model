@@ -11,8 +11,8 @@ class RegularMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.event, PhagocyteDeath))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_REGULAR)
-        self.assertFalse(self.event.internal_bacteria_compartment)
-        self.assertFalse(self.event.bacteria_release_compartment_to)
+        self.assertFalse(self.event.internal_compartment)
+        self.assertFalse(self.event.compartment_to_release_internal_into)
 
 
 class InfectedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
@@ -23,8 +23,8 @@ class InfectedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.event, PhagocyteDeath))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)
-        self.assertEqual(self.event.bacteria_release_compartment_to, BACTERIA_SLOW)
+        self.assertEqual(self.event.internal_compartment, BACTERIA_INTRACELLULAR)
+        self.assertEqual(self.event.compartment_to_release_internal_into, BACTERIA_SLOW)
 
 
 class ActivatedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
@@ -35,8 +35,8 @@ class ActivatedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.event, PhagocyteDeath))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_ACTIVATED)
-        self.assertFalse(self.event.internal_bacteria_compartment)
-        self.assertFalse(self.event.bacteria_release_compartment_to)
+        self.assertFalse(self.event.internal_compartment)
+        self.assertFalse(self.event.compartment_to_release_internal_into)
 
 
 class InfectedMacrophageDeathByIntracellularBacteriaTestCase(unittest.TestCase):
@@ -47,8 +47,8 @@ class InfectedMacrophageDeathByIntracellularBacteriaTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.event, PhagocyteDeathByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.internal_bacteria_compartment, BACTERIA_INTRACELLULAR)
-        self.assertEqual(self.event.bacteria_release_compartment_to, BACTERIA_SLOW)
+        self.assertEqual(self.event.internal_compartment, BACTERIA_INTRACELLULAR)
+        self.assertEqual(self.event.compartment_to_release_internal_into, BACTERIA_SLOW)
         self.assertItemsEqual(self.event.death_causing_compartments, [BACTERIA_INTRACELLULAR])
         self.assertFalse(self.event.extra_compartments_to_destroy)
 

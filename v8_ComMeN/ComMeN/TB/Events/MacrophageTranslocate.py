@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteTranslocate import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.PulmonaryTranslocate import *
 from ..TBClasses import *
 from ...Pulmonary.Node.BronchialTreeNode import *
 from ...Pulmonary.Node.BronchopulmonarySegment import *
@@ -21,66 +21,68 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class RegularMacrophageTranslocateBronchus(PhagocyteTranslocateBronchus):
+class RegularMacrophageTranslocateBronchus(TranslocateBronchus):
     def __init__(self, probability):
-        PhagocyteTranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode],
-                                              probability,
-                                              phagocyte_compartment=MACROPHAGE_REGULAR,
-                                              edge_choice_based_on_weight=True)
+        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+                                     translocate_compartment=MACROPHAGE_REGULAR,
+                                     edge_choice_based_on_weight=True)
 
 
-class InfectedMacrophageTranslocateBronchus(PhagocyteTranslocateBronchus):
+class InfectedMacrophageTranslocateBronchus(TranslocateBronchus):
     def __init__(self, probability):
-        PhagocyteTranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode],
-                                              probability, phagocyte_compartment=MACROPHAGE_INFECTED,
-                                              edge_choice_based_on_weight=True,
-                                              internal_compartment_to_translocate=BACTERIA_INTRACELLULAR)
+        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+                                     translocate_compartment=MACROPHAGE_INFECTED,
+                                     internal_compartments=[BACTERIA_INTRACELLULAR],
+                                     edge_choice_based_on_weight=True)
 
 
-class ActivatedMacrophageTranslocateBronchus(PhagocyteTranslocateBronchus):
+class ActivatedMacrophageTranslocateBronchus(TranslocateBronchus):
     def __init__(self, probability):
-        PhagocyteTranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode],
-                                              probability,
-                                              phagocyte_compartment=MACROPHAGE_ACTIVATED,
-                                              edge_choice_based_on_weight=True)
+        TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode],
+                                                  probability,
+                                     translocate_compartment=MACROPHAGE_ACTIVATED,
+                                     edge_choice_based_on_weight=True)
 
 
-class RegularMacrophageTranslocateLymph(PhagocyteTranslocateLymph):
+class RegularMacrophageTranslocateLymph(TranslocateLymph):
     def __init__(self, probability):
-        PhagocyteTranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
-                                           phagocyte_compartment=MACROPHAGE_REGULAR,
-                                           direction_only=True)
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                  translocate_compartment=MACROPHAGE_REGULAR,
+                                  direction_only=True)
 
 
-class InfectedMacrophageTranslocateLymph(PhagocyteTranslocateLymph):
+class InfectedMacrophageTranslocateLymph(TranslocateLymph):
     def __init__(self, probability):
-        PhagocyteTranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode],
-                                           probability, phagocyte_compartment=MACROPHAGE_INFECTED,
-                                           direction_only=True,
-                                           internal_compartment_to_translocate=BACTERIA_INTRACELLULAR)
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                  translocate_compartment=MACROPHAGE_INFECTED,
+                                  internal_compartments=[BACTERIA_INTRACELLULAR],
+                                  direction_only=True)
 
 
-class ActivatedMacrophageTranslocateLymph(PhagocyteTranslocateLymph):
+class ActivatedMacrophageTranslocateLymph(TranslocateLymph):
     def __init__(self, probability):
-        PhagocyteTranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode],
-                                           probability, phagocyte_compartment=MACROPHAGE_ACTIVATED,
-                                           direction_only=True)
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
+                                  translocate_compartment=MACROPHAGE_ACTIVATED,
+                                  direction_only=True)
 
 
-class RegularMacrophageTranslocateBlood(PhagocyteTranslocateBlood):
+class RegularMacrophageTranslocateBlood(TranslocateBlood):
     def __init__(self, probability):
-        PhagocyteTranslocateBlood.__init__(self, [LymphNode], probability, phagocyte_compartment=MACROPHAGE_REGULAR,
-                                           direction_only=True)
+        TranslocateBlood.__init__(self, [LymphNode], probability,
+                                  translocate_compartment=MACROPHAGE_REGULAR,
+                                  direction_only=True)
 
 
-class InfectedMacrophageTranslocateBlood(PhagocyteTranslocateBlood):
+class InfectedMacrophageTranslocateBlood(TranslocateBlood):
     def __init__(self, probability):
-        PhagocyteTranslocateBlood.__init__(self, [LymphNode], probability, phagocyte_compartment=MACROPHAGE_INFECTED,
-                                           direction_only=True,
-                                           bacteria_compartment_to_translocate=BACTERIA_INTRACELLULAR)
+        TranslocateBlood.__init__(self, [LymphNode], probability,
+                                  translocate_compartment=MACROPHAGE_INFECTED,
+                                  internal_compartments=[BACTERIA_INTRACELLULAR],
+                                  direction_only=True)
 
 
-class ActivatedMacrophageTranslocateBlood(PhagocyteTranslocateBlood):
+class ActivatedMacrophageTranslocateBlood(TranslocateBlood):
     def __init__(self, probability):
-        PhagocyteTranslocateBlood.__init__(self, [LymphNode], probability, phagocyte_compartment=MACROPHAGE_ACTIVATED,
-                                           direction_only=True)
+        TranslocateBlood.__init__(self, [LymphNode], probability,
+                                  translocate_compartment=MACROPHAGE_ACTIVATED,
+                                  direction_only=True)

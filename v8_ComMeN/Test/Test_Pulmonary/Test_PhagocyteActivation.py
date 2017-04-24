@@ -4,7 +4,7 @@ from v8_ComMeN.ComMeN.Base.Node.Patch import *
 from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteActivation import *
 
 
-class MacrophageActivationTestCase(unittest.TestCase):
+class PhagocyteActivationTestCase(unittest.TestCase):
 
     def setUp(self):
         self.mac_reg = 'mac_a'
@@ -39,7 +39,7 @@ class MacrophageActivationTestCase(unittest.TestCase):
         self.assertEqual(node.subpopulations[self.bac_int], 100 - (100/10))
 
 
-class MacrophageActivationByTCellTestCase(unittest.TestCase):
+class PhagocyteActivationByExternalsTestCase(unittest.TestCase):
 
     def setUp(self):
         self.mac_reg = 'mac_a'
@@ -61,7 +61,7 @@ class MacrophageActivationByTCellTestCase(unittest.TestCase):
         self.assertEqual(self.event.increment_from_node(node, None), 10 * (1+2))
 
 
-class MacrophageDeactivationByLackOfInfectionTestCase(unittest.TestCase):
+class PhagocyteDeactivationByLackOfExternalsTestCase(unittest.TestCase):
 
     def setUp(self):
         self.mac_reg = 'mac_a'

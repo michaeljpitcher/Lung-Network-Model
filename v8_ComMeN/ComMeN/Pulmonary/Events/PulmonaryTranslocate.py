@@ -27,9 +27,9 @@ def move_internals(node, neighbour, internal_compartment, phagocyte_compartment)
 
 class TranslocateBronchus(Translocate):
 
-    def __init__(self, node_types, probability, translocate_compartment, edge_choice_based_on_weight=False):
+    def __init__(self, node_types, probability, translocate_compartment, internal_compartments=None, edge_choice_based_on_weight=False):
         self.edge_choice_based_on_weight = edge_choice_based_on_weight
-        Translocate.__init__(self, node_types, probability, translocate_compartment, BRONCHUS)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, BRONCHUS, internal_compartments)
 
     def choose_neighbour(self, edges):
         # Choose an edge
@@ -45,25 +45,14 @@ class TranslocateBronchus(Translocate):
             return Translocate.choose_neighbour(self, edges)
 
 
-class PhagocyteTranslocateBronchus(TranslocateBronchus):
-
-    def __init__(self, node_types, probability, phagocyte_compartment, edge_choice_based_on_weight=False,
-                 internal_compartment_to_translocate=None):
-        self.internal_compartment_to_translocate = internal_compartment_to_translocate
-        TranslocateBronchus.__init__(self, node_types, probability, phagocyte_compartment, edge_choice_based_on_weight)
-
-    def move(self, node, neighbour):
-        if self.internal_compartment_to_translocate is not None:
-            move_internals(node, neighbour, self.internal_compartment_to_translocate, self.translocate_compartment)
-        TranslocateBronchus.move(self, node, neighbour)
-
-
 class TranslocateLymph(Translocate):
 
-    def __init__(self, node_types, probability, translocate_compartment, direction_only=True, flow_based=True):
+    def __init__(self, node_types, probability, translocate_compartment, internal_compartments=None,
+                 direction_only=True, flow_based=True):
         self.direction_only = direction_only
         self.flow_based = flow_based
-        Translocate.__init__(self, node_types, probability, translocate_compartment, LYMPHATIC_VESSEL)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, LYMPHATIC_VESSEL,
+                             internal_compartments)
 
     def increment_from_node(self, node, network):
         if self.flow_based:
@@ -80,40 +69,16 @@ class TranslocateLymph(Translocate):
         return edges
 
 
-class PhagocyteTranslocateLymph(TranslocateLymph):
-
-    def __init__(self, node_types, probability, phagocyte_compartment, direction_only=True,
-                 internal_compartment_to_translocate=None):
-        self.internal_compartment_to_translocate = internal_compartment_to_translocate
-        TranslocateLymph.__init__(self, node_types, probability, phagocyte_compartment, direction_only)
-
-    def move(self, node, neighbour):
-        if self.internal_compartment_to_translocate is not None:
-            move_internals(node, neighbour, self.internal_compartment_to_translocate, self.translocate_compartment)
-        TranslocateLymph.move(self, node, neighbour)
-
-
 class TranslocateBlood(Translocate):
 
-    def __init__(self, node_types, probability, translocate_compartment, direction_only=True):
+    def __init__(self, node_types, probability, translocate_compartment, internal_compartments=None,
+                 direction_only=True):
         self.direction_only = direction_only
-        Translocate.__init__(self, node_types, probability, translocate_compartment, HAEMATOGENOUS)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, HAEMATOGENOUS,
+                             internal_compartments)
 
     def viable_edges(self, node, network):
         edges = Translocate.viable_edges(self, node, network)
         if self.direction_only:
             edges = [(n, data) for (n, data) in edges if data[DIRECTION] == n]
         return edges
-
-
-class PhagocyteTranslocateBlood(TranslocateBlood):
-
-    def __init__(self, node_types, probability, phagocyte_compartment, direction_only=True,
-                 bacteria_compartment_to_translocate=None):
-        self.internal_compartment_to_translocate = bacteria_compartment_to_translocate
-        TranslocateBlood.__init__(self, node_types, probability, phagocyte_compartment, direction_only)
-
-    def move(self, node, neighbour):
-        if self.internal_compartment_to_translocate is not None:
-            move_internals(node, neighbour, self.internal_compartment_to_translocate, self.translocate_compartment)
-        TranslocateBlood.move(self, node, neighbour)

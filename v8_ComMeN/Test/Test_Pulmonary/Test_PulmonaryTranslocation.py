@@ -11,7 +11,7 @@ class TranslocateBronchusTestCase(unittest.TestCase):
     def setUp(self):
         self.comp = 'a'
         self.event = TranslocateBronchus([BronchopulmonarySegment], 0.1, self.comp)
-        self.event_weighted = TranslocateBronchus([BronchopulmonarySegment], 0.1, self.comp, True)
+        self.event_weighted = TranslocateBronchus([BronchopulmonarySegment], 0.1, self.comp, edge_choice_based_on_weight=True)
 
     def test_initialise(self):
         self.assertFalse(self.event.edge_choice_based_on_weight)
@@ -40,8 +40,8 @@ class TranslocateLymphTestCase(unittest.TestCase):
     def setUp(self):
         self.comp = 'a'
         self.event = TranslocateLymph([BronchopulmonarySegment], 0.1, self.comp)
-        self.event_no_direction = TranslocateLymph([BronchopulmonarySegment], 0.1, self.comp, False)
-        self.event_no_flow = TranslocateLymph([BronchopulmonarySegment], 0.1, self.comp, False, False)
+        self.event_no_direction = TranslocateLymph([BronchopulmonarySegment], 0.1, self.comp, direction_only=False)
+        self.event_no_flow = TranslocateLymph([BronchopulmonarySegment], 0.1, self.comp, direction_only=False, flow_based=False)
 
     def test_initialise(self):
         self.assertTrue(self.event.direction_only)
@@ -111,7 +111,7 @@ class TranslocateBloodTestCase(unittest.TestCase):
     def setUp(self):
         self.comp = 'a'
         self.event = TranslocateBlood([BronchopulmonarySegment], 0.1, self.comp)
-        self.event_no_direction = TranslocateBlood([BronchopulmonarySegment], 0.1, self.comp, False)
+        self.event_no_direction = TranslocateBlood([BronchopulmonarySegment], 0.1, self.comp, direction_only=False)
 
     def test_initialise(self):
         self.assertTrue(self.event.direction_only)

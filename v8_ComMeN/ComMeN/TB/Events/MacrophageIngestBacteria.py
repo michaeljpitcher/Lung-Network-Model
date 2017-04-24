@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteIngestBacteria import *
+from v8_ComMeN.ComMeN.Pulmonary.Events.Phagocytosis import *
 from ..TBClasses import *
 from ...Pulmonary.Node.BronchialTreeNode import *
 from ...Pulmonary.Node.BronchopulmonarySegment import *
@@ -21,86 +21,86 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class RegularMacrophageIngestFastBacteriaRetain(PhagocyteIngestBacteria):
+class RegularMacrophageIngestFastBacteriaRetain(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_REGULAR,
-                                         bacteria_compartment=BACTERIA_FAST,
-                                         phagocyte_change_compartment=MACROPHAGE_INFECTED,
-                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_REGULAR,
+                              compartment_to_ingest=BACTERIA_FAST,
+                              compartment_to_change_phagocyte_to=MACROPHAGE_INFECTED,
+                              compartment_to_change_ingested_to=BACTERIA_INTRACELLULAR)
 
 
-class RegularMacrophageIngestFastBacteriaDestroy(PhagocyteIngestBacteria):
+class RegularMacrophageIngestFastBacteriaDestroy(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_REGULAR,
-                                         bacteria_compartment=BACTERIA_FAST)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_REGULAR,
+                              compartment_to_ingest=BACTERIA_FAST)
 
 
-class RegularMacrophageIngestSlowBacteriaRetain(PhagocyteIngestBacteria):
+class RegularMacrophageIngestSlowBacteriaRetain(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_REGULAR,
-                                         bacteria_compartment=BACTERIA_SLOW,
-                                         phagocyte_change_compartment=MACROPHAGE_INFECTED,
-                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_REGULAR,
+                              compartment_to_ingest=BACTERIA_SLOW,
+                              compartment_to_change_phagocyte_to=MACROPHAGE_INFECTED,
+                              compartment_to_change_ingested_to=BACTERIA_INTRACELLULAR)
 
 
-class RegularMacrophageIngestSlowBacteriaDestroy(PhagocyteIngestBacteria):
+class RegularMacrophageIngestSlowBacteriaDestroy(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_REGULAR,
-                                         bacteria_compartment=BACTERIA_SLOW)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_REGULAR,
+                              compartment_to_ingest=BACTERIA_SLOW)
 
 
-class InfectedMacrophageIngestFastBacteriaRetain(PhagocyteIngestBacteria):
+class InfectedMacrophageIngestFastBacteriaRetain(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_INFECTED,
-                                         bacteria_compartment=BACTERIA_FAST,
-                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_INFECTED,
+                              compartment_to_ingest=BACTERIA_FAST,
+                              compartment_to_change_ingested_to=BACTERIA_INTRACELLULAR)
 
 
-class InfectedMacrophageIngestFastBacteriaDestroy(PhagocyteIngestBacteria):
+class InfectedMacrophageIngestFastBacteriaDestroy(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_INFECTED,
-                                         bacteria_compartment=BACTERIA_FAST)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_INFECTED,
+                              compartment_to_ingest=BACTERIA_FAST)
 
 
-class InfectedMacrophageIngestSlowBacteriaRetain(PhagocyteIngestBacteria):
+class InfectedMacrophageIngestSlowBacteriaRetain(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_INFECTED,
-                                         bacteria_compartment=BACTERIA_SLOW,
-                                         bacteria_change_compartment=BACTERIA_INTRACELLULAR)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_INFECTED,
+                              compartment_to_ingest=BACTERIA_SLOW,
+                              compartment_to_change_ingested_to=BACTERIA_INTRACELLULAR)
 
 
-class InfectedMacrophageIngestSlowBacteriaDestroy(PhagocyteIngestBacteria):
+class InfectedMacrophageIngestSlowBacteriaDestroy(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_INFECTED,
-                                         bacteria_compartment=BACTERIA_SLOW)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_INFECTED,
+                              compartment_to_ingest=BACTERIA_SLOW)
 
 
-class ActivatedMacrophageIngestFastBacteriaDestroy(PhagocyteIngestBacteria):
+class ActivatedMacrophageIngestFastBacteriaDestroy(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_ACTIVATED,
-                                         bacteria_compartment=BACTERIA_FAST)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_ACTIVATED,
+                              compartment_to_ingest=BACTERIA_FAST)
 
 
-class ActivatedMacrophageIngestSlowBacteriaDestroy(PhagocyteIngestBacteria):
+class ActivatedMacrophageIngestSlowBacteriaDestroy(Phagocytosis):
     def __init__(self, probability):
-        PhagocyteIngestBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                         phagocyte_compartment=MACROPHAGE_ACTIVATED,
-                                         bacteria_compartment=BACTERIA_SLOW)
+        Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                              phagocyte_compartment=MACROPHAGE_ACTIVATED,
+                              compartment_to_ingest=BACTERIA_SLOW)
 
 
-class InfectedMacrophageDestroyInternalBacteria(PhagocyteDestroyInternalBacteria):
+class InfectedMacrophageDestroyInternalBacteria(PhagocyteDestroyInternals):
     def __init__(self, probability):
-        PhagocyteDestroyInternalBacteria.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
-                                                  probability,
-                                                  phagocyte_compartment=MACROPHAGE_INFECTED,
-                                                  bacteria_compartment=BACTERIA_INTRACELLULAR,
-                                                  healed_phagocyte_compartment=MACROPHAGE_REGULAR)
+        PhagocyteDestroyInternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
+                                           probability,
+                                           phagocyte_compartment=MACROPHAGE_INFECTED,
+                                           bacteria_compartment=BACTERIA_INTRACELLULAR,
+                                           healed_phagocyte_compartment=MACROPHAGE_REGULAR)

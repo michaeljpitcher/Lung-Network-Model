@@ -31,8 +31,8 @@ class InfectedMacrophageSpontaneousDeath(PhagocyteDeath):
     def __init__(self, probability):
         PhagocyteDeath.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                 phagocyte_compartment=MACROPHAGE_INFECTED,
-                                internal_bacteria_compartment=BACTERIA_INTRACELLULAR,
-                                bacteria_release_compartment_to=BACTERIA_SLOW)
+                                internal_compartment=BACTERIA_INTRACELLULAR,
+                                compartment_to_release_internal_into=BACTERIA_SLOW)
 
 
 class ActivatedMacrophageSpontaneousDeath(PhagocyteDeath):
@@ -47,5 +47,5 @@ class InfectedMacrophageDeathByIntracellularBacteria(PhagocyteDeathByOtherCompar
         PhagocyteDeathByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                                    phagocyte_compartment=MACROPHAGE_INFECTED,
                                                    death_causing_compartments=[BACTERIA_INTRACELLULAR],
-                                                   internal_bacteria_compartment=BACTERIA_INTRACELLULAR,
-                                                   bacteria_release_compartment_to=BACTERIA_SLOW)
+                                                   internal_compartment=BACTERIA_INTRACELLULAR,
+                                                   compartment_to_release_internal_into=BACTERIA_SLOW)

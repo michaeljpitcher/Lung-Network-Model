@@ -39,7 +39,7 @@ class TBModelFullTestCase(unittest.TestCase):
     def test_initialise(self):
         self.assertItemsEqual(self.model.compartments, [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR,
                                                         MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED,
-                                                        T_CELL])
+                                                        T_CELL_HELPER, T_CELL_CYTOTOXIC])
 
 if __name__ == '__main__':
     unittest.main()
