@@ -12,7 +12,7 @@ import inspect
 import sys
 import pkgutil
 
-from .. import EventsWithCompartments
+from .. import Events
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -35,7 +35,7 @@ class TBModelFull(PulmonaryAnatomyNetwork):
                        [T_CELL_HELPER, T_CELL_CYTOTOXIC]
 
         # TODO - not the nicest code but this does work. Maybe find better way to import (i.e. Event subclasses?)
-        package = EventsWithCompartments
+        package = Events
         prefix = package.__name__ + "."
         # Look in each module for classes
         event_classes = []

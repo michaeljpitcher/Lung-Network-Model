@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.TCellRecruitment import *
+from v8_ComMeN.ComMeN.TB.Events.TCellRecruitment import *
 
 
 class TCellHelperRecruitmentBronchialRegularTestCase(unittest.TestCase):

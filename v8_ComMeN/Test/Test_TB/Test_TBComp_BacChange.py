@@ -1,5 +1,5 @@
 import unittest
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.BacteriaChange import *
+from v8_ComMeN.ComMeN.TB.Events.BacteriaChange import *
 
 
 class BacteriaFastToSlow(unittest.TestCase):

@@ -1,5 +1,5 @@
 import unittest
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.BacteriaTranslocate import *
+from v8_ComMeN.ComMeN.TB.Events.BacteriaTranslocate import *
 
 
 class BacteriaTranslocateBronchusFastTestCase(unittest.TestCase):

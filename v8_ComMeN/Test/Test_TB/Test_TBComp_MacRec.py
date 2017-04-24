@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.MacrophageRecruitment import *
+from v8_ComMeN.ComMeN.TB.Events.MacrophageRecruitment import *
 
 
 class RegularMacrophageRecruitmentBronchialTestCase(unittest.TestCase):

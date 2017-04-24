@@ -19,6 +19,12 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
+def move_internals(node, neighbour, internal_compartment, phagocyte_compartment):
+    internal_compartment_amount = node.compartment_per_compartment(internal_compartment, phagocyte_compartment)
+    node.update_subpopulation(internal_compartment, -1 * internal_compartment_amount)
+    neighbour.update_subpopulation(internal_compartment, internal_compartment_amount)
+
+
 class TranslocateBronchus(Translocate):
 
     def __init__(self, node_types, probability, translocate_compartment, edge_choice_based_on_weight=False):
@@ -37,6 +43,19 @@ class TranslocateBronchus(Translocate):
                     return neighbour
         else:
             return Translocate.choose_neighbour(self, edges)
+
+
+class PhagocyteTranslocateBronchus(TranslocateBronchus):
+
+    def __init__(self, node_types, probability, phagocyte_compartment, edge_choice_based_on_weight=False,
+                 internal_compartment_to_translocate=None):
+        self.internal_compartment_to_translocate = internal_compartment_to_translocate
+        TranslocateBronchus.__init__(self, node_types, probability, phagocyte_compartment, edge_choice_based_on_weight)
+
+    def move(self, node, neighbour):
+        if self.internal_compartment_to_translocate is not None:
+            move_internals(node, neighbour, self.internal_compartment_to_translocate, self.translocate_compartment)
+        TranslocateBronchus.move(self, node, neighbour)
 
 
 class TranslocateLymph(Translocate):
@@ -61,6 +80,19 @@ class TranslocateLymph(Translocate):
         return edges
 
 
+class PhagocyteTranslocateLymph(TranslocateLymph):
+
+    def __init__(self, node_types, probability, phagocyte_compartment, direction_only=True,
+                 internal_compartment_to_translocate=None):
+        self.internal_compartment_to_translocate = internal_compartment_to_translocate
+        TranslocateLymph.__init__(self, node_types, probability, phagocyte_compartment, direction_only)
+
+    def move(self, node, neighbour):
+        if self.internal_compartment_to_translocate is not None:
+            move_internals(node, neighbour, self.internal_compartment_to_translocate, self.translocate_compartment)
+        TranslocateLymph.move(self, node, neighbour)
+
+
 class TranslocateBlood(Translocate):
 
     def __init__(self, node_types, probability, translocate_compartment, direction_only=True):
@@ -72,3 +104,16 @@ class TranslocateBlood(Translocate):
         if self.direction_only:
             edges = [(n, data) for (n, data) in edges if data[DIRECTION] == n]
         return edges
+
+
+class PhagocyteTranslocateBlood(TranslocateBlood):
+
+    def __init__(self, node_types, probability, phagocyte_compartment, direction_only=True,
+                 bacteria_compartment_to_translocate=None):
+        self.internal_compartment_to_translocate = bacteria_compartment_to_translocate
+        TranslocateBlood.__init__(self, node_types, probability, phagocyte_compartment, direction_only)
+
+    def move(self, node, neighbour):
+        if self.internal_compartment_to_translocate is not None:
+            move_internals(node, neighbour, self.internal_compartment_to_translocate, self.translocate_compartment)
+        TranslocateBlood.move(self, node, neighbour)

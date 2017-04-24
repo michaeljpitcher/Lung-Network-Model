@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.EventsWithCompartments.TCellCloning import *
+from v8_ComMeN.ComMeN.TB.Events.TCellCloning import *
 
 
 class TCellHelperCloningTestCase(unittest.TestCase):
