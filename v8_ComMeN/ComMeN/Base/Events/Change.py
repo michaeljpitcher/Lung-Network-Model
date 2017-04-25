@@ -30,3 +30,16 @@ class Change(Event):
     def update_node(self, node, network):
         node.update_subpopulation(self.compartment_from, -1)
         node.update_subpopulation(self.compartment_to, 1)
+
+
+class ChangeDestroyInternals(Change):
+    def __init__(self, node_types, probability, compartment_from, compartment_to,
+                 internal_compartments):
+        self.internal_compartments = internal_compartments
+        Change.__init__(self, node_types, probability, compartment_from, compartment_to)
+
+    def update_node(self, node, network):
+        for c in self.internal_compartments:
+            amount = node.compartment_per_compartment(c, self.compartment_from)
+            node.update_subpopulation(c, -1 * amount)
+        Change.update_node(self, node, network)
