@@ -62,6 +62,18 @@ class EventTestCase(unittest.TestCase):
         self.assertEqual(nodes[0].subpopulations['a'], 1)
         self.assertEqual(nodes[1].subpopulations['a'], 3)
 
+    def test_destroy_internals_functions(self):
+        node = Patch(0, ['a','b','c'])
+        node.subpopulations['a'] = 5
+        node.subpopulations['b'] = 10
+        node.subpopulations['c'] = 18
+
+        destroy_internals(['b','c'],'a',node)
+
+        self.assertEqual(node.subpopulations['a'], 5)
+        self.assertEqual(node.subpopulations['b'], 8)
+        self.assertEqual(node.subpopulations['c'], 15)
+
 
 if __name__ == '__main__':
     unittest.main()

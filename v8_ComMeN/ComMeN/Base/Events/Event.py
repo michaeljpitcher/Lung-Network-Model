@@ -17,6 +17,12 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
+def destroy_internals(internals, compartment, node):
+    for internal_compartment in internals:
+        amount = node.compartment_per_compartment(internal_compartment, compartment)
+        node.update_subpopulation(internal_compartment, -1 * amount)
+
+
 class Event:
 
     def __init__(self, node_types, probability):

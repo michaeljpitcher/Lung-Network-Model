@@ -8,13 +8,14 @@ class InfectedMacrophageDeathByTCellTestCase(unittest.TestCase):
         self.event = TCellCytotoxicDestroysInfectedMacrophage(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteDeathByOtherCompartments))
+        self.assertTrue(isinstance(self.event, DestroyByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.internal_compartment, BACTERIA_INTRACELLULAR)
-        self.assertFalse(self.event.compartment_to_release_internal_into)
-        self.assertItemsEqual(self.event.death_causing_compartments, [T_CELL_CYTOTOXIC])
-        self.assertFalse(self.event.extra_compartments_to_destroy)
+        self.assertItemsEqual(self.event.internals_to_destroy, [BACTERIA_INTRACELLULAR])
+        self.assertFalse(self.event.internals_changed)
+        self.assertItemsEqual(self.event.influencing_compartments, [T_CELL_CYTOTOXIC])
+        self.assertFalse(self.event.influencers_to_destroy)
+        self.assertFalse(self.event.influencers_changed)
 
 
 if __name__ == '__main__':

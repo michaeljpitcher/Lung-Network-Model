@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from Event import Event
+from Event import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -30,9 +30,7 @@ class Change(Event):
 
     def update_node(self, node, network):
         if self.internals_to_destroy:
-            for compartment in self.internals_to_destroy:
-                amount = node.compartment_per_compartment(compartment, self.compartment_from)
-                node.update_subpopulation(compartment, -1 * amount)
+            destroy_internals(self.internals_to_destroy, self.compartment_from, node)
         node.update_subpopulation(self.compartment_from, -1)
         node.update_subpopulation(self.compartment_to, 1)
 

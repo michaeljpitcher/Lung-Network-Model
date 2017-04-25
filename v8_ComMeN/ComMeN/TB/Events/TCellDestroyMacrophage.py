@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteDeath import *
+from ...Base.Events.Destruction import *
 from ..TBClasses import *
 from ...Pulmonary.Node.BronchialTreeNode import *
 from ...Pulmonary.Node.BronchopulmonarySegment import *
@@ -21,11 +21,10 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class TCellCytotoxicDestroysInfectedMacrophage(PhagocyteDeathByOtherCompartments):
+class TCellCytotoxicDestroysInfectedMacrophage(DestroyByOtherCompartments):
     # TODO - kills all internal bacteria not T-cell - check this, may need two events or more
     def __init__(self, probability):
-        PhagocyteDeathByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                                   phagocyte_compartment=MACROPHAGE_INFECTED,
-                                                   death_causing_compartments=[T_CELL_CYTOTOXIC],
-                                                   extra_compartments_to_destroy=[],
-                                                   internal_compartment=BACTERIA_INTRACELLULAR)
+        DestroyByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                            compartment_destroyed=MACROPHAGE_INFECTED,
+                                            influencing_compartments=[T_CELL_CYTOTOXIC],
+                                            internals_to_destroy=[BACTERIA_INTRACELLULAR])

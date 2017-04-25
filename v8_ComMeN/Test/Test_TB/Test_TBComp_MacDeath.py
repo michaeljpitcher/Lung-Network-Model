@@ -8,11 +8,11 @@ class RegularMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.event = RegularMacrophageSpontaneousDeath(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteDeath))
+        self.assertTrue(isinstance(self.event, Destroy))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_REGULAR)
-        self.assertFalse(self.event.internal_compartment)
-        self.assertFalse(self.event.compartment_to_release_internal_into)
+        self.assertFalse(self.event.internals_to_destroy)
+        self.assertFalse(self.event.internals_changed)
 
 
 class InfectedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
@@ -20,11 +20,11 @@ class InfectedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.event = InfectedMacrophageSpontaneousDeath(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteDeath))
+        self.assertTrue(isinstance(self.event, Destroy))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.internal_compartment, BACTERIA_INTRACELLULAR)
-        self.assertEqual(self.event.compartment_to_release_internal_into, BACTERIA_SLOW)
+        self.assertFalse(self.event.internals_to_destroy)
+        self.assertItemsEqual(self.event.internals_changed, [(BACTERIA_INTRACELLULAR, BACTERIA_SLOW)])
 
 
 class ActivatedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
@@ -32,11 +32,11 @@ class ActivatedMacrophageSpontaneousDeathTestCase(unittest.TestCase):
         self.event = ActivatedMacrophageSpontaneousDeath(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteDeath))
+        self.assertTrue(isinstance(self.event, Destroy))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_ACTIVATED)
-        self.assertFalse(self.event.internal_compartment)
-        self.assertFalse(self.event.compartment_to_release_internal_into)
+        self.assertFalse(self.event.internals_to_destroy)
+        self.assertFalse(self.event.internals_changed)
 
 
 class InfectedMacrophageDeathByIntracellularBacteriaTestCase(unittest.TestCase):
@@ -44,13 +44,14 @@ class InfectedMacrophageDeathByIntracellularBacteriaTestCase(unittest.TestCase):
         self.event = InfectedMacrophageDeathByIntracellularBacteria(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteDeathByOtherCompartments))
+        self.assertTrue(isinstance(self.event, DestroyByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchopulmonarySegment, BronchialTreeNode, LymphNode])
         self.assertEqual(self.event.compartment_destroyed, MACROPHAGE_INFECTED)
-        self.assertEqual(self.event.internal_compartment, BACTERIA_INTRACELLULAR)
-        self.assertEqual(self.event.compartment_to_release_internal_into, BACTERIA_SLOW)
-        self.assertItemsEqual(self.event.death_causing_compartments, [BACTERIA_INTRACELLULAR])
-        self.assertFalse(self.event.extra_compartments_to_destroy)
+        self.assertFalse(self.event.internals_to_destroy)
+        self.assertItemsEqual(self.event.internals_changed, [(BACTERIA_INTRACELLULAR, BACTERIA_SLOW)])
+        self.assertItemsEqual(self.event.influencing_compartments, [BACTERIA_INTRACELLULAR])
+        self.assertFalse(self.event.influencers_changed)
+        self.assertFalse(self.event.influencers_to_destroy)
 
 
 if __name__ == '__main__':

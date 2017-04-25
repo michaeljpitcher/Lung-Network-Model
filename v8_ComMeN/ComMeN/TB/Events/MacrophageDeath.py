@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Events.PhagocyteDeath import *
+from ...Base.Events.Destruction import *
 from ..TBClasses import *
 from ...Pulmonary.Node.BronchialTreeNode import *
 from ...Pulmonary.Node.BronchopulmonarySegment import *
@@ -21,31 +21,29 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class RegularMacrophageSpontaneousDeath(PhagocyteDeath):
+class RegularMacrophageSpontaneousDeath(Destroy):
     def __init__(self, probability):
-        PhagocyteDeath.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                phagocyte_compartment=MACROPHAGE_REGULAR)
+        Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                compartment_destroyed=MACROPHAGE_REGULAR)
 
 
-class InfectedMacrophageSpontaneousDeath(PhagocyteDeath):
+class InfectedMacrophageSpontaneousDeath(Destroy):
     def __init__(self, probability):
-        PhagocyteDeath.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                phagocyte_compartment=MACROPHAGE_INFECTED,
-                                internal_compartment=BACTERIA_INTRACELLULAR,
-                                compartment_to_release_internal_into=BACTERIA_SLOW)
+        Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                         compartment_destroyed=MACROPHAGE_INFECTED,
+                         internals_changed=[(BACTERIA_INTRACELLULAR,BACTERIA_SLOW)])
 
 
-class ActivatedMacrophageSpontaneousDeath(PhagocyteDeath):
+class ActivatedMacrophageSpontaneousDeath(Destroy):
     def __init__(self, probability):
-        PhagocyteDeath.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                phagocyte_compartment=MACROPHAGE_ACTIVATED)
+        Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                         compartment_destroyed=MACROPHAGE_ACTIVATED)
 
 
 # NECROSIS
-class InfectedMacrophageDeathByIntracellularBacteria(PhagocyteDeathByOtherCompartments):
+class InfectedMacrophageDeathByIntracellularBacteria(DestroyByOtherCompartments):
     def __init__(self, probability):
-        PhagocyteDeathByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                                   phagocyte_compartment=MACROPHAGE_INFECTED,
-                                                   death_causing_compartments=[BACTERIA_INTRACELLULAR],
-                                                   internal_compartment=BACTERIA_INTRACELLULAR,
-                                                   compartment_to_release_internal_into=BACTERIA_SLOW)
+        DestroyByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
+                                            compartment_destroyed=MACROPHAGE_INFECTED,
+                                            influencing_compartments=[BACTERIA_INTRACELLULAR],
+                                            internals_changed=[(BACTERIA_INTRACELLULAR, BACTERIA_SLOW)])
