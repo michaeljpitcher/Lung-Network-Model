@@ -6,7 +6,8 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Base.Events.Destruction import *
+from Destruction import *
+
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,24 +18,25 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class Phagocytosis(Destroy):
+class Phagocytosis(Event):
 
     def __init__(self, node_types, probability, phagocyte_compartment, compartment_to_ingest,
                  compartment_to_change_phagocyte_to=None, compartment_to_change_ingested_to=None):
         self.phagocyte_compartment = phagocyte_compartment
+        self.compartment_to_ingest = compartment_to_ingest
         self.compartment_to_change_phagocyte_to = compartment_to_change_phagocyte_to
         self.compartment_to_change_ingested_to = compartment_to_change_ingested_to
-        Destroy.__init__(self, node_types, probability, compartment_to_ingest)
+        Event.__init__(self, node_types, probability)
 
     def increment_from_node(self, node, network):
-        return node.subpopulations[self.phagocyte_compartment] * Destroy.increment_from_node(self, node, network)
+        return node.subpopulations[self.phagocyte_compartment] * node.subpopulations[self.compartment_to_ingest]
 
     def update_node(self, node, network):
         if self.compartment_to_change_phagocyte_to:
             node.update_subpopulation(self.phagocyte_compartment, -1)
             node.update_subpopulation(self.compartment_to_change_phagocyte_to, 1)
 
-        Destroy.update_node(self, node, network)
+        node.update_subpopulation(self.compartment_to_ingest, -1)
 
         if self.compartment_to_change_ingested_to:
             node.update_subpopulation(self.compartment_to_change_ingested_to, 1)
@@ -43,15 +45,15 @@ class Phagocytosis(Destroy):
 class PhagocyteDestroyInternals(Destroy):
     # TODO - check whether this should be destruction of everything, dependent on load
 
-    def __init__(self, node_types, probability, phagocyte_compartment, bacteria_compartment,
-                 healed_phagocyte_compartment):
+    def __init__(self, node_types, probability, phagocyte_compartment, internal_compartment,
+                 healed_phagocyte_compartment=None):
         self.phagocyte_compartment = phagocyte_compartment
-        # Compartment to return macrophage to if it destroys its last bacteria
+        # Compartment to return phagocyte to if it destroys its last internal
         self.healed_phagocyte_compartment = healed_phagocyte_compartment
-        Destroy.__init__(self, node_types, probability, bacteria_compartment)
+        Destroy.__init__(self, node_types, probability, internal_compartment)
 
     def increment_from_node(self, node, network):
-        # If there are intracellular bacteria present, then based on number of macs, else no chance
+        # If there are internals present, then based on number of phagocytes, else no chance
         if node.subpopulations[self.compartment_destroyed] > 0:
             return node.subpopulations[self.phagocyte_compartment]
         else:

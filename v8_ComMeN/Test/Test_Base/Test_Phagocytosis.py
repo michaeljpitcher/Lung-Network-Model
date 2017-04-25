@@ -1,10 +1,10 @@
 import unittest
 
+from v8_ComMeN.ComMeN.Base.Events.Phagocytosis import *
 from v8_ComMeN.ComMeN.Base.Node.Patch import *
-from v8_ComMeN.ComMeN.Pulmonary.Events.Phagocytosis import *
 
 
-class MacrophageIngestBacteriaTestCase(unittest.TestCase):
+class PhagocytosisTestCase(unittest.TestCase):
     def setUp(self):
         self.mac_original = 'mac_o'
         self.mac_new = 'mac_n'
@@ -80,7 +80,7 @@ class MacrophageIngestBacteriaTestCase(unittest.TestCase):
         self.assertEqual(node.subpopulations[self.mac_new], 1)
 
 
-class MacrophageDestroyInternalBacteriaTestCase(unittest.TestCase):
+class PhagocyteDestroyInternalsTestCase(unittest.TestCase):
 
     def setUp(self):
         self.mac_inf = 'm_i'

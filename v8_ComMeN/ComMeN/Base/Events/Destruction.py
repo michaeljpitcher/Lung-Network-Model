@@ -28,3 +28,4 @@ class Destroy(Event):
 
     def update_node(self, node, network):
         node.update_subpopulation(self.compartment_destroyed, -1)
+

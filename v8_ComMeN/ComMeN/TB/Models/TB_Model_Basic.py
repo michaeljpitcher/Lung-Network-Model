@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Events.Phagocytosis import Phagocytosis
+from v8_ComMeN.ComMeN.Base.Events.Phagocytosis import Phagocytosis
 from ..Events.BacteriaReplication import BacteriaReplication
 from ..TBClasses import *
 from ...Pulmonary.Network.PulmonaryAnatomyNetwork import *

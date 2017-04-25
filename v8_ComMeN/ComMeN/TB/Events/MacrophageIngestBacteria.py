@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Events.Phagocytosis import *
+from ...Base.Events.Phagocytosis import *
 from ..TBClasses import *
 from ...Pulmonary.Node.BronchialTreeNode import *
 from ...Pulmonary.Node.BronchopulmonarySegment import *
@@ -102,5 +102,5 @@ class InfectedMacrophageDestroyInternalBacteria(PhagocyteDestroyInternals):
         PhagocyteDestroyInternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                            probability,
                                            phagocyte_compartment=MACROPHAGE_INFECTED,
-                                           bacteria_compartment=BACTERIA_INTRACELLULAR,
+                                           internal_compartment=BACTERIA_INTRACELLULAR,
                                            healed_phagocyte_compartment=MACROPHAGE_REGULAR)

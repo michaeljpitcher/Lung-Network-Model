@@ -25,17 +25,17 @@ class RegularMacrophageSpontaneousActivation(Change):
 
     def __init__(self, probability):
         Change.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                     compartment_from=MACROPHAGE_REGULAR,
-                                     compartment_to=MACROPHAGE_ACTIVATED)
+                        compartment_from=MACROPHAGE_REGULAR,
+                        compartment_to=MACROPHAGE_ACTIVATED)
 
 
 class InfectedMacrophageSpontaneousActivation(Change):
 
     def __init__(self, probability):
         Change.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                     compartment_from=MACROPHAGE_INFECTED,
-                                     compartment_to=MACROPHAGE_ACTIVATED,
-                                     internals_to_destroy=BACTERIA_INTRACELLULAR)
+                        compartment_from=MACROPHAGE_INFECTED,
+                        compartment_to=MACROPHAGE_ACTIVATED,
+                        internals_to_destroy=[BACTERIA_INTRACELLULAR])
 
 
 class RegularMacrophageActivationByCytokine(ChangeByOtherCompartments):
@@ -56,19 +56,20 @@ class InfectedMacrophageActivationByCytokine(ChangeByOtherCompartments):
                                            compartment_from=MACROPHAGE_INFECTED,
                                            compartment_to=MACROPHAGE_ACTIVATED,
                                            influencing_compartments=CYTOKINE_COMPARTMENTS,
-                                           internals_to_destroy=BACTERIA_INTRACELLULAR)
+                                           internals_to_destroy=[BACTERIA_INTRACELLULAR])
 
 
 class ActivatedMacrophageSpontaneousDeactivation(Change):
     def __init__(self, probability):
         Change.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                        MACROPHAGE_ACTIVATED, MACROPHAGE_REGULAR)
+                        compartment_from=MACROPHAGE_ACTIVATED,
+                        compartment_to=MACROPHAGE_REGULAR)
 
 
 class ActivatedMacrophageDeactivationByLackOfCytokine(ChangeByLackOfOtherCompartments):
     def __init__(self, probability):
         ChangeByLackOfOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
-                                                        probability,
-                                                        compartment_from=MACROPHAGE_ACTIVATED,
-                                                        compartment_to=MACROPHAGE_REGULAR,
-                                                        influencing_compartments=CYTOKINE_COMPARTMENTS)
+                                                 probability,
+                                                 compartment_from=MACROPHAGE_ACTIVATED,
+                                                 compartment_to=MACROPHAGE_REGULAR,
+                                                 influencing_compartments=CYTOKINE_COMPARTMENTS)

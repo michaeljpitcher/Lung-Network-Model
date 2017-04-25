@@ -27,7 +27,8 @@ def move_internals(node, neighbour, internal_compartment, phagocyte_compartment)
 
 class TranslocateBronchus(Translocate):
 
-    def __init__(self, node_types, probability, translocate_compartment, internal_compartments=None, edge_choice_based_on_weight=False):
+    def __init__(self, node_types, probability, translocate_compartment, internal_compartments=None,
+                 edge_choice_based_on_weight=False):
         self.edge_choice_based_on_weight = edge_choice_based_on_weight
         Translocate.__init__(self, node_types, probability, translocate_compartment, BRONCHUS, internal_compartments)
 

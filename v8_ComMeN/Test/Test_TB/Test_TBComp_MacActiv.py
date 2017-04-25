@@ -8,11 +8,11 @@ class RegularMacrophageSpontaneousActivationTestCase(unittest.TestCase):
         self.event = RegularMacrophageSpontaneousActivation(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteActivation))
+        self.assertTrue(isinstance(self.event, Change))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_REGULAR)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertFalse(self.event.bacteria_compartment_destroy)
+        self.assertFalse(self.event.internals_to_destroy)
 
 
 class InfectedMacrophageSpontaneousActivationTestCase(unittest.TestCase):
@@ -20,37 +20,37 @@ class InfectedMacrophageSpontaneousActivationTestCase(unittest.TestCase):
         self.event = InfectedMacrophageSpontaneousActivation(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteActivation))
+        self.assertTrue(isinstance(self.event, Change))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertEqual(self.event.bacteria_compartment_destroy, BACTERIA_INTRACELLULAR)
+        self.assertItemsEqual(self.event.internals_to_destroy, [BACTERIA_INTRACELLULAR])
 
 
-class RegularMacrophageActivationByChemokineTestCase(unittest.TestCase):
+class RegularMacrophageActivationByCytokineTestCase(unittest.TestCase):
     def setUp(self):
         self.event = RegularMacrophageActivationByCytokine(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteActivationByExternals))
+        self.assertTrue(isinstance(self.event, ChangeByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_REGULAR)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertItemsEqual(self.event.external_compartments, [MACROPHAGE_INFECTED])
-        self.assertFalse(self.event.bacteria_compartment_destroy)
+        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_COMPARTMENTS)
+        self.assertFalse(self.event.internals_to_destroy)
 
 
-class InfectedMacrophageActivationByChemokineTestCase(unittest.TestCase):
+class InfectedMacrophageActivationByCytokineTestCase(unittest.TestCase):
     def setUp(self):
         self.event = InfectedMacrophageActivationByCytokine(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteActivationByExternals))
+        self.assertTrue(isinstance(self.event, ChangeByOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertItemsEqual(self.event.external_compartments, [MACROPHAGE_INFECTED])
-        self.assertEqual(self.event.bacteria_compartment_destroy, BACTERIA_INTRACELLULAR)
+        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_COMPARTMENTS)
+        self.assertItemsEqual(self.event.internals_to_destroy, [BACTERIA_INTRACELLULAR])
 
 
 class ActivatedMacrophageSpontaneousDeactivationTestCase(unittest.TestCase):
@@ -64,16 +64,16 @@ class ActivatedMacrophageSpontaneousDeactivationTestCase(unittest.TestCase):
         self.assertEqual(self.event.compartment_to, MACROPHAGE_REGULAR)
 
 
-class ActivatedMacrophageDeactivationByLackOfInfectionTestCase(unittest.TestCase):
+class ActivatedMacrophageDeactivationByLackOfCytokineTestCase(unittest.TestCase):
     def setUp(self):
         self.event = ActivatedMacrophageDeactivationByLackOfCytokine(0.1)
 
     def test_initialise(self):
-        self.assertTrue(isinstance(self.event, PhagocyteDeactivationByLackOfExternals))
+        self.assertTrue(isinstance(self.event, ChangeByLackOfOtherCompartments))
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_ACTIVATED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_REGULAR)
-        self.assertItemsEqual(self.event.external_compartments, [MACROPHAGE_INFECTED])
+        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_COMPARTMENTS)
 
 
 if __name__ == '__main__':
