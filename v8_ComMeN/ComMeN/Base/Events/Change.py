@@ -39,9 +39,9 @@ class Change(Event):
 
 class ChangeByOtherCompartments(Change):
 
-    def __init__(self, node_types, probability, compartment_from, compartment_to, external_compartments,
+    def __init__(self, node_types, probability, compartment_from, compartment_to, influencing_compartments,
                  internals_to_destroy=None):
-        self.influencing_compartments = external_compartments
+        self.influencing_compartments = influencing_compartments
         Change.__init__(self, node_types, probability, compartment_from, compartment_to, internals_to_destroy)
 
     def increment_from_node(self, node, network):
@@ -51,9 +51,9 @@ class ChangeByOtherCompartments(Change):
 
 class ChangeByLackOfOtherCompartments(Change):
 
-    def __init__(self, node_types, probability, compartment_from, compartment_to, external_compartments,
+    def __init__(self, node_types, probability, compartment_from, compartment_to, influencing_compartments,
                  internals_to_destroy=None):
-        self.influencing_compartments = external_compartments
+        self.influencing_compartments = influencing_compartments
         Change.__init__(self, node_types, probability, compartment_from, compartment_to, internals_to_destroy)
 
     def increment_from_node(self, node, network):
