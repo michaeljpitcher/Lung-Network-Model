@@ -40,7 +40,7 @@ class TranslocateBronchus(Translocate):
             running_total = 0
             for (neighbour, data) in edges:
                 running_total += data[WEIGHT]
-                if running_total > r:
+                if running_total >= r:
                     return neighbour
         else:
             return Translocate.choose_neighbour(self, edges)

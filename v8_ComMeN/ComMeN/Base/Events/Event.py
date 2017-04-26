@@ -49,7 +49,7 @@ class Event:
         running_total = 0
         for n in self.nodes_impacted:
             running_total += self.increment_state_variable_from_node(n, network)
-            if running_total > r:
+            if running_total >= r:
                 self.update_node(n, network)
                 return
 
