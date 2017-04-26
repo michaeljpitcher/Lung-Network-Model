@@ -12,3 +12,7 @@
 Sandbox.py
 
 *.pyc
+
+*.csv
+
+*.log
