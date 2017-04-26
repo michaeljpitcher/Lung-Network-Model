@@ -108,21 +108,25 @@ class MetapopulationNetwork(nx.Graph):
                 print "0% of event occurring"
                 return
 
-            # Calculate the timestep delta based on the total rates
-            # TODO - check
-            dt = (1.0 / total_rate) * math.log(1.0 / np.random.random())
+            """ Gillespie simulation - derived from:
+            [1] D. T. Gillespie, A general method for numerically simulating the stochastic time evolution of coupled
+            chemical reactions, J. Comput. Phys., vol. 22, no. 4, pp. 403-434, 1976. doi:10.1016/0021-9991(76)90041-3"""
+
+            # Calculate the timestep tau based on the total rates
+            r1 = np.random.random()
+            tau = (1.0 / total_rate) * math.log(1.0 / r1)
 
             # Calculate which event happens based on their individual rates
-            r = np.random.random() * total_rate
+            r2 = np.random.random() * total_rate
             running_total = 0
             for e in self.events:
                 running_total += e.rate
-                if running_total > r:
+                if running_total >= r2:
                     e.update_network(self)
-                    logging.debug("Event performed: " + e.__class__.__name__ + ". Time now:" + str(self.time + dt))
+                    logging.debug("Event performed: " + e.__class__.__name__ + ". Time now:" + str(self.time + tau))
                     break
 
-            self.time += dt
+            self.time += tau
             if run_id is not None:
                 self.record_data(csv_writer)
         if output:
