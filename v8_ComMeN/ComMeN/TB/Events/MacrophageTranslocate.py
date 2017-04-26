@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Pulmonary.Events.PulmonaryTranslocate import *
+from ...Pulmonary.Events.PulmonaryTranslocate import *
 from ..TBClasses import *
 from ...Pulmonary.Node.BronchialTreeNode import *
 from ...Pulmonary.Node.BronchopulmonarySegment import *
