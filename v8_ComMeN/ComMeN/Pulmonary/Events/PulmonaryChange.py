@@ -22,10 +22,10 @@ class ChangeByOxygen(Change):
         self.oxygen_high_to_change = oxygen_high_to_change
         Change.__init__(self, node_types, probability, compartment_from, compartment_to)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         # TODO - check viability of this method - O2 TENSION IS NOT NECESSARILY BETWEEN 0 AND 1
         if self.oxygen_high_to_change:
             oxygen_factor = node.oxygen_tension
         else:
             oxygen_factor = 1-node.oxygen_tension
-        return Change.increment_from_node(self, node, network) * oxygen_factor
+        return Change.increment_state_variable_from_node(self, node, network) * oxygen_factor

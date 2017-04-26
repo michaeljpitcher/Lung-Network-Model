@@ -29,9 +29,9 @@ class DestroyTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.compartment])
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.compartment, 12)
-        self.assertEqual(self.event.increment_from_node(node, None), 12)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 12)
 
     def test_update_node(self):
         node = Patch(0, [self.compartment, self.internal_comp_destroy, self.internal_comp_from, self.internal_comp_to])
@@ -96,17 +96,17 @@ class DestroyByOtherCompartmentTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.compartment, self.influencing_comps[0], self.influencing_comps[1], self.new_comp])
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.subpopulations[self.compartment] = 12
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.subpopulations[self.compartment] = 0
         node.subpopulations[self.influencing_comps[0]] = 12
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.subpopulations[self.compartment] = 3
         node.subpopulations[self.influencing_comps[0]] = 4
-        self.assertEqual(self.event.increment_from_node(node, None), 12)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 12)
         node.subpopulations[self.influencing_comps[1]] = 2
-        self.assertEqual(self.event.increment_from_node(node, None), 18)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 18)
 
     def test_update_node(self):
         node = Patch(0, [self.compartment, self.influencing_comps[0], self.influencing_comps[1], self.new_comp])

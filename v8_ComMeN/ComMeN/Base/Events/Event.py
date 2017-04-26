@@ -28,7 +28,7 @@ class Event:
     def __init__(self, node_types, probability):
         self.node_types = node_types
         self.probability = probability
-        self.total = 0
+        self.state_variable = 0
         self.rate = 0
         self.nodes_impacted = []
 
@@ -36,19 +36,19 @@ class Event:
         self.nodes_impacted += nodes
 
     def update_rate(self, network):
-        self.total = 0
+        self.state_variable = 0
         for node in self.nodes_impacted:
-            self.total += self.increment_from_node(node, network)
-        self.rate = self.probability * self.total
+            self.state_variable += self.increment_state_variable_from_node(node, network)
+        self.rate = self.probability * self.state_variable
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         raise NotImplementedError
 
     def update_network(self, network):
-        r = np.random.random() * self.total
+        r = np.random.random() * self.state_variable
         running_total = 0
         for n in self.nodes_impacted:
-            running_total += self.increment_from_node(n, network)
+            running_total += self.increment_state_variable_from_node(n, network)
             if running_total > r:
                 self.update_node(n, network)
                 return

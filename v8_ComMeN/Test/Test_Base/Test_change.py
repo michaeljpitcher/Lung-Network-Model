@@ -20,9 +20,9 @@ class ChangeTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.comp_from, self.comp_to])
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.comp_from, 6)
-        self.assertEqual(self.event.increment_from_node(node, None), 6)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 6)
 
     def test_update_node(self):
         node = Patch(0, [self.comp_from, self.comp_to])
@@ -55,13 +55,13 @@ class ChangeByExternalsTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.comp_from, self.comp_to] + self.externals)
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.comp_from, 10)
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.externals[0], 1)
-        self.assertEqual(self.event.increment_from_node(node, None), 10 * 1)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 10 * 1)
         node.update_subpopulation(self.externals[1], 2)
-        self.assertEqual(self.event.increment_from_node(node, None), 10 * (1+2))
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 10 * (1 + 2))
 
 
 class ChangeByLackOfExternalsTestCase(unittest.TestCase):
@@ -77,13 +77,13 @@ class ChangeByLackOfExternalsTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.comp_from, self.comp_to] + self.inf_comps)
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.comp_to, 10)
-        self.assertEqual(self.event.increment_from_node(node, None), 10 * (1 / 0.00000001))
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 10 * (1 / 0.00000001))
         node.update_subpopulation(self.inf_comps[0], 1)
-        self.assertEqual(self.event.increment_from_node(node, None), 10 * (1 / 1))
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 10 * (1 / 1))
         node.update_subpopulation(self.inf_comps[1], 2)
-        self.assertEqual(self.event.increment_from_node(node, None), 10 * (1 / (1+2)))
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 10 * (1 / (1 + 2)))
 
 if __name__ == '__main__':
     unittest.main()

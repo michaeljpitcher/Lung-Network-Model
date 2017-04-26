@@ -13,7 +13,7 @@ class CreationTestCase(unittest.TestCase):
         self.assertEqual(self.event.compartment_created, self.compartment)
 
     def test_increment_from_node(self):
-        self.assertEqual(self.event.increment_from_node(None, None), 1)
+        self.assertEqual(self.event.increment_state_variable_from_node(None, None), 1)
 
     def test_update_node(self):
         node = Patch(0, [self.compartment])
@@ -32,9 +32,9 @@ class ReplicationTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.compartment])
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.compartment, 12)
-        self.assertEqual(self.event.increment_from_node(node, None), 12)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 12)
 
 
 if __name__ == '__main__':

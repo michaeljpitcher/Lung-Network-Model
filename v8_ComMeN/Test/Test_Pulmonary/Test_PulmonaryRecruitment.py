@@ -18,8 +18,8 @@ class RecruitmentBronchialTestCase(unittest.TestCase):
     def test_increment_from_node(self):
         node = BronchopulmonarySegment(0, [self.comp_from], 0.0, 0.5, (8, 8))
 
-        self.assertEqual(self.event.increment_from_node(node, None), node.perfusion)
-        self.assertEqual(self.event_not_perfusion.increment_from_node(node, None), 1)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), node.perfusion)
+        self.assertEqual(self.event_not_perfusion.increment_state_variable_from_node(node, None), 1)
 
 
 class RecruitmentBronchialByInfectionTestCase(unittest.TestCase):
@@ -32,16 +32,16 @@ class RecruitmentBronchialByInfectionTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = BronchopulmonarySegment(0, [self.comp] + self.infect_comps, 0.0, 0.5, (8, 8))
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
-        self.assertEqual(self.event_not_perfusion.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
+        self.assertEqual(self.event_not_perfusion.increment_state_variable_from_node(node, None), 0)
 
         node.update_subpopulation(self.infect_comps[0], 2)
-        self.assertEqual(self.event.increment_from_node(node, None), node.perfusion * 2)
-        self.assertEqual(self.event_not_perfusion.increment_from_node(node, None), 1 * 2)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), node.perfusion * 2)
+        self.assertEqual(self.event_not_perfusion.increment_state_variable_from_node(node, None), 1 * 2)
 
         node.update_subpopulation(self.infect_comps[1], 3)
-        self.assertEqual(self.event.increment_from_node(node, None), node.perfusion * (2 + 3))
-        self.assertEqual(self.event_not_perfusion.increment_from_node(node, None), 1 * (2 + 3))
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), node.perfusion * (2 + 3))
+        self.assertEqual(self.event_not_perfusion.increment_state_variable_from_node(node, None), 1 * (2 + 3))
 
 
 class RecruitmentLymphTestCase(unittest.TestCase):
@@ -62,13 +62,13 @@ class RecruitmentLymphByInfectionTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = LymphNode(0, [self.comp] + self.infect_comps, (8, 8))
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
 
         node.update_subpopulation(self.infect_comps[0], 2)
-        self.assertEqual(self.event.increment_from_node(node, None), 2)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 2)
 
         node.update_subpopulation(self.infect_comps[1], 3)
-        self.assertEqual(self.event.increment_from_node(node, None), (2 + 3))
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), (2 + 3))
 
 
 if __name__ == '__main__':

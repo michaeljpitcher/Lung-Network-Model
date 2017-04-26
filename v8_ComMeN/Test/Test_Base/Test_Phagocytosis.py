@@ -36,11 +36,11 @@ class PhagocytosisTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.bac_original, self.bac_new, self.mac_original, self.mac_new])
-        self.assertEqual(self.event_no_change.increment_from_node(node, None), 0)
+        self.assertEqual(self.event_no_change.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.bac_original, 13)
-        self.assertEqual(self.event_no_change.increment_from_node(node, None), 0)
+        self.assertEqual(self.event_no_change.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.mac_original, 5)
-        self.assertEqual(self.event_no_change.increment_from_node(node, None), 13*5)
+        self.assertEqual(self.event_no_change.increment_state_variable_from_node(node, None), 13 * 5)
 
     def test_update_node(self):
         node = Patch(0, [self.bac_original, self.bac_new, self.mac_original, self.mac_new])
@@ -94,14 +94,14 @@ class PhagocyteDestroyInternalsTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         node = Patch(0, [self.mac_heal, self.mac_inf, self.bac])
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.bac, 4)
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.mac_inf, 5)
         node.update_subpopulation(self.bac, -4)
-        self.assertEqual(self.event.increment_from_node(node, None), 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 0)
         node.update_subpopulation(self.bac, 4)
-        self.assertEqual(self.event.increment_from_node(node, None), 5)
+        self.assertEqual(self.event.increment_state_variable_from_node(node, None), 5)
 
     def test_update_node(self):
         node = Patch(0, [self.mac_heal, self.mac_inf, self.bac])

@@ -25,7 +25,7 @@ class Change(Event):
         self.internals_to_destroy = internals_to_destroy
         Event.__init__(self, node_types, probability)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         return node.subpopulations[self.compartment_from]
 
     def update_node(self, node, network):
@@ -42,8 +42,8 @@ class ChangeByOtherCompartments(Change):
         self.influencing_compartments = influencing_compartments
         Change.__init__(self, node_types, probability, compartment_from, compartment_to, internals_to_destroy)
 
-    def increment_from_node(self, node, network):
-        return Change.increment_from_node(self, node, network) * \
+    def increment_state_variable_from_node(self, node, network):
+        return Change.increment_state_variable_from_node(self, node, network) * \
                sum([node.subpopulations[c] for c in self.influencing_compartments])
 
 
@@ -54,11 +54,11 @@ class ChangeByLackOfOtherCompartments(Change):
         self.influencing_compartments = influencing_compartments
         Change.__init__(self, node_types, probability, compartment_from, compartment_to, internals_to_destroy)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         # TODO - check this: epsilon = low number
         epsilon = 0.00000001
         number_externals = sum([node.subpopulations[c] for c in self.influencing_compartments])
         if number_externals == 0:
-            return Change.increment_from_node(self, node, network) * (1 / epsilon)
+            return Change.increment_state_variable_from_node(self, node, network) * (1 / epsilon)
         else:
-            return Change.increment_from_node(self, node, network) * (1 / number_externals)
+            return Change.increment_state_variable_from_node(self, node, network) * (1 / number_externals)

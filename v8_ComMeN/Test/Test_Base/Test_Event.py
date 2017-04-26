@@ -15,7 +15,7 @@ class EventTestCase(unittest.TestCase):
                 self.value = value
                 Event.__init__(self, node_types, prob)
 
-            def increment_from_node(self, node, network):
+            def increment_state_variable_from_node(self, node, network):
                 return node.subpopulations[self.value]
 
             def update_node(self, node, network):
@@ -26,7 +26,7 @@ class EventTestCase(unittest.TestCase):
 
     def test_initialise(self):
         self.assertEqual(self.event.probability, self.prob)
-        self.assertEqual(self.event.total, 0)
+        self.assertEqual(self.event.state_variable, 0)
         self.assertEqual(self.event.rate, 0)
         self.assertEqual(len(self.event.nodes_impacted), 0)
         self.assertItemsEqual(self.event.node_types, self.node_types)
@@ -44,7 +44,7 @@ class EventTestCase(unittest.TestCase):
 
         self.non_abstract_event.attach_nodes(nodes)
         self.non_abstract_event.update_rate(None)
-        self.assertEqual(self.non_abstract_event.total, 3)
+        self.assertEqual(self.non_abstract_event.state_variable, 3)
         self.assertEqual(self.non_abstract_event.rate, 3 * self.prob)
 
     def test_update_network(self):

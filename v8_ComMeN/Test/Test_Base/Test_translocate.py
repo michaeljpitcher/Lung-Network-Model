@@ -32,25 +32,25 @@ class TranslocateTestCase(unittest.TestCase):
 
     def test_increment_from_node(self):
         # Node 0 - none in compartment
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[0], self.network), 0)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[0], self.network), 0)
         # Node 0 - some in compartment
         self.nodes[0].update_subpopulation(self.compartment, 5)
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[0], self.network), 5 * 2)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[0], self.network), 5 * 2)
         # Node 1 - none in compartment
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[1], self.network), 0)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[1], self.network), 0)
         # Node 1 - some in compartment
         self.nodes[1].update_subpopulation(self.compartment, 7)
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[1], self.network), 7)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[1], self.network), 7)
         # Node 2 - none in compartment
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[2], self.network), 0)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[2], self.network), 0)
         # Node 2 - some in compartment
         self.nodes[2].update_subpopulation(self.compartment, 3)
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[2], self.network), 3)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[2], self.network), 3)
         # Node 3 - none in compartment
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[3], self.network), 0)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[3], self.network), 0)
         # Node 3 - some in compartment (no edges though)
         self.nodes[3].update_subpopulation(self.compartment, 8)
-        self.assertEqual(self.event_no_internals.increment_from_node(self.nodes[3], self.network), 0)
+        self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[3], self.network), 0)
 
     def test_viable_edges(self):
         ids = [data['edgeid'] for (neighbour, data) in self.event_no_internals.viable_edges(self.nodes[0], self.network)]

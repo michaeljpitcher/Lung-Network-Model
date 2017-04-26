@@ -28,7 +28,7 @@ class Phagocytosis(Event):
         self.compartment_to_change_ingested_to = compartment_to_change_ingested_to
         Event.__init__(self, node_types, probability)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         return node.subpopulations[self.phagocyte_compartment] * node.subpopulations[self.compartment_to_ingest]
 
     def update_node(self, node, network):
@@ -52,7 +52,7 @@ class PhagocyteDestroyInternals(Destroy):
         self.healed_phagocyte_compartment = healed_phagocyte_compartment
         Destroy.__init__(self, node_types, probability, internal_compartment)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         # If there are internals present, then based on number of phagocytes, else no chance
         if node.subpopulations[self.compartment_destroyed] > 0:
             return node.subpopulations[self.phagocyte_compartment]

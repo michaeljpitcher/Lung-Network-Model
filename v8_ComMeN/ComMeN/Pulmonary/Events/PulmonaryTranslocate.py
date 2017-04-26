@@ -55,12 +55,12 @@ class TranslocateLymph(Translocate):
         Translocate.__init__(self, node_types, probability, translocate_compartment, LYMPHATIC_VESSEL,
                              internal_compartments)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         if self.flow_based:
             edges = self.viable_edges(node, network)
             return node.subpopulations[self.translocate_compartment] * sum([data[FLOW_RATE] for _,data in edges])
         else:
-            return Translocate.increment_from_node(self, node, network)
+            return Translocate.increment_state_variable_from_node(self, node, network)
 
     def viable_edges(self, node, network):
         # TODO - slight inefficiency here (maybe don't add to neighbours if DIRECTION?)

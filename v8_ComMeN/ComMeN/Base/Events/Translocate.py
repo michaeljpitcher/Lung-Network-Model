@@ -26,7 +26,7 @@ class Translocate(Event):
         self.internal_compartments = internal_compartments
         Event.__init__(self, node_types, probability)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         edges = self.viable_edges(node, network)
         return node.subpopulations[self.translocate_compartment] * len(edges)
 

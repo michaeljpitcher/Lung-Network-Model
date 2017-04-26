@@ -100,10 +100,10 @@ class TranslocateLymphTestCase(unittest.TestCase):
         nodes[2].update_subpopulation(self.comp, 5)
         nodes[3].update_subpopulation(self.comp, 7)
 
-        self.assertEqual(self.event.increment_from_node(nodes[0], network), 2*0)
-        self.assertEqual(self.event.increment_from_node(nodes[1], network), 3*0.9)
-        self.assertEqual(self.event.increment_from_node(nodes[2], network), 5*(0.7+0.5))
-        self.assertEqual(self.event.increment_from_node(nodes[3], network), 7*0)
+        self.assertEqual(self.event.increment_state_variable_from_node(nodes[0], network), 2 * 0)
+        self.assertEqual(self.event.increment_state_variable_from_node(nodes[1], network), 3 * 0.9)
+        self.assertEqual(self.event.increment_state_variable_from_node(nodes[2], network), 5 * (0.7 + 0.5))
+        self.assertEqual(self.event.increment_state_variable_from_node(nodes[3], network), 7 * 0)
 
 
 class TranslocateBloodTestCase(unittest.TestCase):

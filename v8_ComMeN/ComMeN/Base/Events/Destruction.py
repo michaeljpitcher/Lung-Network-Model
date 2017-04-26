@@ -29,7 +29,7 @@ class Destroy(Event):
         self.internals_changed = internals_changed
         Event.__init__(self, node_types, probability)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         return node.subpopulations[self.compartment_destroyed]
 
     def update_node(self, node, network):
@@ -55,8 +55,8 @@ class DestroyByOtherCompartments(Destroy):
         self.influencers_changed = influencers_changed
         Destroy.__init__(self, node_types, probability, compartment_destroyed, internals_to_destroy, internals_changed)
 
-    def increment_from_node(self, node, network):
-        return Destroy.increment_from_node(self, node, network) * \
+    def increment_state_variable_from_node(self, node, network):
+        return Destroy.increment_state_variable_from_node(self, node, network) * \
                sum([node.subpopulations[c] for c in self.influencing_compartments])
 
     def update_node(self, node, network):

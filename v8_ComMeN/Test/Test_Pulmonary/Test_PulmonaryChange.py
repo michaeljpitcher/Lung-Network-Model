@@ -20,11 +20,11 @@ class PulmonaryChangeTestCase(unittest.TestCase):
         low_node.update_subpopulation(self.comp_from, 2)
 
         # High event should get more from the high node
-        self.assertTrue(self.event_high.increment_from_node(high_node, None) >
-                        self.event_high.increment_from_node(low_node, None))
+        self.assertTrue(self.event_high.increment_state_variable_from_node(high_node, None) >
+                        self.event_high.increment_state_variable_from_node(low_node, None))
         # Low event should get more from the low node
-        self.assertTrue(self.event_low.increment_from_node(low_node, None) >
-                        self.event_low.increment_from_node(high_node, None))
+        self.assertTrue(self.event_low.increment_state_variable_from_node(low_node, None) >
+                        self.event_low.increment_state_variable_from_node(high_node, None))
 
         # TODO - more tests when oxygen tension method confirmed
 

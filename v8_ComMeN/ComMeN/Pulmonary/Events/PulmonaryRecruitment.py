@@ -23,11 +23,11 @@ class RecruitmentBronchial(Create):
         self.based_on_perfusion = based_on_perfusion
         Create.__init__(self, node_types, probability, recruited_compartment)
 
-    def increment_from_node(self, node, network):
+    def increment_state_variable_from_node(self, node, network):
         if self.based_on_perfusion:
             return node.perfusion
         else:
-            return Create.increment_from_node(self, node, network)
+            return Create.increment_state_variable_from_node(self, node, network)
 
 
 class RecruitmentBronchialByExternals(RecruitmentBronchial):
@@ -36,8 +36,8 @@ class RecruitmentBronchialByExternals(RecruitmentBronchial):
         self.external_compartments = external_compartments
         RecruitmentBronchial.__init__(self, node_types, probability, recruited_compartment, based_on_perfusion)
 
-    def increment_from_node(self, node, network):
-        return RecruitmentBronchial.increment_from_node(self, node, network) * \
+    def increment_state_variable_from_node(self, node, network):
+        return RecruitmentBronchial.increment_state_variable_from_node(self, node, network) * \
                sum([node.subpopulations[c] for c in self.external_compartments])
 
 
@@ -52,6 +52,6 @@ class RecruitmentLymphByExternals(RecruitmentLymph):
         self.external_compartments = external_compartments
         RecruitmentLymph.__init__(self, node_types, probability, recruited_compartment)
 
-    def increment_from_node(self, node, network):
-        return RecruitmentLymph.increment_from_node(self, node, network) * \
+    def increment_state_variable_from_node(self, node, network):
+        return RecruitmentLymph.increment_state_variable_from_node(self, node, network) * \
                sum([node.subpopulations[c] for c in self.external_compartments])

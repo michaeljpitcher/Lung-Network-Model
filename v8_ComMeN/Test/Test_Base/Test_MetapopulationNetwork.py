@@ -35,7 +35,7 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
                 self.value = value
                 Event.__init__(self, node_types, prob)
 
-            def increment_from_node(self, node, network):
+            def increment_state_variable_from_node(self, node, network):
                 return node.subpopulations[self.value]
 
             def update_node(self, node, network):
