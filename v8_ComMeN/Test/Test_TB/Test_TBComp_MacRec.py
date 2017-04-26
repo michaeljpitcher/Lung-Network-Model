@@ -15,6 +15,7 @@ class RegularMacrophageRecruitmentBronchialTestCase(unittest.TestCase):
 
 
 class RegularMacrophageRecruitmentBronchialByInfectionTestCase(unittest.TestCase):
+    # TODO - how does cytokine boost recruitment?
     def setUp(self):
         self.event = RegularMacrophageRecruitmentBronchialByCytokine(0.1)
 
@@ -23,7 +24,7 @@ class RegularMacrophageRecruitmentBronchialByInfectionTestCase(unittest.TestCase
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment])
         self.assertEqual(self.event.compartment_created, MACROPHAGE_REGULAR)
         self.assertTrue(self.event.based_on_perfusion)
-        self.assertItemsEqual(self.event.external_compartments, [MACROPHAGE_INFECTED])
+        self.assertItemsEqual(self.event.external_compartments, CYTOKINE_COMPARTMENTS)
 
 
 class RegularMacrophageRecruitmentLymphTestCase(unittest.TestCase):
@@ -44,7 +45,7 @@ class RegularMacrophageRecruitmentLymphByInfectionTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.event, RecruitmentLymphByExternals))
         self.assertItemsEqual(self.event.node_types, [LymphNode])
         self.assertEqual(self.event.compartment_created, MACROPHAGE_REGULAR)
-        self.assertItemsEqual(self.event.external_compartments, [MACROPHAGE_INFECTED])
+        self.assertItemsEqual(self.event.external_compartments, CYTOKINE_COMPARTMENTS)
 
 
 if __name__ == '__main__':
