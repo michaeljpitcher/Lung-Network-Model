@@ -23,14 +23,14 @@ __status__ = "Development"
 
 class RegularMacrophageRecruitmentBronchial(RecruitmentBronchial):
     def __init__(self, probability):
-        RecruitmentBronchial.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+        RecruitmentBronchial.__init__(self, probability,
                                       recruited_compartment=MACROPHAGE_REGULAR,
                                       based_on_perfusion=True)
 
 
 class RegularMacrophageRecruitmentBronchialByCytokine(RecruitmentBronchialByExternals):
     def __init__(self, probability):
-        RecruitmentBronchialByExternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
+        RecruitmentBronchialByExternals.__init__(self, probability,
                                                  recruited_compartment=MACROPHAGE_REGULAR,
                                                  external_compartments=CYTOKINE_COMPARTMENTS,
                                                  based_on_perfusion=True)
@@ -38,12 +38,12 @@ class RegularMacrophageRecruitmentBronchialByCytokine(RecruitmentBronchialByExte
 
 class RegularMacrophageRecruitmentLymph(RecruitmentLymph):
     def __init__(self, probability):
-        RecruitmentLymph.__init__(self, [LymphNode], probability, recruited_compartment=MACROPHAGE_REGULAR)
+        RecruitmentLymph.__init__(self, probability, recruited_compartment=MACROPHAGE_REGULAR)
 
 
 class RegularMacrophageRecruitmentLymphByCytokine(RecruitmentLymphByExternals):
     def __init__(self, probability):
-        RecruitmentLymphByExternals.__init__(self, [LymphNode], probability,
+        RecruitmentLymphByExternals.__init__(self, probability,
                                              recruited_compartment=MACROPHAGE_REGULAR,
                                              external_compartments=CYTOKINE_COMPARTMENTS)
 

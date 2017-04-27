@@ -23,26 +23,26 @@ __status__ = "Development"
 
 class TCellNaiveHelperRecruitmentBronchialRegular(RecruitmentBronchial):
     def __init__(self, probability):
-        RecruitmentBronchial.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability,
+        RecruitmentBronchial.__init__(self, probability,
                                       recruited_compartment=T_CELL_NAIVE_HELPER,
                                       based_on_perfusion=True)
 
 
 class TCellNaiveHelperRecruitmentLymphRegular(RecruitmentLymph):
     def __init__(self, probability):
-        RecruitmentLymph.__init__(self, [LymphNode], probability,
+        RecruitmentLymph.__init__(self, probability,
                                   recruited_compartment=T_CELL_NAIVE_HELPER)
 
 
 
 class TCellCytotoxicRecruitmentBronchialRegular(RecruitmentBronchial):
     def __init__(self, probability):
-        RecruitmentBronchial.__init__(self, [BronchialTreeNode, BronchopulmonarySegment], probability,
+        RecruitmentBronchial.__init__(self, probability,
                                       recruited_compartment=T_CELL_NAIVE_CYTOTOXIC,
                                       based_on_perfusion=True)
 
 
 class TCellCytotoxicRecruitmentLymphRegular(RecruitmentLymph):
     def __init__(self, probability):
-        RecruitmentLymph.__init__(self, [LymphNode], probability, recruited_compartment=T_CELL_NAIVE_CYTOTOXIC)
+        RecruitmentLymph.__init__(self, probability, recruited_compartment=T_CELL_NAIVE_CYTOTOXIC)
 

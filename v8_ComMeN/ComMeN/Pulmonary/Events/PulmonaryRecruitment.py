@@ -7,6 +7,9 @@ Long Docstring
 """
 
 from ...Base.Events.Creation import *
+from ..Node.BronchopulmonarySegment import *
+from ..Node.BronchialTreeNode import *
+from ..Node.LymphNode import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -19,7 +22,8 @@ __status__ = "Development"
 
 class RecruitmentBronchial(Create):
 
-    def __init__(self, node_types, probability, recruited_compartment, based_on_perfusion=True):
+    def __init__(self, probability, recruited_compartment, based_on_perfusion=True):
+        node_types = [BronchopulmonarySegment, BronchialTreeNode]
         self.based_on_perfusion = based_on_perfusion
         Create.__init__(self, node_types, probability, recruited_compartment)
 
@@ -32,9 +36,9 @@ class RecruitmentBronchial(Create):
 
 class RecruitmentBronchialByExternals(RecruitmentBronchial):
 
-    def __init__(self, node_types, probability, recruited_compartment, external_compartments, based_on_perfusion=True):
+    def __init__(self, probability, recruited_compartment, external_compartments, based_on_perfusion=True):
         self.external_compartments = external_compartments
-        RecruitmentBronchial.__init__(self, node_types, probability, recruited_compartment, based_on_perfusion)
+        RecruitmentBronchial.__init__(self, probability, recruited_compartment, based_on_perfusion)
 
     def increment_state_variable_from_node(self, node, network):
         return RecruitmentBronchial.increment_state_variable_from_node(self, node, network) * \
@@ -43,14 +47,15 @@ class RecruitmentBronchialByExternals(RecruitmentBronchial):
 
 class RecruitmentLymph(Create):
 
-    def __init__(self, node_types, probability, recruited_compartment):
+    def __init__(self, probability, recruited_compartment):
+        node_types = [LymphNode]
         Create.__init__(self, node_types, probability, recruited_compartment)
 
 
 class RecruitmentLymphByExternals(RecruitmentLymph):
-    def __init__(self, node_types, probability, recruited_compartment, external_compartments):
+    def __init__(self, probability, recruited_compartment, external_compartments):
         self.external_compartments = external_compartments
-        RecruitmentLymph.__init__(self, node_types, probability, recruited_compartment)
+        RecruitmentLymph.__init__(self, probability, recruited_compartment)
 
     def increment_state_variable_from_node(self, node, network):
         return RecruitmentLymph.increment_state_variable_from_node(self, node, network) * \
