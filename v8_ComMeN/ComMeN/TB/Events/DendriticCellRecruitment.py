@@ -8,9 +8,6 @@ Long Docstring
 
 from ...Pulmonary.Events.PulmonaryRecruitment import *
 from ..TBClasses import *
-from ...Pulmonary.Node.BronchopulmonarySegment import *
-from ...Pulmonary.Node.BronchialTreeNode import *
-from ...Pulmonary.Node.LymphNode import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
