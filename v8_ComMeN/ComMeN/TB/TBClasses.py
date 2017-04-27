@@ -31,9 +31,9 @@ T_CELL_NAIVE_HELPER = 't_cell_naive_helper'
 T_CELL_HELPER = 't_cell_helper'
 T_CELL_NAIVE_CYTOTOXIC = 't_cell_naive_cytotoxic'
 T_CELL_CYTOTOXIC = 't_cell_cytotoxic'
-# DENDRITIC_CELL = 'dendritic_cell'
-# DENDRITIC_CELL_REGULAR = 'dendritic_cell_regular'
-# DENDRITIC_CELL_INFECTED = 'dendritic_cell_infected'
+DENDRITIC_CELL = 'dendritic_cell'
+DENDRITIC_CELL_IMMATURE = 'dendritic_cell_immature'
+DENDRITIC_CELL_MATURE = 'dendritic_cell_mature'
 
 # Compartments that exude Cytokine
 # TODO - treat all cytokine as one
