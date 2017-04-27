@@ -32,7 +32,7 @@ class TBModelFull(PulmonaryAnatomyNetwork):
 
         compartments = [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR] + \
                        [MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED] + \
-                       [T_CELL_HELPER, T_CELL_CYTOTOXIC]
+                       [T_CELL_NAIVE_HELPER, T_CELL_NAIVE_CYTOTOXIC, T_CELL_HELPER, T_CELL_CYTOTOXIC]
 
         # TODO - not the nicest code but this does work. Maybe find better way to import (i.e. Event subclasses?)
         package = Events
