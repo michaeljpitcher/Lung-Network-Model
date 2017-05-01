@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Dendritic cell phagocytosis of bacteria
 
-Long Docstring
+An immature dendritic cell phagocytoses a bacterium, resulting in its maturation
 
 """
 
@@ -23,6 +23,9 @@ __status__ = "Development"
 
 
 class ImmatureDendriticIngestFastBacteriaMaturate(Phagocytosis):
+    """
+    Immature dendritic cell ingests bacterium. Bacterium is destroyed, dendritic cell becomes mature
+    """
     def __init__(self, probability):
         Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                               phagocyte_compartment=DENDRITIC_CELL_IMMATURE,

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" A macrophage translocates to another node, along a given edge
 
-Long Docstring
+Macrophages can move along any edge to reach another patch. Different rates for different macrophage states.
+Infected macrophages also move some intracellular bacteria
 
 """
 
@@ -22,6 +23,9 @@ __status__ = "Development"
 
 
 class RegularMacrophageTranslocateBronchus(TranslocateBronchus):
+    """
+    Macrophage moves along a bronchus. Choice is based on WEIGHT value of edge
+    """
     def __init__(self, probability):
         TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
                                      translocate_compartment=MACROPHAGE_REGULAR,
@@ -45,10 +49,15 @@ class ActivatedMacrophageTranslocateBronchus(TranslocateBronchus):
 
 
 class RegularMacrophageTranslocateLymph(TranslocateLymph):
+    """
+    Macrophage moves along a lymphatic vessel, can only move in direction of flow. Probability is based
+    on FLOW RATE of edge.
+    """
     def __init__(self, probability):
         TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
                                   translocate_compartment=MACROPHAGE_REGULAR,
-                                  direction_only=True)
+                                  direction_only=True,
+                                  flow_based=True)
 
 
 class InfectedMacrophageTranslocateLymph(TranslocateLymph):
@@ -56,17 +65,22 @@ class InfectedMacrophageTranslocateLymph(TranslocateLymph):
         TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
                                   translocate_compartment=MACROPHAGE_INFECTED,
                                   internal_compartments=[BACTERIA_INTRACELLULAR],
-                                  direction_only=True)
+                                  direction_only=True,
+                                  flow_based=True)
 
 
 class ActivatedMacrophageTranslocateLymph(TranslocateLymph):
     def __init__(self, probability):
         TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
                                   translocate_compartment=MACROPHAGE_ACTIVATED,
-                                  direction_only=True)
+                                  direction_only=True,
+                                  flow_based=True)
 
 
 class RegularMacrophageTranslocateBlood(TranslocateBlood):
+    """
+    Macrophage moves along a bloodstream edge. Can only move in direction of flow
+    """
     def __init__(self, probability):
         TranslocateBlood.__init__(self, [LymphNode], probability,
                                   translocate_compartment=MACROPHAGE_REGULAR,

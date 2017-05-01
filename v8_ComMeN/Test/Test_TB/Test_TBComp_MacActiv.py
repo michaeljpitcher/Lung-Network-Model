@@ -36,7 +36,7 @@ class RegularMacrophageActivationByCytokineTestCase(unittest.TestCase):
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_REGULAR)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_COMPARTMENTS)
+        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_PRODUCING_COMPARTMENTS)
         self.assertFalse(self.event.internals_to_destroy)
 
 
@@ -49,7 +49,7 @@ class InfectedMacrophageActivationByCytokineTestCase(unittest.TestCase):
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_INFECTED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_ACTIVATED)
-        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_COMPARTMENTS)
+        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_PRODUCING_COMPARTMENTS)
         self.assertItemsEqual(self.event.internals_to_destroy, [BACTERIA_INTRACELLULAR])
 
 
@@ -73,7 +73,7 @@ class ActivatedMacrophageDeactivationByLackOfCytokineTestCase(unittest.TestCase)
         self.assertItemsEqual(self.event.node_types, [BronchialTreeNode, BronchopulmonarySegment, LymphNode])
         self.assertEqual(self.event.compartment_from, MACROPHAGE_ACTIVATED)
         self.assertEqual(self.event.compartment_to, MACROPHAGE_REGULAR)
-        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_COMPARTMENTS)
+        self.assertItemsEqual(self.event.influencing_compartments, CYTOKINE_PRODUCING_COMPARTMENTS)
 
 
 if __name__ == '__main__':

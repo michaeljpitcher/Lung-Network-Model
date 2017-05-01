@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" T-cell translocation
 
-Long Docstring
+A t-cell moves from one node to another
 
 """
 
@@ -20,8 +20,12 @@ __version__ = "1.0.8"
 __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
+# TODO - naive versions can't move?
 
 class TCellHelperTranslocateBronchus(TranslocateBronchus):
+    """
+    Helper T-cell moves along a bronchus, choice of bronchus based on edge weights
+    """
     def __init__(self, probability):
         TranslocateBronchus.__init__(self, [BronchopulmonarySegment, BronchialTreeNode], probability,
                                      translocate_compartment=T_CELL_HELPER,
@@ -29,13 +33,20 @@ class TCellHelperTranslocateBronchus(TranslocateBronchus):
 
 
 class TCellHelperTranslocateLymph(TranslocateLymph):
+    """
+    Helper T-cell moves along a lymphatic vessel, in direction of flow, prob of moving based on flow rate
+    """
     def __init__(self, probability):
         TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
                                   translocate_compartment=T_CELL_HELPER,
-                                  direction_only=True)
+                                  direction_only=True,
+                                  flow_based=True)
 
 
 class TCellHelperTranslocateBlood(TranslocateBlood):
+    """
+    Helper T-cell moves along a bloodstream edge, in direction of flow
+    """
     def __init__(self, probability):
         TranslocateBlood.__init__(self, [LymphNode], probability,
                                   translocate_compartment=T_CELL_HELPER,
@@ -53,7 +64,8 @@ class TCellCytotoxicTranslocateLymph(TranslocateLymph):
     def __init__(self, probability):
         TranslocateLymph.__init__(self, [BronchopulmonarySegment, LymphNode], probability,
                                   translocate_compartment=T_CELL_CYTOTOXIC,
-                                  direction_only=True)
+                                  direction_only=True,
+                                  flow_based=True)
 
 
 class TCellCytotoxicTranslocateBlood(TranslocateBlood):

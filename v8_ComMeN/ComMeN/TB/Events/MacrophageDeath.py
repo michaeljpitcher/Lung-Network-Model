@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Macrophage death
 
-Long Docstring
+A macrophage dies. If infected, may release it's internal bacterial load as extracellular slow bacteria
 
 """
 
@@ -24,14 +24,17 @@ __status__ = "Development"
 class RegularMacrophageSpontaneousDeath(Destroy):
     def __init__(self, probability):
         Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
-                                compartment_destroyed=MACROPHAGE_REGULAR)
+                         compartment_destroyed=MACROPHAGE_REGULAR)
 
 
 class InfectedMacrophageSpontaneousDeath(Destroy):
+    """
+    Infected macrophages does, intracellular bacteria become extracellular slow bacteria
+    """
     def __init__(self, probability):
         Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                          compartment_destroyed=MACROPHAGE_INFECTED,
-                         internals_changed=[(BACTERIA_INTRACELLULAR,BACTERIA_SLOW)])
+                         internals_changed=[(BACTERIA_INTRACELLULAR, BACTERIA_SLOW)])
 
 
 class ActivatedMacrophageSpontaneousDeath(Destroy):
@@ -42,6 +45,10 @@ class ActivatedMacrophageSpontaneousDeath(Destroy):
 
 # NECROSIS
 class InfectedMacrophageDeathByIntracellularBacteria(DestroyByOtherCompartments):
+    """
+    Infected macrophage dies, where death is instigated by internal bacteria (the more intracellular bacteria, the more 
+    likely death occurs)
+    """
     def __init__(self, probability):
         DestroyByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                             compartment_destroyed=MACROPHAGE_INFECTED,

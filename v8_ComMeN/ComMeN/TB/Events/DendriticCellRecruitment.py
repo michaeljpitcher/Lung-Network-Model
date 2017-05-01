@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Dendritic cell recruitment
 
-Long Docstring
+Dendritic cell is recruited into the patch
 
 """
 
@@ -19,6 +19,9 @@ __status__ = "Development"
 
 
 class DendriticImmatureRecruitmentBronchial(RecruitmentBronchial):
+    """
+    Dendritic cell recruited into the bronchial tree. Based on perfusion rates.
+    """
     def __init__(self, probability):
         RecruitmentBronchial.__init__(self, probability,
                                       recruited_compartment=DENDRITIC_CELL_IMMATURE,
@@ -28,4 +31,4 @@ class DendriticImmatureRecruitmentBronchial(RecruitmentBronchial):
 class DendriticImmatureRecruitmentLymph(RecruitmentLymph):
     def __init__(self, probability):
         RecruitmentLymph.__init__(self, probability,
-                                      recruited_compartment=DENDRITIC_CELL_IMMATURE)
+                                  recruited_compartment=DENDRITIC_CELL_IMMATURE)

@@ -32,7 +32,8 @@ class TBModelFull(PulmonaryAnatomyNetwork):
 
         compartments = [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR] + \
                        [MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED] + \
-                       [T_CELL_NAIVE_HELPER, T_CELL_NAIVE_CYTOTOXIC, T_CELL_HELPER, T_CELL_CYTOTOXIC]
+                       [T_CELL_NAIVE_HELPER, T_CELL_NAIVE_CYTOTOXIC, T_CELL_HELPER, T_CELL_CYTOTOXIC,
+                        DENDRITIC_CELL_MATURE, DENDRITIC_CELL_IMMATURE]
 
         # TODO - not the nicest code but this does work. Maybe find better way to import (i.e. Event subclasses?)
         package = Events
@@ -49,12 +50,13 @@ class TBModelFull(PulmonaryAnatomyNetwork):
         events = []
         skipped_events = []
         for (prob_key, event_class) in event_classes:
-            if prob_key in probabilities:
+            if prob_key in probabilities and probabilities[prob_key] > 0.0:
                 events.append(event_class(probabilities[prob_key]))
             else:
                 skipped_events.append(prob_key)
 
-        print "Events without probabilities skipped: {0}".format(skipped_events)
+        if skipped_events:
+            print "Events with zero/without probability will be skipped: {0}".format(skipped_events)
 
         PulmonaryAnatomyNetwork.__init__(self, compartments, events,
                                          bronchial_tree_nodes=include_bronchials,

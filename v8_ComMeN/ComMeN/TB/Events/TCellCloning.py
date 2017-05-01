@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" T-cell clonal expansion
 
-Long Docstring
+Effector T-cell clones itself, creating a t-cell of same type 
 
 """
 

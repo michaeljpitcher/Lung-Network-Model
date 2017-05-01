@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Naive lymphocytes activate through contact with phagocytes
 
-Long Docstring
+A naive lymphocyte (t-cell helper or t-cell cytotoxic) comes into contact with a phagocyte, which presents
+its antigens and triggers priming of the naive cell, turning it into an effector t-cell
 
 """
 
@@ -20,11 +21,10 @@ __version__ = "1.0.8"
 __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
-# TODO - split into 2 functions (Dendritic and macrophage) as clarification needed RE which phagocyte activates which
-# lymphocyte
+# TODO - split into 2 functions (Dend and mac) as clarification needed RE which phagocyte activates which lymphocyte
 
 
-class TCellHelperActivationDendritic(ChangeByOtherCompartments):
+class TCellHelperActivationDendriticMature(ChangeByOtherCompartments):
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                            compartment_from=T_CELL_NAIVE_HELPER,
@@ -32,7 +32,7 @@ class TCellHelperActivationDendritic(ChangeByOtherCompartments):
                                            influencing_compartments=[DENDRITIC_CELL_MATURE])
 
 
-class TCellHelperActivationMacrophage(ChangeByOtherCompartments):
+class TCellHelperActivationMacrophageInfected(ChangeByOtherCompartments):
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                            compartment_from=T_CELL_NAIVE_HELPER,
@@ -40,7 +40,7 @@ class TCellHelperActivationMacrophage(ChangeByOtherCompartments):
                                            influencing_compartments=[MACROPHAGE_INFECTED])
 
 
-class TCellCytotoxicActivationDendritic(ChangeByOtherCompartments):
+class TCellCytotoxicActivationDendriticMature(ChangeByOtherCompartments):
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                            compartment_from=T_CELL_NAIVE_CYTOTOXIC,
@@ -48,7 +48,7 @@ class TCellCytotoxicActivationDendritic(ChangeByOtherCompartments):
                                            influencing_compartments=[DENDRITIC_CELL_MATURE])
 
 
-class TCellCytotoxicActivationMacrophage(ChangeByOtherCompartments):
+class TCellCytotoxicActivationMacrophageInfected(ChangeByOtherCompartments):
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                                            compartment_from=T_CELL_NAIVE_CYTOTOXIC,

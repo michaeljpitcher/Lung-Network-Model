@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-"""Short docstring
+"""Bacterial replication
 
-Long Docstring
+Bacteria can replicate, creating a new bacterium of identical state to the original. This can occur extracellularly 
+(for BACTERIA_FAST and BACTERIA_SLOW) or intracellularly (BACTERIA_INTRACELLULAR)
 
 """
 

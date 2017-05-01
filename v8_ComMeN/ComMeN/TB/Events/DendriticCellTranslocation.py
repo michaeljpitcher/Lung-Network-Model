@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Dendritic Cell translocation
 
-Long Docstring
+A dendritic cell can move from a bronchopulmonary segment into a lymph node.
 
 """
 
@@ -19,8 +19,16 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class DendriticMatureLymphTranslocation(TranslocateLymph):
+class DendriticImmatureLymphTranslocation(TranslocateLymph):
     def __init__(self, probability):
         # Translocation is only bronchopulmonary segment to lymph
         TranslocateLymph.__init__(self, [BronchopulmonarySegment], probability,
-                                  translocate_compartment=DENDRITIC_CELL_MATURE)
+                                  translocate_compartment=DENDRITIC_CELL_IMMATURE,
+                                  flow_based=True)
+
+
+class DendriticMatureLymphTranslocation(TranslocateLymph):
+    def __init__(self, probability):
+        TranslocateLymph.__init__(self, [BronchopulmonarySegment], probability,
+                                  translocate_compartment=DENDRITIC_CELL_MATURE,
+                                  flow_based=True)

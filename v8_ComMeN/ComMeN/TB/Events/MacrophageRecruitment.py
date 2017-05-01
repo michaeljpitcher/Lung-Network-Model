@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" A macrophage is recruited to the node
 
-Long Docstring
+Regular macrophage appears at the node. Based on perfusion levels where applicable, and may increase
+with an increase in cytokine
 
 """
 
@@ -29,10 +30,13 @@ class RegularMacrophageRecruitmentBronchial(RecruitmentBronchial):
 
 
 class RegularMacrophageRecruitmentBronchialByCytokine(RecruitmentBronchialByExternals):
+    """
+    Recruitment where dependent on cytokine levels (probability increases with more cytokine)
+    """
     def __init__(self, probability):
         RecruitmentBronchialByExternals.__init__(self, probability,
                                                  recruited_compartment=MACROPHAGE_REGULAR,
-                                                 external_compartments=CYTOKINE_COMPARTMENTS,
+                                                 external_compartments=CYTOKINE_PRODUCING_COMPARTMENTS,
                                                  based_on_perfusion=True)
 
 
@@ -45,5 +49,5 @@ class RegularMacrophageRecruitmentLymphByCytokine(RecruitmentLymphByExternals):
     def __init__(self, probability):
         RecruitmentLymphByExternals.__init__(self, probability,
                                              recruited_compartment=MACROPHAGE_REGULAR,
-                                             external_compartments=CYTOKINE_COMPARTMENTS)
+                                             external_compartments=CYTOKINE_PRODUCING_COMPARTMENTS)
 

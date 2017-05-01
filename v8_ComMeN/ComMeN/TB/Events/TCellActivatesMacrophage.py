@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Helper T-cell activates a macrophage
 
 Long Docstring
 
@@ -22,6 +22,9 @@ __status__ = "Development"
 
 
 class MacrophageRegularActivationByTCellHelper(ChangeByOtherCompartments):
+    """
+    Regular macrophage is activated by contact with helper t-cell.
+    """
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                            probability,
@@ -31,6 +34,9 @@ class MacrophageRegularActivationByTCellHelper(ChangeByOtherCompartments):
 
 
 class MacrophageInfectedActivationByTCellHelper(ChangeByOtherCompartments):
+    """
+    Infected macrophage is activated by contact with helper t-cell. Destroys internal bacterial load.
+    """
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                            probability,

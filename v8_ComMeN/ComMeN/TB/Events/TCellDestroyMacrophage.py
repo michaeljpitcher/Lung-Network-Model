@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Cytotoxic t-cell causes apoptosis in infected macrophage
 
-Long Docstring
+Cytotoxic t-cell comes into contact with infected macrophage, triggers apoptosis which destroys both the
+macrophage and its internal bacterial load.
 
 """
 

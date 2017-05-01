@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Dendritic cell death
 
-Long Docstring
+A dendritic cell dies
 
 """
 

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Macrophage activation/deactivation
 
-Long Docstring
+A macrophage enters an activated state increasing it's bactericidal activity. If the macrophage is infected, also causes 
+destruction of internal bacteria.
 
+Activated macrophages can deactivated and thus return to regular
 """
 
 from ..TBClasses import *
@@ -22,7 +24,6 @@ __status__ = "Development"
 
 
 class RegularMacrophageSpontaneousActivation(Change):
-
     def __init__(self, probability):
         Change.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                         compartment_from=MACROPHAGE_REGULAR,
@@ -30,7 +31,6 @@ class RegularMacrophageSpontaneousActivation(Change):
 
 
 class InfectedMacrophageSpontaneousActivation(Change):
-
     def __init__(self, probability):
         Change.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                         compartment_from=MACROPHAGE_INFECTED,
@@ -39,23 +39,25 @@ class InfectedMacrophageSpontaneousActivation(Change):
 
 
 class RegularMacrophageActivationByCytokine(ChangeByOtherCompartments):
-
+    """
+    Macrophage becomes activated due to its exposure to cytokine, produced by other entities (e.g. infected/activated 
+    macrophages)
+    """
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                            probability,
                                            compartment_from=MACROPHAGE_REGULAR,
                                            compartment_to=MACROPHAGE_ACTIVATED,
-                                           influencing_compartments=CYTOKINE_COMPARTMENTS)
+                                           influencing_compartments=CYTOKINE_PRODUCING_COMPARTMENTS)
 
 
 class InfectedMacrophageActivationByCytokine(ChangeByOtherCompartments):
-
     def __init__(self, probability):
         ChangeByOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                            probability,
                                            compartment_from=MACROPHAGE_INFECTED,
                                            compartment_to=MACROPHAGE_ACTIVATED,
-                                           influencing_compartments=CYTOKINE_COMPARTMENTS,
+                                           influencing_compartments=CYTOKINE_PRODUCING_COMPARTMENTS,
                                            internals_to_destroy=[BACTERIA_INTRACELLULAR])
 
 
@@ -67,9 +69,12 @@ class ActivatedMacrophageSpontaneousDeactivation(Change):
 
 
 class ActivatedMacrophageDeactivationByLackOfCytokine(ChangeByLackOfOtherCompartments):
+    """
+    Activated macrophage reverts to normal (more likely the less cytokine producing compartments there are)
+    """
     def __init__(self, probability):
         ChangeByLackOfOtherCompartments.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                                  probability,
                                                  compartment_from=MACROPHAGE_ACTIVATED,
                                                  compartment_to=MACROPHAGE_REGULAR,
-                                                 influencing_compartments=CYTOKINE_COMPARTMENTS)
+                                                 influencing_compartments=CYTOKINE_PRODUCING_COMPARTMENTS)

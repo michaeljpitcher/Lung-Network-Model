@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
-"""Short docstring
+""" Macrophage phagocytoses a bacterium
 
-Long Docstring
+Macrophage ingests a bacteria. Mtb often prevents the intended destruction by the macrophage and remains alive as an
+intracellular bacterium. Macrophages with intracellular bacteria change to infected state which drives other activity 
+(death, reduced movement, etc). Activated macrophages always destroy their bacteria.
+
+Macrophages with intracellular bacteria can destroy them, if they clear they become regular.
 
 """
 
@@ -22,6 +26,9 @@ __status__ = "Development"
 
 
 class RegularMacrophageIngestFastBacteriaRetain(Phagocytosis):
+    """
+    Macrophage ingests a Fast bacterium but cannot destroy it. Bacterium turns intracellular, macrophage turns infected
+    """
     def __init__(self, probability):
         Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                               phagocyte_compartment=MACROPHAGE_REGULAR,
@@ -31,6 +38,9 @@ class RegularMacrophageIngestFastBacteriaRetain(Phagocytosis):
 
 
 class RegularMacrophageIngestFastBacteriaDestroy(Phagocytosis):
+    """
+    Macrophage ingests a Fast bacterium and destroys it. Bacterium disappears, macrophage remains the same
+    """
     def __init__(self, probability):
         Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                               phagocyte_compartment=MACROPHAGE_REGULAR,
@@ -54,6 +64,9 @@ class RegularMacrophageIngestSlowBacteriaDestroy(Phagocytosis):
 
 
 class InfectedMacrophageIngestFastBacteriaRetain(Phagocytosis):
+    """
+    Infected macrophage ingests a Fast bacterium but cannot destroy it. Bacterium turns intracellular
+    """
     def __init__(self, probability):
         Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                               phagocyte_compartment=MACROPHAGE_INFECTED,
@@ -62,6 +75,9 @@ class InfectedMacrophageIngestFastBacteriaRetain(Phagocytosis):
 
 
 class InfectedMacrophageIngestFastBacteriaDestroy(Phagocytosis):
+    """
+    Infected macrophage ingests a Fast bacterium and destroys it. Bacterium disappears
+    """
     def __init__(self, probability):
         Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                               phagocyte_compartment=MACROPHAGE_INFECTED,
@@ -84,6 +100,9 @@ class InfectedMacrophageIngestSlowBacteriaDestroy(Phagocytosis):
 
 
 class ActivatedMacrophageIngestFastBacteriaDestroy(Phagocytosis):
+    """
+    Activated macrophage ingests a Fast bacterium and destroys it. Bacterium disappears
+    """
     def __init__(self, probability):
         Phagocytosis.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                               phagocyte_compartment=MACROPHAGE_ACTIVATED,
@@ -98,6 +117,10 @@ class ActivatedMacrophageIngestSlowBacteriaDestroy(Phagocytosis):
 
 
 class InfectedMacrophageDestroyInternalBacteria(PhagocyteDestroyInternals):
+    """
+    Infected macrophage destroys an internal bacterium. Bacterium disappears. If all bacteria cleared, macrophage turns
+    back to regular
+    """
     def __init__(self, probability):
         PhagocyteDestroyInternals.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode],
                                            probability,

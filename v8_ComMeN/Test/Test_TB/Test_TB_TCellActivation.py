@@ -1,11 +1,11 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.TCellActivation import *
+from v8_ComMeN.ComMeN.TB.Events.TCellPriming import *
 
 
 class TCellHelperActivationDendriticTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellHelperActivationDendritic(0.1)
+        self.event = TCellHelperActivationDendriticMature(0.1)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_from, T_CELL_NAIVE_HELPER)
@@ -15,7 +15,7 @@ class TCellHelperActivationDendriticTestCase(unittest.TestCase):
 
 class TCellHelperActivationMacrophageTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellHelperActivationMacrophage(0.1)
+        self.event = TCellHelperActivationMacrophageInfected(0.1)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_from, T_CELL_NAIVE_HELPER)
@@ -25,7 +25,7 @@ class TCellHelperActivationMacrophageTestCase(unittest.TestCase):
 
 class TCellCytotoxicActivationDendriticTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellCytotoxicActivationDendritic(0.1)
+        self.event = TCellCytotoxicActivationDendriticMature(0.1)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_from, T_CELL_NAIVE_CYTOTOXIC)
@@ -35,7 +35,7 @@ class TCellCytotoxicActivationDendriticTestCase(unittest.TestCase):
 
 class TCellCytotoxicActivationMacrophageTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = TCellCytotoxicActivationMacrophage(0.1)
+        self.event = TCellCytotoxicActivationMacrophageInfected(0.1)
 
     def test_initialise(self):
         self.assertEqual(self.event.compartment_from, T_CELL_NAIVE_CYTOTOXIC)

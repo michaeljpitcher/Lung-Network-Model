@@ -78,21 +78,22 @@ class MetapopulationNetwork(nx.Graph):
         u.neighbours.append((v, attr_dict))
         v.neighbours.append((u, attr_dict))
 
-    def run(self, time_limit=0, run_id=None, output=True, debug=False):
+    def run(self, time_limit=0, run_id=None, output=True, debug=None):
+        print "ComMen Simulation - time limit:", time_limit
         csv_file = None
         csv_writer = None
 
         if debug:
-            if run_id is not None:
-                filename = 'TBModel_' + str(run_id) + '.log'
-            else:
-                filename = 'TBModel.log'
+            filename = str(debug) + '.log'
+            print "Logging to:", filename
             logging.basicConfig(filename=filename, format='%(asctime)s:%(levelname)s:%(message)s',
                                 level=logging.DEBUG)
-            logging.debug("Running TB automaton model: run id = " + str(run_id))
+            logging.debug("Running ComMen Simulation - Class:{0} - runid:{1}".format(self.__class__.__name__, run_id))
 
         if run_id is not None:
-            csv_file = open(str(run_id) + '.csv', 'wb')
+            filename = str(run_id) + '.csv'
+            csv_file = open(filename, 'wb')
+            print "Output to:", filename
             csv_writer = csv.writer(csv_file, delimiter=',')
             header_row = ["timestep", "node_id"] + self.compartments
             csv_writer.writerow(header_row)
