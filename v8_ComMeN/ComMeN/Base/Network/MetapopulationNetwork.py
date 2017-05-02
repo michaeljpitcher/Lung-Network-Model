@@ -32,9 +32,13 @@ class MetapopulationNetwork(nx.Graph):
 
         self.compartments = compartments
 
+        self.node_list = []
+
         # Nodes
         for n in nodes:
             self.add_node(n)
+
+        self.node_list = sorted(self.node_list, key=lambda node: node.node_id)
 
         # Edges
         for (node1, node2, edge_data) in edges:
@@ -69,6 +73,7 @@ class MetapopulationNetwork(nx.Graph):
     def add_node(self, n, attr_dict=None, **attr):
         assert isinstance(n, Patch), "Node {0} is not a Patch object".format(n)
         nx.Graph.add_node(self, n)
+        self.node_list.append(n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
         assert self.has_node(u), "Node {0} not present in network".format(u)
@@ -102,16 +107,17 @@ class MetapopulationNetwork(nx.Graph):
         while self.time < time_limit:
             if output:
                 self.timestep_print()
-            for e in self.events:
-                e.update_rate(self)
-            total_rate = sum([e.rate for e in self.events])
-            if total_rate == 0:
-                print "0% of event occurring"
-                return
 
             """ Gillespie simulation - derived from:
             [1] D. T. Gillespie, A general method for numerically simulating the stochastic time evolution of coupled
             chemical reactions, J. Comput. Phys., vol. 22, no. 4, pp. 403-434, 1976. doi:10.1016/0021-9991(76)90041-3"""
+            for e in self.events:
+                e.update_rate(self)
+            total_rate = sum([e.rate for e in self.events])
+
+            if total_rate == 0:
+                print "0% of event occurring"
+                return
 
             # Calculate the timestep tau based on the total rates
             r1 = np.random.random()
@@ -136,7 +142,7 @@ class MetapopulationNetwork(nx.Graph):
             csv_file.close()
 
     def record_data(self, csv_writer):
-        for node in self.nodes():
+        for node in self.node_list:
             row = [self.time, node.node_id]
             for compartment in self.compartments:
                 row.append(node.subpopulations[compartment])
