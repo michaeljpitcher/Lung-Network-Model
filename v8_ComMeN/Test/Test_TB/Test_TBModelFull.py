@@ -19,7 +19,7 @@ class TBModelFullTestCase(unittest.TestCase):
     def test_fail_no_events(self):
         with self.assertRaises(AssertionError) as context:
             TBModelFull(self.init_mac_bps, self.init_mac_btn, self.init_mac_lymph, self.init_bac_fast,
-                        self.init_bac_slow, [], True, True, True)
+                        self.init_bac_slow, {}, True, True, True)
         self.assertEqual("No events supplied", str(context.exception))
 
     def test_differing_events(self):
