@@ -26,7 +26,9 @@ __status__ = "Development"
 class TBModelFull(PulmonaryAnatomyNetwork):
 
     def __init__(self, initial_macrophages_bps, initial_macrophages_btn, initial_macrophages_lymph,
-                 initial_bacteria_fast, initial_bacteria_slow, probabilities,
+                 initial_bacteria_fast, initial_bacteria_slow,
+                 initial_dcs_bps, initial_dcs_btn, initial_dcs_lymph,
+                 probabilities,
                  include_bronchials, include_lymphatics, include_bloodstream,
                  tree_weight_method=HORSFIELD):
 
@@ -69,9 +71,14 @@ class TBModelFull(PulmonaryAnatomyNetwork):
                                          lymphatic_nodes=include_lymphatics,
                                          haematogenous_reseeding=include_bloodstream)
 
-        self.seed_network_node_type(BronchopulmonarySegment, {MACROPHAGE_REGULAR: initial_macrophages_bps})
-        self.seed_network_node_type(BronchialTreeNode, {MACROPHAGE_REGULAR: initial_macrophages_btn})
-        self.seed_network_node_type(LymphNode, {MACROPHAGE_REGULAR: initial_macrophages_lymph})
+        self.seed_network_node_type(BronchopulmonarySegment, {MACROPHAGE_REGULAR: initial_macrophages_bps,
+                                                              DENDRITIC_CELL_IMMATURE: initial_dcs_bps})
+        self.seed_network_node_type(BronchialTreeNode, {MACROPHAGE_REGULAR: initial_macrophages_btn,
+                                                        DENDRITIC_CELL_IMMATURE: initial_dcs_btn})
+        self.seed_network_node_type(LymphNode, {MACROPHAGE_REGULAR: initial_macrophages_lymph,
+                                                DENDRITIC_CELL_IMMATURE: initial_dcs_lymph})
+
+
 
         for node_id in initial_bacteria_fast:
             seeding = {BACTERIA_FAST: initial_bacteria_fast[node_id]}
