@@ -6,7 +6,7 @@ Macrophage ingests a bacteria. Mtb often prevents the intended destruction by th
 intracellular bacterium. Macrophages with intracellular bacteria change to infected state which drives other activity 
 (death, reduced movement, etc). Activated macrophages always destroy their bacteria.
 
-Macrophages with intracellular bacteria can destroy them, if they clear they become regular.
+Macrophages with intracellular bacteria can destroy them; if they clear all of them, they become regular.
 
 """
 
@@ -23,6 +23,8 @@ __license__ = ""
 __version__ = "1.0.8"
 __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
+
+# TODO - may need something here for chemokine - i.e. chemokine increases macrophage movement, thus increasing ingestion rates
 
 
 class RegularMacrophageIngestFastBacteriaRetain(Phagocytosis):
