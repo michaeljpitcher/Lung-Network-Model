@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.TCellPriming import *
+from v8_ComMeN.ComMeN.TB.Events.PhagocytePrimesTCell import *
 
 
 class TCellHelperActivationDendriticTestCase(unittest.TestCase):
