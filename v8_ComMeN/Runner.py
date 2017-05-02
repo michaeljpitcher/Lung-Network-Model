@@ -34,8 +34,10 @@ include_bloodstream = config.getboolean("TopologyParameters", "bloodstream")
 
 # Read probabilities from config
 probabilities = dict()
+
 for event in config.items('EventProbabilities'):
-        probabilities[event[0]] = float(event[1])
+    assert event not in probabilities.keys(), "Event {0} has already been defined".format(event)
+    probabilities[event[0]] = float(event[1])
 
 macs_per_bps = config.getint('InitialSeedingMacrophages', 'macrophages_per_bronchopulmonarysegment')
 macs_per_btn = config.getint('InitialSeedingMacrophages', 'macrophages_per_bronchialtreenode')
@@ -54,9 +56,18 @@ model = TBModelFull(macs_per_bps, macs_per_btn, macs_per_lymph, initial_fast_bac
                      tree_weight_method=tree_weight_method, include_lymphatics=include_lymphatics,
                      include_bloodstream=include_bloodstream)
 
+from ComMeN.Pulmonary.Visuals.PulmonaryNetworkGraph import *
+
+"""
+draw_pulmonary_network_graph(model, "ComMeN", "commen_base", False, False)
+draw_pulmonary_network_graph(model, "ComMeN", "commen_lymph", True, False)
+draw_pulmonary_network_graph(model, "ComMeN", "commen_all", True, True)
+
+
 import cProfile
 cp = cProfile.Profile()
 cp.enable()
-model.run(5)
+model.run(1.0, run_id=99, debug='Debug')
 cp.disable()
 cp.print_stats('tottime')
+"""

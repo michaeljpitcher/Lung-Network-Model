@@ -22,25 +22,25 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class SpontaneousTCellNaiveHelperDeath(Destroy):
+class TCellNaiveHelperSpontaneousDeath(Destroy):
     def __init__(self, probability):
         Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                          compartment_destroyed=T_CELL_NAIVE_HELPER)
 
 
-class SpontaneousTCellNaiveCytotoxicDeath(Destroy):
+class TCellNaiveCytotoxicSpontaneousDeath(Destroy):
     def __init__(self, probability):
         Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                          compartment_destroyed=T_CELL_NAIVE_CYTOTOXIC)
 
 
-class SpontaneousTCellHelperDeath(Destroy):
+class TCellHelperSpontaneousDeath(Destroy):
     def __init__(self, probability):
         Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                          compartment_destroyed=T_CELL_HELPER)
 
 
-class SpontaneousTCellCytotoxicDeath(Destroy):
+class TCellCytotoxicSpontaneousDeath(Destroy):
     def __init__(self, probability):
         Destroy.__init__(self, [BronchopulmonarySegment, BronchialTreeNode, LymphNode], probability,
                          compartment_destroyed=T_CELL_CYTOTOXIC)

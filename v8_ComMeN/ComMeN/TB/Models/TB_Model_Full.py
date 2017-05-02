@@ -30,6 +30,7 @@ class TBModelFull(PulmonaryAnatomyNetwork):
                  include_bronchials, include_lymphatics, include_bloodstream,
                  tree_weight_method=HORSFIELD):
 
+        print "Creating TB Model..."
         compartments = [BACTERIA_FAST, BACTERIA_SLOW, BACTERIA_INTRACELLULAR] + \
                        [MACROPHAGE_REGULAR, MACROPHAGE_INFECTED, MACROPHAGE_ACTIVATED] + \
                        [T_CELL_NAIVE_HELPER, T_CELL_NAIVE_CYTOTOXIC, T_CELL_HELPER, T_CELL_CYTOTOXIC,
@@ -57,6 +58,10 @@ class TBModelFull(PulmonaryAnatomyNetwork):
 
         if skipped_events:
             print "Events with zero/without probability will be skipped: {0}".format(skipped_events)
+
+        unnecessary_events = [k for k in probabilities.keys() if k not in [n for (n,p) in event_classes]]
+        if unnecessary_events:
+            print "The following events have probabilities defined but are not needed: {0}".format(unnecessary_events)
 
         PulmonaryAnatomyNetwork.__init__(self, compartments, events,
                                          bronchial_tree_nodes=include_bronchials,

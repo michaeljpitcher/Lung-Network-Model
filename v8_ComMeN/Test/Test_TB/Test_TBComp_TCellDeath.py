@@ -5,7 +5,7 @@ from v8_ComMeN.ComMeN.TB.Events.TCellDeath import *
 
 class SpontaneousTCellNaiveHelperDeathTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = SpontaneousTCellNaiveHelperDeath(0.1)
+        self.event = TCellNaiveHelperSpontaneousDeath(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, Destroy))
@@ -15,7 +15,7 @@ class SpontaneousTCellNaiveHelperDeathTestCase(unittest.TestCase):
 
 class SpontaneousTCellNaiveCytotoxicDeathTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = SpontaneousTCellNaiveCytotoxicDeath(0.1)
+        self.event = TCellNaiveCytotoxicSpontaneousDeath(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, Destroy))
@@ -25,7 +25,7 @@ class SpontaneousTCellNaiveCytotoxicDeathTestCase(unittest.TestCase):
 
 class SpontaneousTCellHelperDeathTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = SpontaneousTCellHelperDeath(0.1)
+        self.event = TCellHelperSpontaneousDeath(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, Destroy))
@@ -35,7 +35,7 @@ class SpontaneousTCellHelperDeathTestCase(unittest.TestCase):
 
 class SpontaneousTCellCytotoxicDeathTestCase(unittest.TestCase):
     def setUp(self):
-        self.event = SpontaneousTCellCytotoxicDeath(0.1)
+        self.event = TCellCytotoxicSpontaneousDeath(0.1)
 
     def test_initialise(self):
         self.assertTrue(isinstance(self.event, Destroy))
