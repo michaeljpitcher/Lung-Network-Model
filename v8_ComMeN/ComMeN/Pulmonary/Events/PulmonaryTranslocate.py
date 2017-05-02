@@ -63,10 +63,12 @@ class TranslocateLymph(Translocate):
             return Translocate.increment_state_variable_from_node(self, node, network)
 
     def viable_edges(self, node, network):
-        # TODO - slight inefficiency here (maybe don't add to neighbours if DIRECTION?)
-        edges = Translocate.viable_edges(self, node, network)
+        # TODO - why is this done every time? more sensible to do once and save somewhere
         if self.direction_only:
-            edges = [(n, data) for (n, data) in edges if data[DIRECTION] == n]
+            edges = [(n, data) for (n, data) in node.neighbours if data[EDGE_TYPE] == self.edge_type
+                     and data[DIRECTION] == n]
+        else:
+            edges = [(n, data) for (n, data) in node.neighbours if data[EDGE_TYPE] == self.edge_type]
         return edges
 
 
@@ -79,7 +81,9 @@ class TranslocateBlood(Translocate):
                              internal_compartments)
 
     def viable_edges(self, node, network):
-        edges = Translocate.viable_edges(self, node, network)
         if self.direction_only:
-            edges = [(n, data) for (n, data) in edges if data[DIRECTION] == n]
+            edges = [(n, data) for (n, data) in node.neighbours if data[EDGE_TYPE] == self.edge_type
+                     and data[DIRECTION] == n]
+        else:
+            edges = [(n, data) for (n, data) in node.neighbours if data[EDGE_TYPE] == self.edge_type]
         return edges
