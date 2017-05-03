@@ -30,10 +30,17 @@ class Create(Event):
         node.update_subpopulation(self.compartment_created, 1)
 
 
-class Replication(Create):
+class CreateByOtherCompartments(Create):
 
-    def __init__(self, node_types, probability, compartment_replicating):
-        Create.__init__(self, node_types, probability, compartment_replicating)
+    def __init__(self, node_types, probability, compartment_created, influencing_compartments):
+        self.influencing_compartments = influencing_compartments
+        Create.__init__(self, node_types, probability, compartment_created)
 
     def increment_state_variable_from_node(self, node, network):
-        return node.subpopulations[self.compartment_created]
+        return sum([node.subpopulations[compartment] for compartment in self.influencing_compartments])
+
+
+class Replication(CreateByOtherCompartments):
+
+    def __init__(self, node_types, probability, compartment_replicating):
+        CreateByOtherCompartments.__init__(self, node_types, probability, compartment_replicating, [compartment_replicating])
