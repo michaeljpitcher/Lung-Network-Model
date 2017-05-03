@@ -8,17 +8,23 @@ class TBModelFullTestCase(unittest.TestCase):
         self.init_mac_bps = 10
         self.init_mac_btn = 7
         self.init_mac_lymph = 3
+        self.init_dcs_bps = 9
+        self.init_dcs_btn = 5
+        self.init_dcs_lymph = 2
         self.init_bac_fast = {10:15, 30:5}
         self.init_bac_slow = {7:1, 29:99}
         self.probabilities = {'BacteriaChangeByOxygenFastToSlow': 0.8}
         self.model = TBModelFull(initial_macrophages_bps=self.init_mac_bps, initial_macrophages_btn=self.init_mac_btn,
-                                 initial_macrophages_lymph=self.init_mac_lymph, initial_bacteria_fast=self.init_bac_fast,
+                                 initial_macrophages_lymph=self.init_mac_lymph, initial_dcs_bps=self.init_dcs_bps,
+                                 initial_dcs_btn=self.init_dcs_btn, initial_dcs_lymph=self.init_dcs_lymph,
+                                 initial_bacteria_fast=self.init_bac_fast,
                                  initial_bacteria_slow=self.init_bac_slow, probabilities=self.probabilities,
                                  include_bronchials=True, include_lymphatics=True, include_bloodstream=True)
 
     def test_fail_no_events(self):
         with self.assertRaises(AssertionError) as context:
-            TBModelFull(self.init_mac_bps, self.init_mac_btn, self.init_mac_lymph, self.init_bac_fast,
+            TBModelFull(self.init_mac_bps, self.init_mac_btn, self.init_mac_lymph, self.init_dcs_bps, self.init_dcs_btn,
+                        self.init_dcs_lymph,self.init_bac_fast,
                         self.init_bac_slow, {}, True, True, True)
         self.assertEqual("No events supplied", str(context.exception))
 
@@ -30,7 +36,8 @@ class TBModelFullTestCase(unittest.TestCase):
             probabilities[e] = 0.1
             expected_events.append(e)
             model = TBModelFull(initial_macrophages_bps=self.init_mac_bps, initial_macrophages_btn=self.init_mac_btn,
-                                 initial_macrophages_lymph=self.init_mac_lymph,
+                                 initial_macrophages_lymph=self.init_mac_lymph, initial_dcs_bps=self.init_dcs_bps,
+                                 initial_dcs_btn=self.init_dcs_btn, initial_dcs_lymph=self.init_dcs_lymph,
                                  initial_bacteria_fast=self.init_bac_fast,
                                  initial_bacteria_slow=self.init_bac_slow, probabilities=probabilities,
                                  include_bronchials=True, include_lymphatics=True, include_bloodstream=True)
