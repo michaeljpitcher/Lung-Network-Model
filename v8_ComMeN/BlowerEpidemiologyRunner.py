@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from ComMeN.Epidemiology.Models.DetailedBlowerModel import *
+from ComMeN.Epidemiology.Models.BlowerDetailedModel import *
 import csv
 
 
