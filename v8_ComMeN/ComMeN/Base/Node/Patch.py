@@ -26,7 +26,7 @@ class Patch:
         self.neighbours = []
 
     def __str__(self):
-        return "Patch {" + str(self.node_id) + "}"
+        return "Patch [" + str(self.node_id) + "]"
 
     def update_subpopulation(self, compartment, alteration):
         assert compartment in self.subpopulations.keys(), "Invalid compartment {0} for update".format(compartment)

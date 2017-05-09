@@ -43,6 +43,10 @@ macs_per_bps = config.getint('InitialSeedingMacrophages', 'macrophages_per_bronc
 macs_per_btn = config.getint('InitialSeedingMacrophages', 'macrophages_per_bronchialtreenode')
 macs_per_lymph = config.getint('InitialSeedingMacrophages', 'macrophages_per_lymphnode')
 
+dcs_per_bps = config.getint('InitialSeedingDendriticCells', 'dcs_per_bronchopulmonarysegment')
+dcs_per_btn = config.getint('InitialSeedingDendriticCells', 'dcs_per_bronchialtreenode')
+dcs_per_lymph = config.getint('InitialSeedingDendriticCells', 'dcs_per_lymphnode')
+
 # TODO - base on ventilation?
 initial_fast_bacteria = dict()
 for (node_id, count) in config.items('InitialSeedingBacteriaFast'):
@@ -51,23 +55,18 @@ initial_slow_bacteria = dict()
 for (node_id, count) in config.items('InitialSeedingBacteriaSlow'):
     initial_slow_bacteria[int(node_id)] = int(count)
 
-model = TBModelFull(macs_per_bps, macs_per_btn, macs_per_lymph, initial_fast_bacteria, initial_slow_bacteria,
-                    probabilities, include_bronchials=include_bronchials,
-                     tree_weight_method=tree_weight_method, include_lymphatics=include_lymphatics,
-                     include_bloodstream=include_bloodstream)
-
-from ComMeN.Pulmonary.Visuals.PulmonaryNetworkGraph import *
-
-"""
-draw_pulmonary_network_graph(model, "ComMeN", "commen_base", False, False)
-draw_pulmonary_network_graph(model, "ComMeN", "commen_lymph", True, False)
-draw_pulmonary_network_graph(model, "ComMeN", "commen_all", True, True)
+model = TBModelFull(initial_macrophages_bps=macs_per_bps, initial_macrophages_btn=macs_per_btn,
+                    initial_macrophages_lymph=macs_per_lymph,
+                    initial_bacteria_fast=initial_fast_bacteria, initial_bacteria_slow=initial_slow_bacteria,
+                    initial_dcs_bps=dcs_per_bps, initial_dcs_btn=dcs_per_btn, initial_dcs_lymph=dcs_per_lymph,
+                    probabilities=probabilities, include_bronchials=include_bronchials,
+                    tree_weight_method=tree_weight_method, include_lymphatics=include_lymphatics,
+                    include_bloodstream=include_bloodstream)
 
 
-import cProfile
-cp = cProfile.Profile()
-cp.enable()
+# import cProfile
+# cp = cProfile.Profile()
+# cp.enable()
 model.run(1.0, run_id=99, debug='Debug')
-cp.disable()
-cp.print_stats('tottime')
-"""
+# cp.disable()
+# cp.print_stats('tottime')

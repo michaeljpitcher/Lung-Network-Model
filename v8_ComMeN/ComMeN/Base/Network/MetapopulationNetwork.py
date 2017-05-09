@@ -98,7 +98,7 @@ class MetapopulationNetwork(nx.Graph):
         if run_id is not None:
             filename = str(run_id) + '.csv'
             csv_file = open(filename, 'wb')
-            print "Output to:", filename
+            print "Data output to:", filename
             csv_writer = csv.writer(csv_file, delimiter=',')
             header_row = ["timestep", "node_id"] + self.compartments
             csv_writer.writerow(header_row)
@@ -116,7 +116,7 @@ class MetapopulationNetwork(nx.Graph):
             total_rate = sum([e.rate for e in self.events])
 
             if total_rate == 0:
-                print "0% of event occurring"
+                print "0% of event occurring - ending simulation"
                 return
 
             # Calculate the timestep tau based on the total rates
