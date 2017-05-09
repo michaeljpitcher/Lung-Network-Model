@@ -80,8 +80,11 @@ class MetapopulationNetwork(nx.Graph):
         assert self.has_node(v), "Node {0} not present in network".format(v)
         assert EDGE_TYPE in attr_dict.keys(), "Edge type not specified for edge {0} - {1}".format(u, v)
         nx.Graph.add_edge(self, u, v, attr_dict)
+        # Add edges to neighbours
         u.neighbours.append((v, attr_dict))
-        v.neighbours.append((u, attr_dict))
+        # Only add second neighbour if nodes are distinct (avoids adding self twice to neighbours)
+        if u != v:
+            v.neighbours.append((u, attr_dict))
 
     def run(self, time_limit=0, run_id=None, output=True, debug=None):
         print "ComMen Simulation - time limit:", time_limit
