@@ -20,9 +20,9 @@ class TranslocateTestCase(unittest.TestCase):
         self.edges = [(self.nodes[0], self.nodes[1], {EDGE_TYPE: self.edge_type, EDGE_ID:1}),
                  (self.nodes[0], self.nodes[2], {EDGE_TYPE: self.edge_type, EDGE_ID:2}),
                  (self.nodes[2], self.nodes[3], {EDGE_TYPE: 'edge2', EDGE_ID:3})]
-        events_and_node_types = {self.event_no_internals: [Patch]}
+        events = [self.event_no_internals]
 
-        self.network = MetapopulationNetwork([self.compartment], self.nodes, self.edges, events_and_node_types)
+        self.network = MetapopulationNetwork([self.compartment], self.nodes, self.edges, events)
 
     def test_initialise(self):
         self.assertEqual(self.event_no_internals.translocate_compartment, self.compartment)
@@ -67,7 +67,7 @@ class TranslocateTestCase(unittest.TestCase):
         neighbour = self.event_no_internals.choose_neighbour(edges)
         self.assertEqual(neighbour, self.nodes[2])
 
-    def test_move_no_internals(self):
+    def test_move(self):
         self.nodes[0].subpopulations[self.compartment] = 5
         self.nodes[0].subpopulations[self.internal_compartment] = 15
         self.nodes[1].subpopulations[self.compartment] = 0
@@ -96,6 +96,39 @@ class TranslocateTestCase(unittest.TestCase):
         self.event_no_internals.update_node(self.nodes[0], self.network)
         self.assertEqual(self.nodes[0].subpopulations[self.compartment], 9)
         self.assertEqual(self.nodes[2].subpopulations[self.compartment], 1)
+
+
+class TranslocateAndChangeTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.probability = 0.1
+        self.compartment = 'a'
+        self.new_compartment = 'z'
+        self.edge_type = 'edge1'
+        EDGE_ID = 'edgeid'
+        self.event = TranslocateAndChange([Patch], self.probability, self.compartment, self.edge_type,
+                                          self.new_compartment)
+
+        self.nodes = [Patch(0, [self.compartment]), Patch(1, [self.compartment]),
+                      Patch(2, [self.compartment]), Patch(3, [self.compartment])]
+        self.edges = [(self.nodes[0], self.nodes[1], {EDGE_TYPE: self.edge_type, EDGE_ID: 1}),
+                      (self.nodes[0], self.nodes[2], {EDGE_TYPE: self.edge_type, EDGE_ID: 2}),
+                      (self.nodes[2], self.nodes[3], {EDGE_TYPE: 'edge2', EDGE_ID: 3})]
+
+        self.network = MetapopulationNetwork([self.compartment], self.nodes, self.edges, [self.event])
+
+    def test_move(self):
+        self.nodes[0].subpopulations[self.compartment] = 5
+        self.nodes[0].subpopulations[self.new_compartment] = 0
+        self.nodes[1].subpopulations[self.compartment] = 0
+        self.nodes[1].subpopulations[self.new_compartment] = 0
+
+        self.event.move(self.nodes[0], self.nodes[1])
+        self.assertEqual(self.nodes[0].subpopulations[self.compartment], 4)
+        self.assertEqual(self.nodes[0].subpopulations[self.new_compartment], 0)
+        self.assertEqual(self.nodes[1].subpopulations[self.compartment], 0)
+        self.assertEqual(self.nodes[1].subpopulations[self.new_compartment], 1)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -49,3 +49,21 @@ class Translocate(Event):
                 neighbour.update_subpopulation(c, amount_to_move)
         node.update_subpopulation(self.translocate_compartment, -1)
         neighbour.update_subpopulation(self.translocate_compartment, 1)
+
+
+class TranslocateAndChange(Translocate):
+
+    def __init__(self, node_types, probability, translocate_compartment, edge_type, new_compartment,
+                 internal_compartments=None):
+        self.new_compartment = new_compartment
+        Translocate.__init__(self, node_types, probability, translocate_compartment, edge_type, internal_compartments)
+
+    def move(self, node, neighbour):
+        if self.internal_compartments:
+            for c in self.internal_compartments:
+                amount_to_move = node.compartment_per_compartment(c, self.translocate_compartment)
+                node.update_subpopulation(c, -1 * amount_to_move)
+                neighbour.update_subpopulation(c, amount_to_move)
+        node.update_subpopulation(self.translocate_compartment, -1)
+        # Agent changes to the new compartment
+        neighbour.update_subpopulation(self.new_compartment, 1)
