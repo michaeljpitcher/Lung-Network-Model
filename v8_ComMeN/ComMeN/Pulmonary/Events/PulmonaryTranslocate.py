@@ -30,7 +30,8 @@ class TranslocateBronchus(Translocate):
     def __init__(self, node_types, probability, translocate_compartment, internal_compartments=None,
                  edge_choice_based_on_weight=False):
         self.edge_choice_based_on_weight = edge_choice_based_on_weight
-        Translocate.__init__(self, node_types, probability, translocate_compartment, BRONCHUS, internal_compartments)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, BRONCHUS,
+                             internal_compartments=internal_compartments)
 
     def choose_neighbour(self, edges):
         # Choose an edge
@@ -53,7 +54,7 @@ class TranslocateLymph(Translocate):
         self.direction_only = direction_only
         self.flow_based = flow_based
         Translocate.__init__(self, node_types, probability, translocate_compartment, LYMPHATIC_VESSEL,
-                             internal_compartments)
+                             internal_compartments=internal_compartments)
 
     def increment_state_variable_from_node(self, node, network):
         if self.flow_based:
@@ -78,7 +79,7 @@ class TranslocateBlood(Translocate):
                  direction_only=True):
         self.direction_only = direction_only
         Translocate.__init__(self, node_types, probability, translocate_compartment, HAEMATOGENOUS,
-                             internal_compartments)
+                             internal_compartments=internal_compartments)
 
     def viable_edges(self, node, network):
         if self.direction_only:

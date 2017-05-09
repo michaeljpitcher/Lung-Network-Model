@@ -20,15 +20,22 @@ __status__ = "Development"
 
 class Translocate(Event):
 
-    def __init__(self, node_types, probability, translocate_compartment, edge_type, internal_compartments=None):
+    def __init__(self, node_types, probability, translocate_compartment, edge_type,
+                 probability_increases_with_edges=True, internal_compartments=None):
         self.translocate_compartment = translocate_compartment
         self.edge_type = edge_type
         self.internal_compartments = internal_compartments
+        self.probability_increases_with_edges = probability_increases_with_edges
         Event.__init__(self, node_types, probability)
 
     def increment_state_variable_from_node(self, node, network):
         edges = self.viable_edges(node, network)
-        return node.subpopulations[self.translocate_compartment] * len(edges)
+        if self.probability_increases_with_edges:
+            return node.subpopulations[self.translocate_compartment] * len(edges)
+        elif len(edges) > 0:
+            return node.subpopulations[self.translocate_compartment]
+        else:
+            return 0
 
     def update_node(self, node, network):
         edges = self.viable_edges(node, network)

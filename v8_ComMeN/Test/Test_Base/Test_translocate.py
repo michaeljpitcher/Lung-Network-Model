@@ -13,7 +13,9 @@ class TranslocateTestCase(unittest.TestCase):
         EDGE_ID = 'edgeid'
         self.event_no_internals = Translocate([Patch], self.probability, self.compartment, self.edge_type)
         self.event_with_internals = Translocate([Patch], self.probability, self.compartment, self.edge_type,
-                                                [self.internal_compartment])
+                                                internal_compartments=[self.internal_compartment])
+        self.event_not_affected_by_degree = Translocate([Patch], self.probability, self.compartment, self.edge_type,
+                                                        probability_increases_with_edges=False)
 
         self.nodes = [Patch(0, [self.compartment]), Patch(1, [self.compartment]),
                       Patch(2, [self.compartment]), Patch(3, [self.compartment])]
@@ -51,6 +53,16 @@ class TranslocateTestCase(unittest.TestCase):
         # Node 3 - some in compartment (no edges though)
         self.nodes[3].update_subpopulation(self.compartment, 8)
         self.assertEqual(self.event_no_internals.increment_state_variable_from_node(self.nodes[3], self.network), 0)
+
+        # Prob not affected by degree
+        self.assertEqual(self.event_not_affected_by_degree.increment_state_variable_from_node(self.nodes[0],
+                                                                                              self.network), 5)
+        self.assertEqual(self.event_not_affected_by_degree.increment_state_variable_from_node(self.nodes[1],
+                                                                                              self.network), 7)
+        self.assertEqual(self.event_not_affected_by_degree.increment_state_variable_from_node(self.nodes[2],
+                                                                                              self.network), 3)
+        self.assertEqual(self.event_not_affected_by_degree.increment_state_variable_from_node(self.nodes[3],
+                                                                                              self.network), 0)
 
     def test_viable_edges(self):
         ids = [data['edgeid'] for (neighbour, data) in self.event_no_internals.viable_edges(self.nodes[0], self.network)]
