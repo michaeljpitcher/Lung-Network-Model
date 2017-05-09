@@ -61,9 +61,10 @@ class Translocate(Event):
 class TranslocateAndChange(Translocate):
 
     def __init__(self, node_types, probability, translocate_compartment, edge_type, new_compartment,
-                 internal_compartments=None):
+                 probability_increases_with_edges=True, internal_compartments=None):
         self.new_compartment = new_compartment
-        Translocate.__init__(self, node_types, probability, translocate_compartment, edge_type, internal_compartments)
+        Translocate.__init__(self, node_types, probability, translocate_compartment, edge_type,
+                             probability_increases_with_edges, internal_compartments)
 
     def move(self, node, neighbour):
         if self.internal_compartments:
