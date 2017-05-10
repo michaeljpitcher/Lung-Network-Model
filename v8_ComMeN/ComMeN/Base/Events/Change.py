@@ -38,13 +38,22 @@ class Change(Event):
 class ChangeByOtherCompartments(Change):
 
     def __init__(self, node_types, probability, compartment_from, compartment_to, influencing_compartments,
-                 internals_to_destroy=None):
+                 internals_to_destroy=None, influencing_compartments_to_change=None):
         self.influencing_compartments = influencing_compartments
+        self.influencing_compartments_to_change = influencing_compartments_to_change
         Change.__init__(self, node_types, probability, compartment_from, compartment_to, internals_to_destroy)
 
     def increment_state_variable_from_node(self, node, network):
         return Change.increment_state_variable_from_node(self, node, network) * \
                sum([node.subpopulations[c] for c in self.influencing_compartments])
+
+    def update_node(self, node, network):
+        Change.update_node(self, node, network)
+        if self.influencing_compartments_to_change:
+            for original in self.influencing_compartments_to_change:
+                new = self.influencing_compartments_to_change[original]
+                node.update_subpopulation(original, -1)
+                node.update_subpopulation(new, 1)
 
 
 class ChangeByLackOfOtherCompartments(Change):
