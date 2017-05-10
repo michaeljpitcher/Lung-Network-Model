@@ -49,7 +49,7 @@ class ChangeByExternalsTestCase(unittest.TestCase):
         self.comp_to = 'mac_b'
         self.externals = ['inf_a', 'inf_b']
         self.new_external = 'new_external'
-        self.externals_changed = {self.externals[0]: self.new_external}
+        self.externals_changed = [(self.externals[0], self.new_external)]
         self.event = ChangeByOtherCompartments(None, 0.1, self.comp_from, self.comp_to, self.externals)
         self.event_change_internals = ChangeByOtherCompartments(None, 0.1, self.comp_from, self.comp_to, self.externals,
                                                                 influencing_compartments_to_change=self.externals_changed)

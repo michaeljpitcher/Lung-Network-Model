@@ -50,10 +50,9 @@ class ChangeByOtherCompartments(Change):
     def update_node(self, node, network):
         Change.update_node(self, node, network)
         if self.influencing_compartments_to_change:
-            for original in self.influencing_compartments_to_change:
-                new = self.influencing_compartments_to_change[original]
-                node.update_subpopulation(original, -1)
-                node.update_subpopulation(new, 1)
+            for (original_compartment, new_compartment) in self.influencing_compartments_to_change:
+                node.update_subpopulation(original_compartment, -1)
+                node.update_subpopulation(new_compartment, 1)
 
 
 class ChangeByLackOfOtherCompartments(Change):
