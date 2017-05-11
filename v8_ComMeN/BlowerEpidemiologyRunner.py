@@ -8,6 +8,7 @@ Long Docstring
 
 from ComMeN.Epidemiology.Models.BlowerDetailedModel import *
 import csv
+import matplotlib.pyplot as plt
 
 
 __author__ = "Michael Pitcher"
@@ -36,27 +37,44 @@ model = DetailedBlowerModel(population_size, infection_size, pi=pi, p=p, beta=be
 
 model.run(100)
 
-
-with open('fast.csv', 'w') as csvfile:
+fast_data = []
+with open('data/fast.csv', 'w') as csvfile:
     csvwriter = csv.writer(csvfile, delimiter=',')
     for key in range(0, int(max(model.fast_incidence_rate.keys()))):
         if float(key) in model.fast_incidence_rate.keys():
             csvwriter.writerow([key, model.fast_incidence_rate[float(key)]])
+            fast_data.append(model.fast_incidence_rate[float(key)])
         else:
             csvwriter.writerow([key, 0])
+            fast_data.append(0)
+plt.plot(fast_data)
 
-with open('slow.csv', 'w') as csvfile:
+slow_data = []
+with open('data/slow.csv', 'w') as csvfile:
     csvwriter = csv.writer(csvfile, delimiter=',')
     for key in range(0, int(max(model.slow_incidence_rate.keys()))):
         if float(key) in model.slow_incidence_rate.keys():
             csvwriter.writerow([key, model.slow_incidence_rate[float(key)]])
+            slow_data.append(model.slow_incidence_rate[float(key)])
         else:
             csvwriter.writerow([key, 0])
+            slow_data.append(0)
+plt.plot(slow_data)
 
-with open('relapse.csv', 'w') as csvfile:
+relapse_data = []
+with open('data/relapse.csv', 'w') as csvfile:
     csvwriter = csv.writer(csvfile, delimiter=',')
     for key in range(0, int(max(model.relapse_incidence_rate.keys()))):
         if float(key) in model.relapse_incidence_rate.keys():
             csvwriter.writerow([key, model.relapse_incidence_rate[float(key)]])
+            relapse_data.append(model.relapse_incidence_rate[float(key)])
         else:
             csvwriter.writerow([key, 0])
+            relapse_data.append(0)
+
+plt.plot(relapse_data)
+
+total_data = [fast_data[n] + slow_data[n] + relapse_data[n] for n in range(len(fast_data))]
+plt.plot(total_data)
+
+plt.savefig("outcome.png")

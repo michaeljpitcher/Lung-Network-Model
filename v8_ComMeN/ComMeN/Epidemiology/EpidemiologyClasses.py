@@ -30,6 +30,11 @@ EXPOSED_JUVENILE = 'exposed_juvenile'
 EXPOSED_MATURE = 'exposed_mature'
 INFECTIOUS_JUVENILE = 'infected_juvenile'
 INFECTIOUS_MATURE = 'infected_mature'
+RAT_SUSCEPTIBLE = 'rat_susceptible'
+RAT_INFECTIOUS = 'rat_infectious'
+RAT_RESISTANT = 'rat_resistant'
+FLEA_FREE_INFECTIOUS = 'flea_free_infectious'
+AVERAGE_FLEA_ON_RAT = 'average_flea_on_rat'
 
 
 HICKSON_TOTAL_POPULATION = [SUSCEPTIBLE, LATENT, NON_INFECTIOUS, INFECTIOUS, DETECTED, TREATED]
