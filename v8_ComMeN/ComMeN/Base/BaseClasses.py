@@ -12,3 +12,6 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 EDGE_TYPE = 'edge_type'
+# For csv writing
+TIMESTEP = 'timestep'
+NODE_ID = 'node_id'
