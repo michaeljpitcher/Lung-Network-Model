@@ -86,7 +86,7 @@ class MetapopulationNetwork(nx.Graph):
         if u != v:
             v.neighbours.append((u, attr_dict))
 
-    def run(self, time_limit=0, run_id=None, output=True, debug=None):
+    def run(self, time_limit=0, run_id=None, console_output=True, debug=None):
         print "ComMen Simulation - time limit:", time_limit
         csv_file = None
         csv_writer = None
@@ -100,15 +100,14 @@ class MetapopulationNetwork(nx.Graph):
 
         if run_id is not None:
             filename = str(run_id) + '.csv'
-            csv_file = open(filename, 'wb')
+            csv_file = open(filename, 'w')
             print "Data output to:", filename
-            csv_writer = csv.writer(csv_file, delimiter=',')
-            header_row = ["timestep", "node_id"] + self.compartments
-            csv_writer.writerow(header_row)
+            csv_writer = csv.DictWriter(csv_file, fieldnames=[TIMESTEP, NODE_ID] + self.compartments)
+            csv_writer.writeheader()
             self.record_data(csv_writer)
 
         while self.time < time_limit:
-            if output:
+            if console_output:
                 self.timestep_print()
 
             """ Gillespie simulation - derived from:
@@ -139,16 +138,16 @@ class MetapopulationNetwork(nx.Graph):
             self.time += tau
             if run_id is not None:
                 self.record_data(csv_writer)
-        if output:
+        if console_output:
             self.timestep_print()
         if run_id is not None:
             csv_file.close()
 
     def record_data(self, csv_writer):
         for node in self.node_list:
-            row = [self.time, node.node_id]
+            row = {TIMESTEP: self.time, NODE_ID: node.node_id}
             for compartment in self.compartments:
-                row.append(node.subpopulations[compartment])
+                row[compartment] = node.subpopulations[compartment]
             csv_writer.writerow(row)
 
     def timestep_print(self):
