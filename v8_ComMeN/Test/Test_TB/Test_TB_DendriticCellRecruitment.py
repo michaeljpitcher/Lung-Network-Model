@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.DendriticCellRecruitment import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.DendriticCellRecruitment import *
 
 
 class DendriticImmatureRecruitmentBronchialTestCase(unittest.TestCase):

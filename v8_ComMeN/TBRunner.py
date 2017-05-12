@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from ComMeN.TB.Models.TB_Model_Full import *
+from ComMeN.TBIndividual.Models.TB_Model_Full import *
 import ConfigParser as cp
 
 __author__ = "Michael Pitcher"

@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.TCellDestroyMacrophage import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.TCellDestroyMacrophage import *
 
 
 class InfectedMacrophageDeathByTCellTestCase(unittest.TestCase):

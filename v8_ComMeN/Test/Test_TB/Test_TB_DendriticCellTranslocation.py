@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.DendriticCellTranslocation import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.DendriticCellTranslocation import *
 
 
 class DendriticImmatureLymphTranslocationTestCase(unittest.TestCase):

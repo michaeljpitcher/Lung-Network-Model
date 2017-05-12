@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageTranslocate import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.MacrophageTranslocate import *
 
 
 class RegularMacrophageTranslocateBronchusTestCase(unittest.TestCase):

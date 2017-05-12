@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Models.TB_Model_Full import *
+from v8_ComMeN.ComMeN.TBIndividual.Models.TB_Model_Full import *
 
 
 class TBModelFullTestCase(unittest.TestCase):

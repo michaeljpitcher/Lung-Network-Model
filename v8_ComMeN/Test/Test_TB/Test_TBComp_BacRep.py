@@ -1,5 +1,5 @@
 import unittest
-from v8_ComMeN.ComMeN.TB.Events.BacteriaReplication import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.BacteriaReplication import *
 
 
 class BacteriaReplicationFastTestCase(unittest.TestCase):

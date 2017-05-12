@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.TCellActivatesMacrophage import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.TCellActivatesMacrophage import *
 
 
 class RegularMacrophageActivationByTCellsTestCase(unittest.TestCase):

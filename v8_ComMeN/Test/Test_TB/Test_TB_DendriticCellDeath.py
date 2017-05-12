@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.DendriticCellDeath import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.DendriticCellDeath import *
 
 
 class DendriticImmatureDeathTestCase(unittest.TestCase):

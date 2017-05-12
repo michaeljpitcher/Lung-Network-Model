@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageActivation import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.MacrophageActivation import *
 
 
 class RegularMacrophageSpontaneousActivationTestCase(unittest.TestCase):

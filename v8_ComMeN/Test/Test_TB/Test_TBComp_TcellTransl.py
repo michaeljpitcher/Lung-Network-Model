@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.TCellTranslocate import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.TCellTranslocate import *
 
 
 class TCellHelperTranslocateBronchusTestCase(unittest.TestCase):

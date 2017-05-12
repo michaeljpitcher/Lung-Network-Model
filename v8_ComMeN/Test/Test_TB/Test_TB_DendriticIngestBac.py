@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.DendriticCellIngestBacteria import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.DendriticCellIngestBacteria import *
 
 
 class ImmatureDendriticIngestFastBacteriaMaturateTestCase(unittest.TestCase):

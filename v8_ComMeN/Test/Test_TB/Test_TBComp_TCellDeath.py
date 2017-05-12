@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.TCellDeath import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.TCellDeath import *
 
 
 class SpontaneousTCellNaiveHelperDeathTestCase(unittest.TestCase):

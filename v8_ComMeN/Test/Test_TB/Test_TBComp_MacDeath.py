@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageDeath import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.MacrophageDeath import *
 
 
 class RegularMacrophageSpontaneousDeathTestCase(unittest.TestCase):

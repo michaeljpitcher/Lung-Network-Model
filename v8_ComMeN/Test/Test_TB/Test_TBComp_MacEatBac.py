@@ -1,6 +1,6 @@
 import unittest
 
-from v8_ComMeN.ComMeN.TB.Events.MacrophageIngestBacteria import *
+from v8_ComMeN.ComMeN.TBIndividual.Events.MacrophageIngestBacteria import *
 
 
 class RestingMacrophageIngestFastBacteriaRetainTestCase(unittest.TestCase):
