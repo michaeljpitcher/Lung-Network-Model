@@ -19,6 +19,12 @@ __status__ = "Development"
 
 
 class Phagocytosis(Event):
+    """
+    Member of one compartment phagocytoses (eats) member of another compartment. Can cause a variety of different 
+    outcomes, effectively a combination of change and destroy events. Phagocyte may change phenotype, ingested 
+    compartment may be destroyed or change phenotype. (Motivation for this comes from TB: Macrophages may fail to 
+    destroy bacteria - resulting in them become infected and the bacteria becoming intracellular)
+    """
 
     def __init__(self, node_types, probability, phagocyte_compartment, compartment_to_ingest,
                  compartment_to_change_phagocyte_to=None, compartment_to_change_ingested_to=None):
@@ -29,20 +35,28 @@ class Phagocytosis(Event):
         Event.__init__(self, node_types, probability)
 
     def increment_state_variable_from_node(self, node, network):
+        # State variable is count of phagocyte * compartment ingested
         return node.subpopulations[self.phagocyte_compartment] * node.subpopulations[self.compartment_to_ingest]
 
     def update_node(self, node, network):
+        # If phagocyte changes, change it
         if self.compartment_to_change_phagocyte_to:
             node.update_subpopulation(self.phagocyte_compartment, -1)
             node.update_subpopulation(self.compartment_to_change_phagocyte_to, 1)
 
+        # Compartment ingested decreases by 1, either it's destroyed or changes
         node.update_subpopulation(self.compartment_to_ingest, -1)
 
+        # If ingested compartment changes, change it
         if self.compartment_to_change_ingested_to:
             node.update_subpopulation(self.compartment_to_change_ingested_to, 1)
 
 
 class PhagocyteDestroyInternals(Destroy):
+    """
+    Phagocyte destroys something that is inside it.
+    """
+
     # TODO - check whether this should be destruction of everything, dependent on load
 
     def __init__(self, node_types, probability, phagocyte_compartment, internal_compartment,

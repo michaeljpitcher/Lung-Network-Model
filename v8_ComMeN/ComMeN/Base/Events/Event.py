@@ -24,6 +24,12 @@ def destroy_internals(internals, compartment, node):
 
 
 class Event:
+    """
+    Basic event class. Each event has probability of happening and state variable (amount of opportunities to happen).
+    Rate is calculated by multiplying probability by state variable. If chosen to be performed, event picks a node and 
+    updates the counts at that node.
+    Events can be specified to occur at specific node types.
+    """
 
     def __init__(self, node_types, probability):
         self.node_types = node_types
@@ -36,15 +42,26 @@ class Event:
         self.nodes_impacted += nodes
 
     def update_rate(self, network):
+        """
+        Go through every node, and increment the state variable. Multiply by probability to get the rate
+        :param network: 
+        :return: 
+        """
         self.state_variable = 0
         for node in self.nodes_impacted:
             self.state_variable += self.increment_state_variable_from_node(node, network)
         self.rate = self.probability * self.state_variable
 
     def increment_state_variable_from_node(self, node, network):
+        # To be overriden by event subclasses
         raise NotImplementedError
 
     def update_network(self, network):
+        """
+        Pick a node, based probabilistically on how much it contributes to the state variable
+        :param network: 
+        :return: 
+        """
         r = np.random.random() * self.state_variable
         running_total = 0
         for n in self.nodes_impacted:
@@ -56,4 +73,5 @@ class Event:
                 return
 
     def update_node(self, node, network):
+        # To be overriden by event subclasses
         raise NotImplementedError
