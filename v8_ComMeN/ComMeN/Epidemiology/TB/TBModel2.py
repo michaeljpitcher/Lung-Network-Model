@@ -21,9 +21,9 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class BasicTBEpidemicModel(SinglePatchEpidemicModel):
+class TBEpidemicModel2(SinglePatchEpidemicModel):
 
-    def __init__(self, beta, gamma, delta, omega):
+    def __init__(self, beta, gamma, delta, p, omega, omega_i):
         compartments = [SUSCEPTIBLE, LATENT, INFECTIOUS]
         events = []
 
@@ -35,8 +35,12 @@ class BasicTBEpidemicModel(SinglePatchEpidemicModel):
         events.append(Destroy([Patch], omega, LATENT))
         events.append(Destroy([Patch], omega, INFECTIOUS))
 
+        # Death by infection
+        events.append(Destroy([Patch], omega_i, INFECTIOUS))
+
         # Infect
-        events.append(Infect([Patch], beta, SUSCEPTIBLE, LATENT, [INFECTIOUS]))
+        events.append(Infect([Patch], beta * (1 - p), SUSCEPTIBLE, LATENT, [INFECTIOUS]))
+        events.append(Infect([Patch], beta * p, SUSCEPTIBLE, INFECTIOUS, [INFECTIOUS]))
 
         # Progression
         events.append(Change([Patch], gamma, LATENT, INFECTIOUS))
