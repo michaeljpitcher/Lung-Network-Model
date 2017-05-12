@@ -36,7 +36,6 @@ class Change(Event):
 
 
 class ChangeByOtherCompartments(Change):
-
     def __init__(self, node_types, probability, compartment_from, compartment_to, influencing_compartments,
                  internals_to_destroy=None, influencing_compartments_to_change=None):
         self.influencing_compartments = influencing_compartments
@@ -53,6 +52,20 @@ class ChangeByOtherCompartments(Change):
             for (original_compartment, new_compartment) in self.influencing_compartments_to_change:
                 node.update_subpopulation(original_compartment, -1)
                 node.update_subpopulation(new_compartment, 1)
+
+
+class Infect(Change):
+    def __init__(self, node_types, probability, susceptible_compartment, compartment_to, infectious_compartments):
+        self.infectious_compartments = infectious_compartments
+        Change.__init__(self, node_types, probability, susceptible_compartment, compartment_to)
+
+    def increment_state_variable_from_node(self, node, network):
+        total_population = float(sum(node.subpopulations.values()))
+        if total_population == 0:
+            return 0
+        else:
+            total_infectious = sum([node.subpopulations[n] for n in self.infectious_compartments])
+            return (node.subpopulations[self.compartment_from] * total_infectious) / total_population
 
 
 class ChangeByLackOfOtherCompartments(Change):

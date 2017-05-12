@@ -137,7 +137,7 @@ class MetapopulationNetworkTestCase(unittest.TestCase):
     def test_run(self):
         np.random.seed(101)
         self.nodes[0].subpopulations['a'] = 10
-        self.network.run(10, output=False)
+        self.network.run(10, console_output=False)
         self.assertTrue(self.network.time > 10)
         # TODO - further testing for run
 
