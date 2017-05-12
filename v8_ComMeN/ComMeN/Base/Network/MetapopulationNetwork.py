@@ -120,6 +120,8 @@ class MetapopulationNetwork(nx.Graph):
             if total_rate == 0:
                 print "0% of event occurring - ending simulation"
                 return
+            elif self.end_simulation():
+                return
 
             # Calculate the timestep tau based on the total rates
             r1 = np.random.random()
@@ -152,3 +154,7 @@ class MetapopulationNetwork(nx.Graph):
 
     def timestep_print(self):
         print "t=", self.time
+
+    def end_simulation(self):
+        # Can be overridden to allow simulation to end at a given point
+        return False
