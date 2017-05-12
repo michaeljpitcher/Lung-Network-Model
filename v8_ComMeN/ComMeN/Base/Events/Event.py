@@ -48,7 +48,9 @@ class Event:
         r = np.random.random() * self.state_variable
         running_total = 0
         for n in self.nodes_impacted:
-            running_total += self.increment_state_variable_from_node(n, network)
+            increment = self.increment_state_variable_from_node(n, network)
+            assert increment >= 0, "Cannot have negative state variable increment from node"
+            running_total += increment
             if running_total >= r:
                 self.update_node(n, network)
                 return
