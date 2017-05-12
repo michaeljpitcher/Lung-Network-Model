@@ -6,15 +6,15 @@ Long Docstring
 
 """
 
-from ...Base.Network.MetapopulationNetwork import *
-from ..Node.FulfordPatch import *
-from ..EpidemiologyClasses import *
-from ..Events.FulfordBirth import *
+from v8_ComMeN.ComMeN.Epidemiology.Old.Fulford.FulfordBirth import *
+
+from v8_ComMeN.ComMeN.Base.Events.Change import *
+from v8_ComMeN.ComMeN.Base.Events.Destruction import *
+from v8_ComMeN.ComMeN.Base.Events.Translocate import *
+from v8_ComMeN.ComMeN.Base.Network.MetapopulationNetwork import *
+from v8_ComMeN.ComMeN.Epidemiology.EpidemiologyClasses import *
 from ..Events.FulfordDeath import *
 from ..Events.FulfordTransmission import *
-from ...Base.Events.Destruction import *
-from ...Base.Events.Change import *
-from ...Base.Events.Translocate import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

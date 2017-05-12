@@ -6,9 +6,9 @@ Long Docstring
 
 """
 
-from ...Base.Events.Change import *
-from ..EpidemiologyClasses import *
-from ...Base.Events.Creation import *
+from v8_ComMeN.ComMeN.Base.Events.Change import *
+from v8_ComMeN.ComMeN.Epidemiology.EpidemiologyClasses import *
+from v8_ComMeN.ComMeN.Base.Events.Creation import *
 import math
 
 __author__ = "Michael Pitcher"

@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from ...Base.Node.Patch import *
+from v8_ComMeN.ComMeN.Base.Node.Patch import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

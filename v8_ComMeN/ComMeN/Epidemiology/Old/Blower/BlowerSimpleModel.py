@@ -6,12 +6,13 @@ Long Docstring
 
 """
 
-from ...Base.Network.MetapopulationNetwork import *
-from ...Base.Events.Creation import *
-from ...Base.Events.Change import *
-from ...Base.Events.Destruction import *
-from ..EpidemiologyClasses import *
-from ..Node.Region import *
+from v8_ComMeN.ComMeN.Epidemiology.Old.Blower import *
+
+from v8_ComMeN.ComMeN.Base.Events.Change import *
+from v8_ComMeN.ComMeN.Base.Events.Creation import *
+from v8_ComMeN.ComMeN.Base.Events.Destruction import *
+from v8_ComMeN.ComMeN.Base.Network.MetapopulationNetwork import *
+from v8_ComMeN.ComMeN.Epidemiology.EpidemiologyClasses import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

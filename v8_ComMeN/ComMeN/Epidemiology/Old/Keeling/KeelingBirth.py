@@ -6,8 +6,8 @@ Long Docstring
 
 """
 
-from ...Base.Events.Creation import *
-from ..EpidemiologyClasses import *
+from v8_ComMeN.ComMeN.Base.Events.Creation import *
+from v8_ComMeN.ComMeN.Epidemiology.EpidemiologyClasses import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

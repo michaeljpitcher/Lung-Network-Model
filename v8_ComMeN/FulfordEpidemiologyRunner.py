@@ -6,9 +6,7 @@ Long Docstring
 
 """
 
-from ComMeN.Epidemiology.Models.FulfordMetapopulationModelSingle import *
-import csv
-
+from v8_ComMeN.ComMeN.Epidemiology.Old.Fulford import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

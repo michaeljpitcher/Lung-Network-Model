@@ -6,9 +6,7 @@ Long Docstring
 
 """
 
-from ComMeN.Epidemiology.Models.KeelingBubonicPlague import *
-import csv
-
+from v8_ComMeN.ComMeN.Epidemiology.Old.Keeling import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -34,5 +32,5 @@ model = KeelingBubonicPlagueModel(r_r, p, k_r, d_r, m_r, g_r, r_f, k_f, d_f, bet
 
 model.seed_network_node_id(0, {RAT_SUSCEPTIBLE: 2500, FLEA_FREE_INFECTIOUS: 100})
 
-model.run(10)
+model.run(2)
 

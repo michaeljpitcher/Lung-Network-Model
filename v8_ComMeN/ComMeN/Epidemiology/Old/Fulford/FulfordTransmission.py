@@ -6,8 +6,9 @@ Long Docstring
 
 """
 
-from ...Base.Events.Change import *
-from ..Node.FulfordPatch import *
+from v8_ComMeN.ComMeN.Epidemiology.Old.Fulford import *
+
+from v8_ComMeN.ComMeN.Base.Events.Change import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

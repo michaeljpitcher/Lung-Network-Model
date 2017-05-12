@@ -6,10 +6,10 @@ Long Docstring
 
 """
 
-from ...Base.Events.Destruction import *
-from ..Node.FulfordPatch import *
-from ..EpidemiologyClasses import *
+from v8_ComMeN.ComMeN.Epidemiology.Old.Fulford import *
 
+from v8_ComMeN.ComMeN.Base.Events.Destruction import *
+from v8_ComMeN.ComMeN.Epidemiology.EpidemiologyClasses import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

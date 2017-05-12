@@ -6,12 +6,12 @@ Long Docstring
 
 """
 
-from ...Base.Network.MetapopulationNetwork import *
-from ..EpidemiologyClasses import *
+from v8_ComMeN.ComMeN.Epidemiology.Old.Keeling.KeelingBirth import *
+
+from v8_ComMeN.ComMeN.Base.Network.MetapopulationNetwork import *
 from ..Events.KeelingDeath import *
-from ..Events.KeelingBirth import *
-from ..Events.KeelingRecover import *
 from ..Events.KeelingInfect import *
+from ..Events.KeelingRecover import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -62,6 +62,7 @@ class KeelingBubonicPlagueModel(MetapopulationNetwork):
     def timestep_print(self):
         print "t=", self.time
         node = self.node_list[0]
+        print node.subpopulations
         t_r = sum([node.subpopulations[n] for n in [RAT_SUSCEPTIBLE, RAT_RESISTANT, RAT_INFECTIOUS]])
         self.force_of_infection[self.time] = node.subpopulations[FLEA_FREE_INFECTIOUS] * math.exp(-1 * self.a * t_r)
         print self.force_of_infection[self.time]

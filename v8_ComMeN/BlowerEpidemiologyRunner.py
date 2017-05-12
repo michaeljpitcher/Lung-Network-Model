@@ -6,10 +6,10 @@ Long Docstring
 
 """
 
-from ComMeN.Epidemiology.Models.BlowerDetailedModel import *
 import csv
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+from v8_ComMeN.ComMeN.Epidemiology.Old.Blower import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"

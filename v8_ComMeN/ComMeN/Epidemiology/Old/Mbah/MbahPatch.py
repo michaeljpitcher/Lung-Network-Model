@@ -6,7 +6,7 @@ Long Docstring
 
 """
 
-from ...Base.Node.Patch import *
+from v8_ComMeN.ComMeN.Base.Node.Patch import *
 
 __author__ = "Michael Pitcher"
 __copyright__ = "Copyright 2017"
@@ -17,6 +17,7 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-class Region(Patch):
-    def __init__(self, node_id, compartments):
+class MbahPatch(Patch):
+    def __init__(self, node_id, compartments, f):
+        self.proportion_recieving_treatment = f
         Patch.__init__(self, node_id, compartments)
