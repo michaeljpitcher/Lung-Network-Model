@@ -31,6 +31,10 @@ def draw_population_graph(run_id, compartments, show_total=False, title=None):
         for compartment in compartments:
             data[compartment].append(float(row[compartment]))
 
+    # C
+    fig, ax = plt.subplots()
+    ax.set_color_cycle(['blue', 'orangered', 'goldenrod', 'purple', 'green', 'cyan'])
+
     for compartment in compartments:
         plt.plot(time, data[compartment])
     if show_total:

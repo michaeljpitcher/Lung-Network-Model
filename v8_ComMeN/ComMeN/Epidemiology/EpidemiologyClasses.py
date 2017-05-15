@@ -24,6 +24,8 @@ INFECTIOUS = 'infectious'
 DETECTED = 'detected'
 TREATED = 'treated'
 RECOVERED = 'recovered'
+PASSIVELY_IMMUNE = 'passively_immune'
+EXPOSED = 'exposed'
 SUSCEPTIBLE_JUVENILE = 'susceptible_juvenile'
 SUSCEPTIBLE_MATURE = 'susceptible_mature'
 EXPOSED_JUVENILE = 'exposed_juvenile'
@@ -35,6 +37,7 @@ RAT_INFECTIOUS = 'rat_infectious'
 RAT_RESISTANT = 'rat_resistant'
 FLEA_FREE_INFECTIOUS = 'flea_free_infectious'
 AVERAGE_FLEA_ON_RAT = 'average_flea_on_rat'
+INFECTIOUS_RESISTANT = 'infectious_resistant'
 
 
 HICKSON_TOTAL_POPULATION = [SUSCEPTIBLE, LATENT, NON_INFECTIOUS, INFECTIOUS, DETECTED, TREATED]
