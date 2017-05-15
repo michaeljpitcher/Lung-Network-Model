@@ -31,7 +31,7 @@ def draw_population_graph(run_id, compartments, show_total=False, title=None):
         for compartment in compartments:
             data[compartment].append(float(row[compartment]))
 
-    # C
+    # Colours set to (sort of) mimic MATLAB
     fig, ax = plt.subplots()
     ax.set_color_cycle(['blue', 'orangered', 'goldenrod', 'purple', 'green', 'cyan'])
 
@@ -49,4 +49,18 @@ def draw_population_graph(run_id, compartments, show_total=False, title=None):
         plt.title(str(title))
     # x1, x2, y1, y2 = plt.axis()
     # plt.axis((0, math.ceil(max(time)), 0, ))
+    plt.show()
+
+
+def plot_incidence_rates(incidence):
+
+    for cause in incidence.keys():
+        data = incidence[cause]
+        timesteps = sorted(data.keys())
+        time = []
+        values = []
+        for t in timesteps:
+            time.append(t)
+            values.append(data[t])
+        plt.plot(time, values)
     plt.show()
