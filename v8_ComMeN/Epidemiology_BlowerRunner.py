@@ -37,7 +37,7 @@ def model_blower_simple():
     model = SimpleBlowerModel(pi=pi, beta=beta, mu=mu,v=v, p=p, mu_t=mu_t)
     model.seed_network_node_id(0, {SUSCEPTIBLE:pop*(1-inf), INFECTIOUS:pop*inf})
     run_id = 1
-    model.run(100, run_id=run_id)
+    model.run(time_limit=100, run_id=run_id)
     draw_population_graph(run_id, model.compartments, title="BLOWER SIMPLE")
 
 
@@ -59,7 +59,7 @@ def model_blower_detailed():
     model = DetailedBlowerModel(pi=pi, p=p, beta=beta, f=f, mu=mu, v=v, q=q, mu_t=mu_t, c=c, omega=omega)
     model.seed_network_node_id(0, {SUSCEPTIBLE: pop - 100, INFECTIOUS: 100})
     run_id = 1
-    model.run(100, run_id=run_id)
+    model.run(time_limit=100, run_id=run_id)
     draw_population_graph(run_id, model.compartments, title="BLOWER DETAILED")
     plot_incidence_rates({'fast':model.fast_incidence_rate, 'slow':model.slow_incidence_rate, 'relapse':model.relapse_incidence_rate})
 

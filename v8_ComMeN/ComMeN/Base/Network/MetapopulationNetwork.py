@@ -86,7 +86,11 @@ class MetapopulationNetwork(nx.Graph):
         if u != v:
             v.neighbours.append((u, attr_dict))
 
-    def run(self, time_limit=0, run_id=None, console_output=True, debug=None):
+    def run(self, start_time=0, time_limit=0, run_id=None, console_output=True, debug=None):
+
+        if start_time > 0:
+            self.time = start_time
+
         print "ComMen Simulation - time limit:", time_limit
         csv_file = None
         csv_writer = None

@@ -67,6 +67,6 @@ model = TBModelFull(initial_macrophages_bps=macs_per_bps, initial_macrophages_bt
 # import cProfile
 # cp = cProfile.Profile()
 # cp.enable()
-model.run(1.0, run_id=99, debug='Debug')
+model.run(time_limit=1.0, run_id=99, debug='Debug')
 # cp.disable()
 # cp.print_stats('tottime')

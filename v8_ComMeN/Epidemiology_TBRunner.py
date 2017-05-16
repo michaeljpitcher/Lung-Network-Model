@@ -33,7 +33,7 @@ def basic_tb_epidemic():
     model = BasicTBEpidemicModel(beta, gamma, delta, omega)
     model.seed_network_node_id(0, {SUSCEPTIBLE:990, INFECTIOUS:10})
     run_id = 1
-    model.run(100, run_id=run_id)
+    model.run(time_limit=100, run_id=run_id)
     draw_population_graph(run_id, model.compartments, "TB Basic epidemiology")
 
 
@@ -48,7 +48,7 @@ def run_tb_model_2():
     model = TBEpidemicModel2(beta=beta, gamma=gamma, p=p, delta=delta, omega=omega, omega_i=omega_i)
     model.seed_network_node_id(0, {SUSCEPTIBLE:990, INFECTIOUS:10})
     run_id = 1
-    model.run(200, run_id=run_id)
+    model.run(time_limit=200, run_id=run_id)
     draw_population_graph(run_id, model.compartments, "TB Basic epidemiology")
 
 
@@ -64,7 +64,7 @@ def run_tb_model_3():
     model = TBEpidemicModel3(beta=beta, gamma=gamma, p=p, q=q, delta=delta, omega=omega, omega_i=omega_i)
     model.seed_network_node_id(0, {SUSCEPTIBLE:990, INFECTIOUS:10})
     run_id = 1
-    model.run(200, run_id=run_id)
+    model.run(time_limit=200, run_id=run_id)
     draw_population_graph(run_id, model.compartments, "TB Basic epidemiology")
 
 
@@ -81,7 +81,7 @@ def run_tb_model_4():
     model = TBEpidemicModel4(beta=beta, gamma=gamma, p=p, q=q, delta=delta, theta=theta, omega=omega, omega_i=omega_i)
     model.seed_network_node_id(0, {SUSCEPTIBLE:990, INFECTIOUS:10})
     run_id = 1
-    model.run(200, run_id=run_id)
+    model.run(time_limit=200, run_id=run_id)
     draw_population_graph(run_id, model.compartments, "TB Basic epidemiology")
 
 
@@ -100,7 +100,7 @@ def run_tb_model_5():
                              omega_i=omega_i)
     model.seed_network_node_id(0, {SUSCEPTIBLE:990, INFECTIOUS:10})
     run_id = 1
-    model.run(200, run_id=run_id)
+    model.run(time_limit=200, run_id=run_id)
     draw_population_graph(run_id, model.compartments, "TB Basic epidemiology")
 
 
@@ -123,7 +123,7 @@ def run_feng_tb():
     infectious = 1100
     model.seed_network_node_id(0, {SUSCEPTIBLE: 25000-infectious, INFECTIOUS: infectious})
     run_id = 1
-    model.run(100, run_id=run_id)
+    model.run(time_limit=100, run_id=run_id)
     draw_population_graph(run_id, [INFECTIOUS], title="TB Basic epidemiology")
 
 
