@@ -19,7 +19,7 @@ __email__ = "mjp22@st-andrews.ac.uk"
 __status__ = "Development"
 
 
-def draw_population_graph(run_id, compartments, show_total=False, title=None):
+def draw_single_population_graph(run_id, compartments, show_total=False, title=None):
     csv_file = open(str(run_id) + ".csv", 'r')
     csv_reader = csv.DictReader(csv_file)
     time = []
@@ -51,6 +51,38 @@ def draw_population_graph(run_id, compartments, show_total=False, title=None):
     # plt.axis((0, math.ceil(max(time)), 0, ))
     plt.show()
 
+
+def draw_multi_population_graph(run_id, compartments, title=None, axis=None):
+    # Colours set to (sort of) mimic MATLAB
+    fig, ax = plt.subplots()
+    ax.set_color_cycle(['blue', 'orangered', 'goldenrod', 'purple', 'green', 'cyan', 'black', 'grey'])
+
+    print "reading data...."
+    csv_file = open(str(run_id) + ".csv", 'r')
+    csv_reader = csv.DictReader(csv_file)
+    data = {}
+    for row in csv_reader:
+        node_id = int(row['node_id'])
+        if node_id not in data.keys():
+            data[node_id] = []
+        data[node_id].append(row)
+
+    time = [row['timestep'] for row in data[1]]
+
+    legend_labels = []
+
+    print "drawing graph..."
+    for node_id in data:
+        for compartment in compartments:
+            compartment_data = [row[compartment] for row in data[node_id]]
+            plt.plot(time, compartment_data)
+            legend_labels.append(compartment + '_' + str(node_id))
+    plt.legend(legend_labels)
+    if title:
+        plt.title(str(title))
+    if axis:
+        plt.axis((axis[0], axis[1], axis[2], axis[3]))
+    plt.show()
 
 def plot_incidence_rates(incidence):
 

@@ -86,7 +86,7 @@ class MetapopulationNetwork(nx.Graph):
         if u != v:
             v.neighbours.append((u, attr_dict))
 
-    def run(self, start_time=0, time_limit=0, run_id=None, console_output=True, debug=None):
+    def run(self, start_time=0, time_limit=0, run_id=None, console_output=True, debug=None, record_steps=100):
 
         if start_time > 0:
             self.time = start_time
@@ -94,6 +94,7 @@ class MetapopulationNetwork(nx.Graph):
         print "ComMen Simulation - time limit:", time_limit
         csv_file = None
         csv_writer = None
+        record_counter = 0.0
 
         if debug:
             filename = str(debug) + '.log'
@@ -102,7 +103,7 @@ class MetapopulationNetwork(nx.Graph):
                                 level=logging.DEBUG)
             logging.debug("Running ComMen Simulation - Class:{0} - runid:{1}".format(self.__class__.__name__, run_id))
 
-        if run_id is not None:
+        if run_id:
             filename = str(run_id) + '.csv'
             csv_file = open(filename, 'w')
             print "Data output to:", filename
@@ -111,7 +112,7 @@ class MetapopulationNetwork(nx.Graph):
             self.record_data(csv_writer)
 
         while self.time < time_limit:
-            if console_output:
+            if console_output and record_counter % record_steps == 0:
                 self.timestep_print()
 
             """ Gillespie simulation - derived from:
@@ -142,8 +143,10 @@ class MetapopulationNetwork(nx.Graph):
                     break
 
             self.time += tau
-            if run_id is not None:
+            record_counter += 1.0
+            if run_id and record_counter % record_steps == 0:
                 self.record_data(csv_writer)
+
         if console_output:
             self.timestep_print()
         if run_id is not None:

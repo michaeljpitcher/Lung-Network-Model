@@ -51,7 +51,7 @@ class KeelingRatBirthResistantFromResistant(Create):
 class KeelingFleaBirth(Create):
     def __init__(self, node_types, r_f, k_f):
         self.k_f = k_f
-        Create.__init__(self, node_types, r_f, AVERAGE_FLEA_ON_RAT)
+        Create.__init__(self, node_types, r_f, FLEA_INDEX)
 
     def increment_state_variable_from_node(self, node, network):
-        return node.subpopulations[AVERAGE_FLEA_ON_RAT] * (1 - (node.subpopulations[AVERAGE_FLEA_ON_RAT] / self.k_f))
+        return node.subpopulations[FLEA_INDEX] * (1 - (node.subpopulations[FLEA_INDEX] / self.k_f))

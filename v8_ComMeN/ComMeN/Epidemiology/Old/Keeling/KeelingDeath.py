@@ -30,7 +30,7 @@ class KeelingDeathRatInfectious(Destroy):
     def update_node(self, node, network):
         Destroy.update_node(self, node, None)
         # Increment free flea TODO - does this need to be rounded?
-        node.update_subpopulation(FLEA_FREE_INFECTIOUS, node.subpopulations[AVERAGE_FLEA_ON_RAT])
+        node.update_subpopulation(FLEA_FREE_INFECTIOUS, node.subpopulations[FLEA_INDEX])
 
 
 class KeelingDeathRatInfectiousByInfection(KeelingDeathRatInfectious):

@@ -2,7 +2,8 @@
 
 """Short docstring
 
-Long Docstring
+S. M. Blower, A. R. Mclean, T. C. Porco, P. M. Small, P. C. Hopewell, M. A. Sanchez, and A. R. Moss, "The intrinsic
+transmission dynamics of tuberculosis epidemics," Nat. Med., vol. 1, no. 8, pp. 815-821, Aug. 1995.
 
 """
 

@@ -34,7 +34,7 @@ class KeelingInfect(Change):
 class Something(Create):
     def __init__(self, node_types, d_f, a):
         self.a = a
-        Create.__init__(self, node_types, d_f, AVERAGE_FLEA_ON_RAT)
+        Create.__init__(self, node_types, d_f, FLEA_INDEX)
 
     def increment_state_variable_from_node(self, node, network):
         t_r = sum([node.subpopulations[n] for n in [RAT_INFECTIOUS, RAT_SUSCEPTIBLE, RAT_RESISTANT]])

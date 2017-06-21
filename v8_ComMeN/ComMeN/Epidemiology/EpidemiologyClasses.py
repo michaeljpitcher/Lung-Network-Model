@@ -35,8 +35,8 @@ INFECTIOUS_MATURE = 'infected_mature'
 RAT_SUSCEPTIBLE = 'rat_susceptible'
 RAT_INFECTIOUS = 'rat_infectious'
 RAT_RESISTANT = 'rat_resistant'
-FLEA_FREE_INFECTIOUS = 'flea_free_infectious'
-AVERAGE_FLEA_ON_RAT = 'average_flea_on_rat'
+FREE_INFECTIOUS_FLEA = 'free_infectious_flea'
+FLEA_INDEX = 'flea_index'
 INFECTIOUS_RESISTANT = 'infectious_resistant'
 
 

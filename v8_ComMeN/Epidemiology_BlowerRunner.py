@@ -38,7 +38,7 @@ def model_blower_simple():
     model.seed_network_node_id(0, {SUSCEPTIBLE:pop*(1-inf), INFECTIOUS:pop*inf})
     run_id = 1
     model.run(time_limit=100, run_id=run_id)
-    draw_population_graph(run_id, model.compartments, title="BLOWER SIMPLE")
+    draw_single_population_graph(run_id, model.compartments, title="BLOWER SIMPLE")
 
 
 def model_blower_detailed():
@@ -53,15 +53,15 @@ def model_blower_detailed():
     c = 0.058
     q = 0.85
 
-    pop = 200000
-    inf = 0.01
+    pop = 1000000
+    inf = 10000
 
     model = DetailedBlowerModel(pi=pi, p=p, beta=beta, f=f, mu=mu, v=v, q=q, mu_t=mu_t, c=c, omega=omega)
-    model.seed_network_node_id(0, {SUSCEPTIBLE: pop - 100, INFECTIOUS: 100})
+    model.seed_network_node_id(0, {SUSCEPTIBLE: pop, INFECTIOUS: inf})
     run_id = 1
-    model.run(time_limit=100, run_id=run_id)
-    draw_population_graph(run_id, model.compartments, title="BLOWER DETAILED")
-    plot_incidence_rates({'fast':model.fast_incidence_rate, 'slow':model.slow_incidence_rate, 'relapse':model.relapse_incidence_rate})
+    model.run(time_limit=200, run_id=run_id, record_steps=100)
+    draw_single_population_graph(run_id, [INFECTIOUS, NON_INFECTIOUS], title="BLOWER DETAILED")
+    # plot_incidence_rates({'fast':model.fast_incidence_rate, 'slow':model.slow_incidence_rate, 'relapse':model.relapse_incidence_rate})
 
-# model_blower_simple()
-model_blower_detailed()
+model_blower_simple()
+# model_blower_detailed()

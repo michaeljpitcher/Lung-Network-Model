@@ -6,8 +6,9 @@ Long Docstring
 
 """
 
-from v8_ComMeN.ComMeN.Base.Network.MetapopulationNetwork import *
-from v8_ComMeN.ComMeN.Base.Node.Patch import *
+from ....Base.Network.MetapopulationNetwork import *
+from ....Base.Node.Patch import *
+from ...EpidemiologyClasses import *
 
 
 __author__ = "Michael Pitcher"
@@ -20,6 +21,9 @@ __status__ = "Development"
 
 
 class MultiPatchFullConnectedEpidemicModel(MetapopulationNetwork):
+    """
+    Multiple patches - all similar and fully connected with no edge weightings
+    """
 
     def __init__(self, number_of_patches, compartments, events):
         nodes = []
@@ -28,5 +32,5 @@ class MultiPatchFullConnectedEpidemicModel(MetapopulationNetwork):
         edges = []
         for n in range(number_of_patches-1):
             for k in range(n+1, number_of_patches):
-                edges.append((nodes[n], nodes[k], {EDGE_TYPE:'edge'}))
+                edges.append((nodes[n], nodes[k], {EDGE_TYPE: STANDARD_EDGE}))
         MetapopulationNetwork.__init__(self, compartments, nodes, edges, events)

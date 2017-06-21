@@ -33,7 +33,7 @@ def model_2_3_epidemic():
     model.seed_network_node_id(0, {SUSCEPTIBLE:10000*(1-0.01), INFECTIOUS:10000*(0.01)})
     run_id = 1
     model.run(time_limit=25, run_id=run_id)
-    draw_population_graph(run_id, model.compartments, title="HETHCOTE CLASSIC EPIDEMIC")
+    draw_single_population_graph(run_id, model.compartments, title="HETHCOTE CLASSIC EPIDEMIC")
 
 
 def model_2_4_endemic():
@@ -44,7 +44,7 @@ def model_2_4_endemic():
     model.seed_network_node_id(0, {SUSCEPTIBLE: 10000*(1-0.01), INFECTIOUS:10000*(0.01)})
     run_id = 1
     model.run(time_limit=50, run_id=run_id)
-    draw_population_graph(run_id, model.compartments, title="HETHCOTE CLASSIC ENDEMIC")
+    draw_single_population_graph(run_id, model.compartments, title="HETHCOTE CLASSIC ENDEMIC")
 
 
 def model_3_1_MSEIR():
@@ -58,9 +58,9 @@ def model_3_1_MSEIR():
     model.seed_network_node_id(0, {SUSCEPTIBLE: 10000 * (1 - 0.01), INFECTIOUS: 10000 * (0.01)})
     run_id = 1
     model.run(time_limit=50, run_id=run_id)
-    draw_population_graph(run_id, model.compartments, title="HETHCOTE MSEIR")
+    draw_single_population_graph(run_id, model.compartments, title="HETHCOTE MSEIR")
 
 
 # model_2_3_epidemic()
-# model_2_4_endemic()
-model_3_1_MSEIR()
+model_2_4_endemic()
+# model_3_1_MSEIR()
