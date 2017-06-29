@@ -72,6 +72,10 @@ class MetapopulationNetwork(nx.Graph):
 
     def add_node(self, n, attr_dict=None, **attr):
         assert isinstance(n, Patch), "Node {0} is not a Patch object".format(n)
+        assert len([k for k in self.node_list if k.node_id == n.node_id]) == 0, "Node with ID {0} already exists"\
+            .format(n.node_id)
+
+
         nx.Graph.add_node(self, n)
         self.node_list.append(n)
 
@@ -86,7 +90,7 @@ class MetapopulationNetwork(nx.Graph):
         if u != v:
             v.neighbours.append((u, attr_dict))
 
-    def run(self, start_time=0, time_limit=0, run_id=None, console_output=True, debug=None, record_steps=100):
+    def run(self, start_time=0, time_limit=0, run_id=None, console_output=True, debug=None, record_steps=1):
 
         if start_time > 0:
             self.time = start_time
